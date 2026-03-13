@@ -2,6 +2,17 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from businesman import Businessman
 
+class Board:
+
+    def __init__(self, cells: list[Cell] = None):
+        self.cells = [] or None
+
+    def get_cell(self, position) -> Cell:
+        pass
+
+    def is_passed_go(self, position: int) -> bool:
+        pass
+
 class Cell(ABC):
 
     _x: int
@@ -179,6 +190,3 @@ class Building:  # строение
 
     def get_full_price(self):
         return self.__price * self.__ratio
-
-
-
