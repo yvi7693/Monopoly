@@ -38,34 +38,38 @@ class Bank:
     START_CAPITAL = 1500
     BONUS_GO = 200
 
-    accounts: list[BankAccount]
+    __accounts: list[BankAccount]
 
     def __init__(self, accounts: list[BankAccount] = None):
         if not isinstance(accounts, list):  raise TypeError()
 
-        self.accounts = accounts or []
+        self.__accounts = accounts or []
 
     def register_account(self, id: IdBusinessman) -> None:
-        if not isinstance(id, IdBusinessman):  raise TypeError()
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
-        self.accounts.append(BankAccount(id))
+        if id in self.__accounts:  raise AssertionError("Аккаунт уже добавлен")
+
+        self.__accounts.append(BankAccount(id))
 
     def deregister_account(self, id: IdBusinessman) -> None:
-        if not isinstance(id, IdBusinessman):  raise TypeError()
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
+
+        if not id in self.__accounts:  raise AssertionError("Аккаунта нет в списке")
 
         delete_index = 0
 
-        for i in range(len(self.accounts)):
-            if self.accounts[i].id == id:
+        for i in range(len(self.__accounts)):
+            if self.__accounts[i].id == id:
                 delete_index = i
 
-        self.accounts.pop(delete_index)
+        self.__accounts.pop(delete_index)
 
     def charge_account(self, money: int, id: IdBusinessman) -> None:
         if not isinstance(money, int):  raise TypeError()
         if not isinstance(id, IdBusinessman):  raise TypeError()
 
-        account = self.search_account(id)
+        account = self.__search_account(id)
 
         if account is None:  raise AssertionError("")
 
@@ -95,7 +99,7 @@ class Bank:
     def __search_account(self, id: IdBusinessman) -> BankAccount | None:
         if not isinstance(id, IdBusinessman):  raise TypeError()
 
-        for account in self.accounts:
+        for account in self.__accounts:
             if account.id == id:
                 return account
 

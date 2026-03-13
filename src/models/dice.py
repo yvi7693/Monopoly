@@ -1,6 +1,5 @@
 class Dice:
 
-
     @staticmethod
     def throw() -> int:
         import random

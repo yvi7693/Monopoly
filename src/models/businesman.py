@@ -1,4 +1,4 @@
-from src.models.gameboard import Ownership, Board
+from src.models.gameboard import Ownership, Board, NeighborhoodTypes
 from dataclasses import dataclass
 
 @dataclass
@@ -16,17 +16,21 @@ class Businessman:
 
     def get_position(self) -> int: return self.__position
 
-    def __get_id(self) -> IdBusinessman: return self.__id
+    def set_position(self, points: int) -> None:
+        if not isinstance(points, int): raise TypeError("Тип данных не int")
+        self.__position = points
 
     def add_ownership(self, ownership: Ownership) -> None:
-        if not isinstance(ownership, Ownership): raise TypeError()
+        if not isinstance(ownership, Ownership): raise TypeError("Тип данных не Ownership")
 
-        if ownership in self.__ownerships: raise TypeError()
+        if ownership in self.__ownerships: raise TypeError("Данная собственность уже находится во владении")
 
         self.__ownerships.append(ownership)
 
     def delete_ownership(self, delete_ownership: Ownership):
-        if not isinstance(delete_ownership, Ownership):  raise TypeError()
+        if not isinstance(delete_ownership, Ownership):  raise TypeError("Тип данных не Ownership")
+
+        if not delete_ownership in self.__ownerships: raise TypeError("Данной собственности нет в списке собственностей")
 
         delete_index = 0
 
@@ -36,12 +40,8 @@ class Businessman:
 
         self.__ownerships.pop(delete_index)
 
-    def make_move(self, points: int) -> None:
-        if not isinstance(points, int): raise TypeError()
-        self.__position += points
-
     def has_title_deeds(self, search_ownership: Ownership) -> bool:
-        if not isinstance(search_ownership, Ownership):  raise TypeError()
+        if not isinstance(search_ownership, Ownership):  raise TypeError("Тип данных не Ownership")
 
         for ownership in self.__ownerships:
             if ownership == search_ownership:
@@ -49,7 +49,18 @@ class Businessman:
 
         return False
 
-    id = property(__get_id)
+    def has_neighborhood_by_street(self, neighborhood: NeighborhoodTypes) -> bool:
+        count = 0
 
-    def has_neighborhood_by_street(self, param):
-        pass
+        for ownership in self.__ownerships:
+            if ownership.get_neighborhood() == neighborhood:
+                count += 1
+
+        if count == 3: return True
+
+        return False
+
+    def __get_id(self) -> IdBusinessman:
+        return self.__id
+
+    id = property(__get_id)

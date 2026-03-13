@@ -47,6 +47,8 @@ class Chance(Cell):
 
     CASH = 30
 
+    __bank: Bank
+
     def __init__(self, x: int, bank: Bank):
         super().__init__(x)
 
@@ -131,6 +133,10 @@ class NeighborhoodTypes:
     GREEN = 2
     YELLOW = 3
     BROWN = 4
+    PURPLE = 5
+    ORANGE = 7
+    BLACK = 8
+
 
 class Street(Ownership):
 
@@ -188,7 +194,12 @@ class BuildingRatioTypes:
     HOME = 2
     HOTEL = 9
 
-class Building:  # строение
+class Building:
+
+    # строение
+
+    __price: int
+    __ratio: int
 
     def __init__(self, price: int, ratio: int):
         if not isinstance(price, int):  raise TypeError()

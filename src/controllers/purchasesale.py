@@ -7,7 +7,7 @@ class ManagerOwnership:
     def __init__(self, bank: Bank):
         if not isinstance(bank, Bank):  raise TypeError()
 
-        self.bank = bank
+        self.__bank = bank
 
     def try_buy_ownership(self, ownership: Ownership, businessman: Businessman) -> bool: # попытка купить собственность
 
@@ -15,9 +15,9 @@ class ManagerOwnership:
 
         price = ownership.get_price()
 
-        if not self.bank.has_enough_money(price, businessman.id): return False
+        if not self.__bank.has_enough_money(price, businessman.id): return False
 
-        self.bank.debit_account(price, businessman.id)
+        self.__bank.debit_account(price, businessman.id)
 
         businessman.add_ownership(ownership)
 
@@ -33,7 +33,7 @@ class ManagerOwnership:
 
         businessman.delete_ownership(ownership)
 
-        self.bank.charge_account(price, businessman.id)
+        self.__bank.charge_account(price, businessman.id)
 
         ownership.unset_owner()
 

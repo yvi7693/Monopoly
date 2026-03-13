@@ -1,20 +1,21 @@
 from src.controllers.finance import Bank
 from src.models.businesman import Businessman
 from src.models.dice import Dice
-from src.models.gameboard import Board, Cell
+from src.models.gameboard import Board
 
 class GameRules:
 
-    board: Board
-    dice: Dice
+    __board: Board
+    __dice: Dice
+    __bank: Bank
 
     def __init__(self, board: Board, bank: Bank, dice: Dice):
-        if not isinstance(board, Board):  raise TypeError()
-        if not isinstance(bank, Bank):  raise TypeError()
+        if not isinstance(board, Board):  raise TypeError("Тип данных не Board")
+        if not isinstance(bank, Bank):  raise TypeError("Тип данных не Bank")
 
         self.__board = board
         self.__dice = dice
-        self.bank = bank
+        self.__bank = bank
 
     def make_move(self, businessman: Businessman):
         points = self.__dice.throw()
@@ -23,19 +24,22 @@ class GameRules:
 
         new_position = businessman.get_position()
 
-        cell = self.board.get_cell(new_position)
+        cell = self.__board.get_cell(new_position)
 
-        cell.land(businessman)
+        cell.land(businessman.id)
 
     def __move_token(self, points: int, businessman: Businessman) -> None:
-        businessman.make_move(points)
 
-        new_position = businessman.get_position()
+        position = businessman.get_position()
 
-        if self.board.is_passed_go(new_position):
-            self.__passed_go(businessman)
+        new_position = (position + points) % Board.END
 
-    def __passed_go(self, businessman: Businessman) -> None:
-        if not isinstance(businessman, Businessman):  raise TypeError()
+        businessman.set_position(new_position)
 
-        self.bank.charge_account(Bank.BONUS_GO, businessman.id)
+        if Board.is_passed_go(position, points):
+            self.__give_bonus_go(businessman)
+
+    def __give_bonus_go(self, businessman: Businessman) -> None:
+        if not isinstance(businessman, Businessman):  raise TypeError("Тип данных не Businessman")
+
+        self.__bank.charge_account(Bank.BONUS_GO, businessman.id)
