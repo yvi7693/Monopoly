@@ -1,5 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from operator import truediv
+
 from businesman import IdBusinessman
 from src.controllers.finance import Bank
 
@@ -9,14 +11,18 @@ class Board:
     START = 0
     END = 39
 
+    __cells: list[Cell]
+
     def __init__(self, cells: list[Cell] = None):
-        self.cells = cells or []
+        self.__cells = cells or []
 
-    def get_cell(self, position) -> Cell:
-        pass
+    def get_cell(self, position) -> Cell: return self.__cells[position]
 
-    def is_passed_go(self, position: int) -> bool:
-        pass
+    @staticmethod
+    def is_passed_go(position: int, points: int) -> bool:
+        if (position + points) > 39: return True
+
+        return False
 
 class Cell(ABC):
 
@@ -53,7 +59,7 @@ class Chance(Cell):
 
     def __try_luck(self, id: IdBusinessman):  # испытать удачу
 
-        result = self.__solve_chance()
+        result = Chance.__solve_chance()
 
         if result == ChanceResultTypes.POSITIVE:
             self.__execute_positive_chance(id)
@@ -82,13 +88,15 @@ class Ownership(Cell, ABC):
     _name: str
     _owner: IdBusinessman
     _price: int
+    _rent: int
 
-    def __init__(self, x: int, price: int, rent: int):
+    def __init__(self, name: str, x: int, price: int, rent: int):
         super().__init__(x)
 
-        if not isinstance(price, int):  raise  TypeError()
-        if not isinstance(rent, int):  raise TypeError()
+        if not isinstance(price, int):  raise  TypeError("Тип данных не int")
+        if not isinstance(rent, int):  raise TypeError("Тип данных не int")
 
+        self._name = name
         self._owner = None
         self._price = price
         self._rent = rent
@@ -103,7 +111,7 @@ class Ownership(Cell, ABC):
 
     def set_owner(self, owner: IdBusinessman) -> None:
 
-        if not isinstance(owner, IdBusinessman): raise TypeError()
+        if not isinstance(owner, IdBusinessman): raise TypeError("Тип данных не IdBusinessman")
 
         self._owner = owner
 
@@ -121,9 +129,15 @@ class NeighborhoodTypes:
     RED = 0
     BLUE = 1
     GREEN = 2
-
+    YELLOW = 3
+    BROWN = 4
 
 class Street(Ownership):
+
+    HOME_MAX_COUNT = 4
+
+    __neighborhood: NeighborhoodTypes
+    __builds: list[Building]
 
     def __init__(self, x: int, price: int, rent: int, neighborhood: NeighborhoodTypes):
         super().__init__(x, price, rent)
@@ -134,7 +148,8 @@ class Street(Ownership):
     def __eq__(self, other: Street):
         return self._name == other._name
 
-    def get_neighborhood(self) -> NeighborhoodTypes: return self.__neighborhood
+    def get_neighborhood(self) -> NeighborhoodTypes:
+        return self.__neighborhood
 
     def land(self, id: IdBusinessman):  # встать
         pass
@@ -148,32 +163,23 @@ class Street(Ownership):
         return self._price + price_buildings
 
     def calculate_rent(self) -> int:
-        build_ratio = 0
+        build_ratio = 1
 
         for build in self.__builds:
             build_ratio += build.get_ratio()
 
         return  self._rent * build_ratio
 
-    def build_home(self, home: Building) -> None:  # построить дом
-        if not isinstance(home, Building):  raise TypeError()
-        if home.get_ratio() != BuildingRatioTypes.HOME:  raise ValueError()
-
-        self.__builds.append(home)
-
-    def build_hotel(self, hotel: Building) -> None:  # построить отель
-        if not isinstance(hotel, Building):  raise TypeError()
-        if hotel.get_ratio() != BuildingRatioTypes.HOTEL:  raise ValueError()
-
-        self.__builds.append(hotel)
+    def create_build(self, price: int, type: int) -> None:  # построить дом
+        self.__builds.append(Building(price, type))
 
     def can_build_home(self) -> bool: # можно ли построить дом
-        if len(self.__builds) < 4: return True
+        if len(self.__builds) < Street.HOME_MAX_COUNT: return True
 
         return False
 
     def can_build_hotel(self) -> bool: # можно ли построить отель
-        if len(self.__builds) == 4 : return True
+        if len(self.__builds) == Street.HOME_MAX_COUNT : return True
 
         return False
 

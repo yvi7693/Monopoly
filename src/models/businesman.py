@@ -6,7 +6,6 @@ class IdBusinessman:
 
     id: int
 
-
 class Businessman:
 
     def __init__(self, id: IdBusinessman):
@@ -21,6 +20,8 @@ class Businessman:
 
     def add_ownership(self, ownership: Ownership) -> None:
         if not isinstance(ownership, Ownership): raise TypeError()
+
+        if ownership in self.__ownerships: raise TypeError()
 
         self.__ownerships.append(ownership)
 
@@ -39,7 +40,7 @@ class Businessman:
         if not isinstance(points, int): raise TypeError()
         self.__position += points
 
-    def has_tittle_deeds(self, search_ownership: Ownership) -> bool:
+    def has_title_deeds(self, search_ownership: Ownership) -> bool:
         if not isinstance(search_ownership, Ownership):  raise TypeError()
 
         for ownership in self.__ownerships:
@@ -49,3 +50,6 @@ class Businessman:
         return False
 
     id = property(__get_id)
+
+    def has_neighborhood_by_street(self, param):
+        pass

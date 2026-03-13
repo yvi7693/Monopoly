@@ -7,16 +7,13 @@ class GameRules:
 
     board: Board
     dice: Dice
-    cells: list[Cell]
 
-    def __init__(self, board: Board, bank: Bank, cells: list[Cell] = None):
+    def __init__(self, board: Board, bank: Bank, dice: Dice):
         if not isinstance(board, Board):  raise TypeError()
-        if not isinstance(cells, list): raise TypeError()
         if not isinstance(bank, Bank):  raise TypeError()
 
         self.__board = board
-        self.__dice = Dice()
-        self.__cells = cells or []
+        self.__dice = dice
         self.bank = bank
 
     def make_move(self, businessman: Businessman):

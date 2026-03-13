@@ -27,7 +27,7 @@ class ManagerOwnership:
 
     def try_sell_ownership(self, ownership: Ownership, businessman: Businessman):
 
-        if not businessman.has_tittle_deeds(ownership): return False
+        if not businessman.has_title_deeds(ownership): return False
 
         price = ownership.calculate_price()
 

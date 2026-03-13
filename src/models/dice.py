@@ -1,7 +1,5 @@
 class Dice:
 
-    def __init__(self):
-        pass
 
     @staticmethod
     def throw() -> int:

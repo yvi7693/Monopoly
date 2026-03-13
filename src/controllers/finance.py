@@ -21,6 +21,8 @@ class BankAccount:
     def debit(self, money: int) -> None:
         if not isinstance(money, int):  raise TypeError()
 
+        if self.__balance - money < 0: raise AssertionError()
+
         self.__balance -= money
 
     def has_enough_money(self, money: int) -> bool:
@@ -65,7 +67,7 @@ class Bank:
 
         account = self.search_account(id)
 
-        if account is None:  raise ValueError()
+        if account is None:  raise AssertionError("")
 
         account.charge(money)
 
@@ -73,7 +75,7 @@ class Bank:
         if not isinstance(money, int):  raise TypeError()
         if not isinstance(id, IdBusinessman):  raise TypeError()
 
-        account = self.search_account(id)
+        account = self.__search_account(id)
 
         if account is None:  raise ValueError()
 
@@ -83,14 +85,14 @@ class Bank:
         if not isinstance(money, int):  raise TypeError()
         if not isinstance(id, IdBusinessman):  raise TypeError()
 
-        account = self.search_account(id)
+        account = self.__search_account(id)
 
         if account is None:  raise ValueError()
 
         return account.has_enough_money(money)
 
 
-    def search_account(self, id: IdBusinessman) -> BankAccount | None:
+    def __search_account(self, id: IdBusinessman) -> BankAccount | None:
         if not isinstance(id, IdBusinessman):  raise TypeError()
 
         for account in self.accounts:
