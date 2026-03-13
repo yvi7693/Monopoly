@@ -1,3 +1,4 @@
+from src.controllers.finance import Bank
 from src.models.businesman import Businessman
 from src.models.dice import Dice
 from src.models.gameboard import Board, Cell
@@ -8,13 +9,15 @@ class GameRules:
     dice: Dice
     cells: list[Cell]
 
-    def __init__(self, board: Board, cells: list[Cell] = None):
+    def __init__(self, board: Board, bank: Bank, cells: list[Cell] = None):
         if not isinstance(board, Board):  raise TypeError()
         if not isinstance(cells, list): raise TypeError()
+        if not isinstance(bank, Bank):  raise TypeError()
 
         self.__board = board
         self.__dice = Dice()
         self.__cells = cells or []
+        self.bank = bank
 
     def make_move(self, businessman: Businessman):
         points = self.__dice.throw()
@@ -36,10 +39,6 @@ class GameRules:
             self.__passed_go(businessman)
 
     def __passed_go(self, businessman: Businessman) -> None:
-        pass
+        if not isinstance(businessman, Businessman):  raise TypeError()
 
-
-
-
-
-
+        self.bank.charge_account(Bank.BONUS_GO, businessman.id)
