@@ -1,11 +1,16 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from businesman import Businessman
+from businesman import IdBusinessman
+from src.controllers.finance import Bank
+
 
 class Board:
 
+    START = 0
+    END = 39
+
     def __init__(self, cells: list[Cell] = None):
-        self.cells = [] or None
+        self.cells = cells or []
 
     def get_cell(self, position) -> Cell:
         pass
@@ -24,7 +29,7 @@ class Cell(ABC):
         self._x = x
 
     @abstractmethod
-    def land(self, businessman: Businessman): raise NotImplemented()
+    def land(self, id: IdBusinessman): raise NotImplemented()
 
 class ChanceResultTypes:
 
@@ -36,29 +41,33 @@ class Chance(Cell):
 
     CASH = 30
 
-    def __init__(self, x: int):
-
+    def __init__(self, x: int, bank: Bank):
         super().__init__(x)
 
-    def land(self, businessman: Businessman):
-        self.__try_luck(businessman)
+        if not isinstance(bank, Bank):  raise TypeError()
 
-    def __try_luck(self, businessman: Businessman):  # испытать удачу
+        self.__bank = bank
+
+    def land(self, id: IdBusinessman):
+        self.__try_luck(id)
+
+    def __try_luck(self, id: IdBusinessman):  # испытать удачу
 
         result = self.__solve_chance()
 
         if result == ChanceResultTypes.POSITIVE:
-            self.__execute_positive_chance(businessman)
+            self.__execute_positive_chance(id)
         else:
-            self.__execute_negative_chance(businessman)
+            self.__execute_negative_chance(id)
 
-    def __execute_positive_chance(self, businessman):  # выполнить позитивный исход
-        businessman.increase_balance(Chance.CASH)
+    def __execute_positive_chance(self, id: IdBusinessman):  # выполнить позитивный исход
+        self.__bank.charge_account(Chance.CASH, id)
 
-    def __execute_negative_chance(self, businessman):  # выполнить негативный исход
-        businessman.decrease_balance(Chance.CASH)
+    def __execute_negative_chance(self, id: IdBusinessman):  # выполнить негативный исход
+        self.__bank.charge_account(Chance.CASH, id)
 
-    def __solve_chance(self) -> int:  # вычислить шанс
+    @staticmethod
+    def __solve_chance() -> int:  # вычислить шанс
         import random
 
         if random.randint(0, 10) > 5:
@@ -71,7 +80,7 @@ class Ownership(Cell, ABC):
     # Модель Собственности
 
     _name: str
-    _owner: Businessman
+    _owner: IdBusinessman
     _price: int
 
     def __init__(self, x: int, price: int, rent: int):
@@ -92,16 +101,16 @@ class Ownership(Cell, ABC):
 
     def get_price(self) -> int:  return self._price
 
-    def set_owner(self, owner: Businessman) -> None:
+    def set_owner(self, owner: IdBusinessman) -> None:
 
-        if not isinstance(owner, Businessman): raise TypeError()
+        if not isinstance(owner, IdBusinessman): raise TypeError()
 
         self._owner = owner
 
     def has_owner(self) -> bool:
         return not self._owner is None
 
-    def identify_owner(self, owner: Businessman) -> bool:
+    def identify_owner(self, owner: IdBusinessman) -> bool:
         return self._owner == owner
 
     def unset_owner(self) -> None:
@@ -127,7 +136,7 @@ class Street(Ownership):
 
     def get_neighborhood(self) -> NeighborhoodTypes: return self.__neighborhood
 
-    def land(self, businessman: Businessman):  # встать
+    def land(self, id: IdBusinessman):  # встать
         pass
 
     def calculate_price(self) -> int:
@@ -182,11 +191,11 @@ class Building:  # строение
         self.__price = price
         self.__ratio = ratio
 
-    def get_price(self):
+    def get_price(self) -> int:
         return self.__price
 
-    def get_ratio(self):
+    def get_ratio(self) -> int:
         return self.__ratio
 
-    def get_full_price(self):
+    def get_full_price(self) -> int:
         return self.__price * self.__ratio

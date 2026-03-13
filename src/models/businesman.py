@@ -12,13 +12,12 @@ class Businessman:
     def __init__(self, id: IdBusinessman):
 
         self.__id = id
-        self.__balance = 1500
         self.__ownerships = []
         self.__position = Board.START
 
-    def get_balance(self) -> int: return self.__balance
-
     def get_position(self) -> int: return self.__position
+
+    def __get_id(self) -> IdBusinessman: return self.__id
 
     def add_ownership(self, ownership: Ownership) -> None:
         if not isinstance(ownership, Ownership): raise TypeError()
@@ -49,8 +48,4 @@ class Businessman:
 
         return False
 
-    def increase_balance(self, money: int) -> None: self.__balance += money
-
-    def decrease_balance(self, money: int) -> None: self.__balance -= money
-
-    def check_balance(self, price: int) -> bool: return self.__balance >= price
+    id = property(__get_id)
