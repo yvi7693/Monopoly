@@ -1,3 +1,6 @@
+from src.models.gameboard import Ownership
+
+
 class Businessman:
 
     def __init__(self, balance):
@@ -5,23 +8,25 @@ class Businessman:
         self.__balance = balance
         self.__ownerships = []
 
-    def get_balance(self) -> int:
-        pass
+    def get_balance(self) -> int: return self.__balance
 
-    def add_ownership(self, ownership):
-        pass
+    def add_ownership(self, ownership: Ownership) -> None:
+        if not isinstance(ownership, Ownership): raise TypeError()
 
-    def delete_ownership(self, ownership):
-        pass
+        self.__ownerships.append(ownership)
 
-    def increase_balance(self, money): # увеличить баланс
-        pass
+    def delete_ownership(self, delete_ownership: Ownership):
+        delete_index = 0
 
-    def decrease_balance(self, money):  # уменьшить баланс
-        pass
+        for i in range(len(self.__ownerships)):
+            if self.__ownerships[i] == delete_ownership:
+                delete_index = i
 
-    def make_move(self) -> int:  # сделать ход
-        pass
+        self.__ownerships.pop(delete_index)
 
-    def check_balance(self, price) -> bool:
-        pass
+
+    def increase_balance(self, money: int) -> None: self.__balance += money
+
+    def decrease_balance(self, money: int) -> None: self.__balance -= money
+
+    def check_balance(self, price: int) -> bool: return self.__balance >= price
