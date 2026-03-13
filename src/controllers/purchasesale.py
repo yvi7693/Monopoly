@@ -1,7 +1,13 @@
+from src.controllers.finance import Bank
 from src.models.gameboard import Ownership
 from src.models.businesman import Businessman
 
 class ManagerOwnership:
+
+    def __init__(self, bank: Bank):
+        if not isinstance(bank, Bank):  raise TypeError()
+
+        self.bank = bank
 
     def try_buy_ownership(self, ownership: Ownership, businessman: Businessman) -> bool: # попытка купить собственность
 
@@ -9,13 +15,13 @@ class ManagerOwnership:
 
         price = ownership.get_price()
 
-        if not businessman.check_balance(price): return False
+        if not self.bank.has_enough_money(price, businessman.id): return False
 
-        businessman.decrease_balance(price)
+        self.bank.debit_account(price, businessman.id)
 
         businessman.add_ownership(ownership)
 
-        ownership.set_owner(businessman)
+        ownership.set_owner(businessman.id)
 
         return True
 
@@ -27,7 +33,7 @@ class ManagerOwnership:
 
         businessman.delete_ownership(ownership)
 
-        businessman.increase_balance(price)
+        self.bank.charge_account(price, businessman.id)
 
         ownership.unset_owner()
 
