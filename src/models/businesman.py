@@ -3,12 +3,15 @@ from src.models.gameboard import Ownership
 
 class Businessman:
 
-    def __init__(self, balance):
+    def __init__(self):
 
-        self.__balance = balance
+        self.__balance = 1500
         self.__ownerships = []
+        self.__position = 0
 
     def get_balance(self) -> int: return self.__balance
+
+    def get_position(self) -> int: return self.__position
 
     def add_ownership(self, ownership: Ownership) -> None:
         if not isinstance(ownership, Ownership): raise TypeError()
@@ -24,6 +27,9 @@ class Businessman:
 
         self.__ownerships.pop(delete_index)
 
+    def make_move(self, points: int) -> None:
+        if not isinstance(points, int): raise TypeError()
+        self.__position += points
 
     def increase_balance(self, money: int) -> None: self.__balance += money
 
