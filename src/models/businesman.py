@@ -1,13 +1,20 @@
-from src.models.gameboard import Ownership
+from src.models.gameboard import Ownership, Board
+from dataclasses import dataclass
+
+@dataclass
+class IdBusinessman:
+
+    id: int
 
 
 class Businessman:
 
-    def __init__(self):
+    def __init__(self, id: IdBusinessman):
 
+        self.__id = id
         self.__balance = 1500
         self.__ownerships = []
-        self.__position = 0
+        self.__position = Board.START
 
     def get_balance(self) -> int: return self.__balance
 
@@ -19,6 +26,8 @@ class Businessman:
         self.__ownerships.append(ownership)
 
     def delete_ownership(self, delete_ownership: Ownership):
+        if not isinstance(delete_ownership, Ownership):  raise TypeError()
+
         delete_index = 0
 
         for i in range(len(self.__ownerships)):
@@ -30,6 +39,15 @@ class Businessman:
     def make_move(self, points: int) -> None:
         if not isinstance(points, int): raise TypeError()
         self.__position += points
+
+    def has_tittle_deeds(self, search_ownership: Ownership) -> bool:
+        if not isinstance(search_ownership, Ownership):  raise TypeError()
+
+        for ownership in self.__ownerships:
+            if ownership == search_ownership:
+                return True
+
+        return False
 
     def increase_balance(self, money: int) -> None: self.__balance += money
 
