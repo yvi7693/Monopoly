@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from businesman import Businessman
 
@@ -58,8 +59,9 @@ class Chance(Cell):
 class Ownership(Cell, ABC):
     # Модель Собственности
 
+    _name: str
     _owner: Businessman
-    _price: float
+    _price: int
 
     def __init__(self, x: int, price: int, rent: int):
         super().__init__(x)
@@ -77,20 +79,22 @@ class Ownership(Cell, ABC):
     @abstractmethod
     def calculate_rent(self) -> int:  raise NotImplemented()
 
-    def get_price(self) -> int:
-        pass
+    def get_price(self) -> int:  return self._price
 
     def set_owner(self, owner: Businessman) -> None:
-        pass
+
+        if not isinstance(owner, Businessman): raise TypeError()
+
+        self._owner = owner
 
     def has_owner(self) -> bool:
-        pass
+        return not self._owner is None
 
     def identify_owner(self, owner: Businessman) -> bool:
-        pass
+        return self._owner == owner
 
     def unset_owner(self) -> None:
-        pass
+        self._owner = None
 
 
 class NeighborhoodTypes:
@@ -105,24 +109,54 @@ class Street(Ownership):
         super().__init__(x, price, rent)
 
         self.__neighborhood =  neighborhood  # район
+        self.__builds = []
+
+    def __eq__(self, other: Street):
+        return self._name == other._name
+
+    def get_neighborhood(self) -> NeighborhoodTypes: return self.__neighborhood
 
     def land(self, businessman: Businessman):  # встать
         pass
 
     def calculate_price(self) -> int:
-        pass
+        price_buildings = 0
+
+        for build in self.__builds:
+            price_buildings += build.get_price()
+
+        return self._price + price_buildings
 
     def calculate_rent(self) -> int:
-        pass
+        build_ratio = 0
 
-    def build_home(self) -> None:  # построить дом
-        pass
+        for build in self.__builds:
+            build_ratio += build.get_ratio()
 
-    def build_hotel(self) -> None:  # построить отель
-        pass
+        return  self._rent * build_ratio
+
+    def build_home(self, home: Building) -> None:  # построить дом
+        if not isinstance(home, Building):  raise TypeError()
+        if home.get_ratio() != BuildingRatioTypes.HOME:  raise ValueError()
+
+        self.__builds.append(home)
+
+    def build_hotel(self, hotel: Building) -> None:  # построить отель
+        if not isinstance(hotel, Building):  raise TypeError()
+        if hotel.get_ratio() != BuildingRatioTypes.HOTEL:  raise ValueError()
+
+        self.__builds.append(hotel)
+
+    def can_build_home(self) -> bool: # можно ли построить дом
+        if len(self.__builds) < 4: return True
+
+        return False
 
     def can_build_hotel(self) -> bool: # можно ли построить отель
-        pass
+        if len(self.__builds) == 4 : return True
+
+        return False
+
 
 class BuildingRatioTypes:
     HOME = 2
