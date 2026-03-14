@@ -1,6 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from operator import truediv
 
 from businesman import IdBusinessman
 from src.controllers.finance import Bank
@@ -83,6 +82,39 @@ class Chance(Cell):
         else:
             return ChanceResultTypes.NEGATIVE
 
+
+class Jail(Cell):
+
+    __prisoners: list[IdBusinessman]
+
+    def __init__(self, x: int):
+        super().__init__(x)
+
+        self.__prisoners = []
+
+    def land(self, id: IdBusinessman):
+        self.__conclude(id)
+
+    def __conclude(self, id: IdBusinessman) -> None:
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
+
+        if id in self.__prisoners:  raise AssertionError("Данный предприниматель уже заключён")
+
+        self.__prisoners.append(id)
+
+    def give_freedom(self, id: IdBusinessman):
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
+
+        if id in self.__prisoners:  raise AssertionError("Данный предприниматель уже заключён")
+
+        delete_index = 0
+
+        for i in range(len(self.__prisoners)):
+            if self.__prisoners[i] == id:
+                delete_index = i
+                break
+
+        self.__prisoners.pop(delete_index)
 
 class Ownership(Cell, ABC):
     # Модель Собственности
