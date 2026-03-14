@@ -1,5 +1,5 @@
 from src.models.businesman import Businessman
-from src.models.gameboard import Street, BuildingRatioTypes
+from src.models.gameboard import Street, BuildingRatioTypes, BuildingTypes
 from src.controllers.finance import Bank
 
 
@@ -15,15 +15,15 @@ class Builder:
 
         if not street.identify_owner(businessman.id): return False
 
-        if not businessman.has_neighborhood_by_street(street.get_neighborhood()): return False
+        if not businessman.has_neighborhood_by_street(street.neighborhood): return False
 
         if not street.can_build_hotel(): return False
 
-        if not self.__bank.has_enough_money(Builder.HOTEL_PRICE, businessman.id): return False
+        if not self.__bank.has_enough_money(street.neighborhood.build_price, businessman.id): return False
 
-        self.__bank.debit_account(Builder.HOTEL_PRICE, businessman.id)
+        self.__bank.debit_account(street.neighborhood.build_price, businessman.id)
 
-        street.create_build(Builder.HOTEL_PRICE, BuildingRatioTypes.HOTEL)
+        street.create_build(street.neighborhood.build_price, BuildingTypes.HOTEL, BuildingRatioTypes.HOTEL)
 
         return True
 
@@ -32,14 +32,14 @@ class Builder:
 
         if not street.identify_owner(businessman.id): return False
 
-        if not businessman.has_neighborhood_by_street(street.get_neighborhood()): return False
+        if not businessman.has_neighborhood_by_street(street.neighborhood): return False
 
         if not street.can_build_home(): return False
 
-        if not self.__bank.has_enough_money(Builder.HOME_PRICE): return False
+        if not self.__bank.has_enough_money(street.neighborhood.build_price, businessman.id): return False
 
-        self.__bank.debit_account(Builder.HOME_PRICE)
+        self.__bank.debit_account(street.neighborhood.build_price, businessman.id)
 
-        street.create_build(Builder.HOME_PRICE, BuildingRatioTypes.HOME)
+        street.create_build(street.neighborhood.build_price, BuildingTypes.HOME, BuildingRatioTypes.HOME)
 
         return True

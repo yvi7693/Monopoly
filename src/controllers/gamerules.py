@@ -1,24 +1,20 @@
 from src.controllers.finance import Bank
 from src.models.businesman import Businessman
-from src.models.dice import Dice
 from src.models.gameboard import Board
 
 class GameRules:
 
     __board: Board
-    __dice: Dice
     __bank: Bank
 
-    def __init__(self, board: Board, bank: Bank, dice: Dice):
+    def __init__(self, board: Board, bank: Bank):
         if not isinstance(board, Board):  raise TypeError("Тип данных не Board")
         if not isinstance(bank, Bank):  raise TypeError("Тип данных не Bank")
 
         self.__board = board
-        self.__dice = dice
         self.__bank = bank
 
-    def make_move(self, businessman: Businessman):
-        points = self.__dice.throw()
+    def make_move(self, businessman: Businessman, points: int):
 
         self.__move_token(points, businessman)
 

@@ -1,4 +1,4 @@
-from src.models.gameboard import Ownership, Board, NeighborhoodTypes
+from src.models.gameboard import Ownership, Board, NeighborhoodTypes, Neighborhood
 from dataclasses import dataclass
 
 @dataclass
@@ -49,14 +49,14 @@ class Businessman:
 
         return False
 
-    def has_neighborhood_by_street(self, neighborhood: NeighborhoodTypes) -> bool:
+    def has_neighborhood_by_street(self, neighborhood: Neighborhood) -> bool:
         count = 0
 
         for ownership in self.__ownerships:
-            if ownership.get_neighborhood() == neighborhood:
+            if ownership.neighborhood == neighborhood:
                 count += 1
 
-        if count == 3: return True
+        if count == Neighborhood.MAX_COUNT_STREET: return True
 
         return False
 
