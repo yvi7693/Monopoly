@@ -18,6 +18,8 @@ class Board:
 
     def get_cell(self, position) -> Cell: return self.__cells[position]
 
+    def add_cell(self, cell: Cell) -> None: self.__cells.append(cell)
+
     @staticmethod
     def is_passed_go(position: int, points: int) -> bool:
         if (position + points) > Board.END: return True
@@ -99,7 +101,7 @@ class Jail(Cell):
     def give_freedom(self, id: IdBusinessman):
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
-        if id in self.__prisoners:  raise AssertionError("Данный предприниматель уже заключён")
+        if not id in self.__prisoners:  raise AssertionError("Данного предпринимателя нет в тюрьме")
 
         delete_index = 0
 
@@ -109,6 +111,11 @@ class Jail(Cell):
                 break
 
         self.__prisoners.pop(delete_index)
+
+    def is_concluded(self, id: IdBusinessman) -> bool:
+        if id in self.__prisoners: return True
+
+        return False
 
     def __conclude(self, id: IdBusinessman) -> None:
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")

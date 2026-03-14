@@ -16,13 +16,17 @@ class Game:
         self.__game_board = Board()
 
         self.__game_rules = GameRules(self.__game_board, self.__bank)
-        self.player_manager = PlayerManager()
+        self.__player_manager = PlayerManager(self.__bank)
         self.__builder = Builder(self.__bank)
         self.__manager_ownership = ManagerOwnership(self.__bank)
         self.__dice = Dice()
 
     def set_up(self, count_businessmen: int):
-        pass
+        self.__player_manager.try_add_businessmen(count_businessmen)
+
+        # создание клеток
+        ...
+
 
     def mainloop(self):
         pass

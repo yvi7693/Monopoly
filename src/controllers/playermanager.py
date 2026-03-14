@@ -1,3 +1,4 @@
+from src.controllers.finance import Bank
 from src.models.businesman import Businessman, IdBusinessman
 
 
@@ -7,8 +8,9 @@ class PlayerManager:
 
     __businessmen: list[Businessman]
 
-    def __init__(self):
+    def __init__(self, bank: Bank):
         self.__businessmen = []
+        self.__bank = bank
 
     def get_businessmen(self) -> list[Businessman]:
         return self.__businessmen
@@ -25,6 +27,8 @@ class PlayerManager:
 
             self.__businessmen.append(Businessman(id))
 
+            self.__bank.register_account(id)
+
         return True
 
     def exclude_businessman(self, businessman: Businessman) -> None:
@@ -40,3 +44,5 @@ class PlayerManager:
                 break
 
         self.__businessmen.pop(delete_index)
+
+        self.__bank.deregister_account(businessman.id)
