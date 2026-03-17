@@ -1,5 +1,7 @@
-def main():
-    pass
+from src.presenter.core import GamePresenter
 
-if __name__ == '__main__':
+def main():
+    GamePresenter()
+
+if __name__ == "__main__":
     main()

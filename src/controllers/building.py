@@ -11,7 +11,15 @@ class Builder:
     def __init__(self, bank: Bank):
         self.__bank = bank
 
-    def try_build_hotel(self, businessman: Businessman, street: Street):
+    def try_build(self,  businessman: Businessman, street: Street, type: BuildingTypes) -> bool:
+        if type == BuildingTypes.HOME:
+            self.__try_build_home(businessman, street)
+
+        elif type == BuildingTypes.HOTEL:
+            self.__try_build_hotel(businessman, street)
+
+
+    def __try_build_hotel(self, businessman: Businessman, street: Street):
 
         if not street.identify_owner(businessman.id): return False
 
@@ -28,7 +36,7 @@ class Builder:
         return True
 
 
-    def try_build_home(self, businessman: Businessman, street: Street):
+    def __try_build_home(self, businessman: Businessman, street: Street):
 
         if not street.identify_owner(businessman.id): return False
 

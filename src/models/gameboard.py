@@ -2,9 +2,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from businesman import IdBusinessman
+from src.models.businesman import IdBusinessman
 from src.controllers.finance import Bank
 
+from enum import Enum
 
 class Board:
 
@@ -144,6 +145,9 @@ class Ownership(Cell, ABC):
         self._rent = rent
 
     @abstractmethod
+    def calculate_price(self) -> int: raise NotImplemented()
+
+    @abstractmethod
     def calculate_rent(self) -> int:  raise NotImplemented()
 
     def get_price(self) -> int:  return self._price
@@ -253,21 +257,22 @@ class BuildingRatioTypes:
     HOME = 2
     HOTEL = 9
 
-class BuildingTypes:
+class BuildingTypes(Enum):
     HOME = 0
     HOTEL = 1
+
 
 class Building:
 
     # строение
 
     __price: int
-    __type: int
+    __type: BuildingTypes
     __ratio: int
 
-    def __init__(self, price: int, type: int, ratio: int):
+    def __init__(self, price: int, type: BuildingTypes, ratio: int):
         if not isinstance(price, int):  raise TypeError("Тип данных не int")
-        if not isinstance(type, int):  raise TypeError("Тип данных не int")
+        if not isinstance(type, BuildingTypes):  raise TypeError("Тип данных не int")
         if not isinstance(ratio, int):  raise TypeError("Тип данных не int")
 
         self.__price = price
@@ -277,7 +282,7 @@ class Building:
     def get_price(self) -> int:
         return self.__price
 
-    def get_type(self) -> int:
+    def get_type(self) -> BuildingTypes:
         return self.__type
 
     def get_ratio(self) -> int:
@@ -294,6 +299,9 @@ class Station(Ownership):
     def __init__(self, name: str, x: int, price: int, rent: int):
         super().__init__(name, x, price, rent)
         self.__name = name
+
+    def calculate_price(self) -> int:
+        return self._price
 
     def calculate_rent(self) -> int:
         pass
