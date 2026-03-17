@@ -15,8 +15,14 @@ class Builder:
         if type == BuildingTypes.HOME:
             self.__try_build_home(businessman, street)
 
+            return True
+
         elif type == BuildingTypes.HOTEL:
             self.__try_build_hotel(businessman, street)
+
+            return True
+
+        return False
 
 
     def __try_build_hotel(self, businessman: Businessman, street: Street):
