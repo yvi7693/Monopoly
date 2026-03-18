@@ -1,5 +1,8 @@
-from src.models.gameboard import Ownership, Board, NeighborhoodTypes, Neighborhood
+from __future__ import annotations
 from dataclasses import dataclass
+
+from src.models.gameboard import Ownership, Board, Neighborhood
+
 
 @dataclass
 class IdBusinessman:
@@ -62,5 +65,9 @@ class Businessman:
 
     def __get_id(self) -> IdBusinessman:
         return self.__id
+
+    @staticmethod
+    def copy(businessman: Businessman) -> Businessman:
+        return Businessman(businessman.id)
 
     id = property(__get_id)

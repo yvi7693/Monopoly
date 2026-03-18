@@ -1,8 +1,8 @@
-from src.controllers.finance import Bank
 from src.controllers.gamerules import GameRules
 from src.controllers.playermanager import PlayerManager
 from src.controllers.purchasesale import ManagerOwnership
 from src.controllers.building import Builder
+from src.controllers.finance import Bank
 
 from src.models.dice import Dice
 from src.models.gameboard import Board

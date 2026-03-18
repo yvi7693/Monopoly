@@ -1,5 +1,6 @@
 from src.controllers.finance import Bank
 from src.models.businesman import Businessman, IdBusinessman
+from src.models.gameboard import Ownership
 
 
 class PlayerManager:
@@ -13,7 +14,14 @@ class PlayerManager:
         self.__bank = bank
 
     def get_businessmen(self) -> list[Businessman]:
-        return self.__businessmen
+
+        businessmen = []
+
+        for businessman in self.__businessmen:
+            businessmen.append(businessman.copy(businessman))
+
+
+        return businessmen
 
     def try_add_businessmen(self, businessmen_count: int) -> bool:
         current_count = len(self.__businessmen)
@@ -46,3 +54,52 @@ class PlayerManager:
         self.__businessmen.pop(delete_index)
 
         self.__bank.deregister_account(businessman.id)
+
+    def add_ownership(self, ownership: Ownership, id: IdBusinessman) -> None:
+
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
+        if not isinstance(ownership, Ownership):  raise TypeError("Тип данных не Ownership")
+
+        businessman = self.__search_businessman(id)
+
+        if businessman is None:  raise AssertionError("Текущий предприниматель не найден")
+
+        businessman.delete_ownership(ownership)
+
+    def delete_ownership(self, ownership: Ownership, id: IdBusinessman) -> None:
+
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
+        if not isinstance(ownership, Ownership):  raise TypeError("Тип данных не Ownership")
+
+        businessman = self.__search_businessman(id)
+
+        if businessman is None:  raise AssertionError("Текущий предприниматель не найден")
+
+        businessman.delete_ownership(ownership)
+
+    def has_tittle_deeds(self, ownership: Ownership, id: IdBusinessman) -> bool:
+
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
+        if not isinstance(ownership, Ownership):  raise TypeError("Тип данных не Ownership")
+
+        businessman = self.__search_businessman(id)
+
+        if businessman is None:  raise AssertionError("Текущий предприниматель не найден")
+
+        return businessman.has_title_deeds(ownership)
+
+    def __search_businessman(self, id: IdBusinessman) -> Businessman | None:
+
+        for i in range(len(self.__businessmen)):
+
+            if self.__businessmen[i].id == id:
+
+                businessman = self.__businessmen[i]
+
+                return businessman
+
+        return None
+
+
+
+

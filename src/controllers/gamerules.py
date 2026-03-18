@@ -1,18 +1,25 @@
+from multiprocessing.managers import Token
+
 from src.controllers.finance import Bank
+from src.controllers.tokenplacer import TokenPlacer
 from src.models.businesman import Businessman
-from src.models.gameboard import Board
+from src.models.gameboard import Board, CellTypes
+
 
 class GameRules:
 
     __board: Board
     __bank: Bank
+    __token_placer: TokenPlacer
 
-    def __init__(self, board: Board, bank: Bank):
+    def __init__(self, board: Board, bank: Bank, token_placer: TokenPlacer):
         if not isinstance(board, Board):  raise TypeError("Тип данных не Board")
         if not isinstance(bank, Bank):  raise TypeError("Тип данных не Bank")
+        if not isinstance(token_placer, TokenPlacer):  raise TypeError("Тип данных не TokenPlacer")
 
         self.__board = board
         self.__bank = bank
+        self.__token_placer = token_placer
 
     def make_move(self, businessman: Businessman, points: int):
 

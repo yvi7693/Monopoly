@@ -2,8 +2,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from src.controllers.tokenplacer import TokenPlacer
 from src.models.businesman import IdBusinessman
-from src.controllers.finance import Bank
 
 from enum import Enum
 
@@ -27,18 +27,32 @@ class Board:
 
         return False
 
+
+@dataclass
+class CellTypes(Enum):
+
+        STREET = 1
+        STATION = 2
+        CHANCE = 3
+        JAIL = 4
+
+
 class Cell(ABC):
 
     _x: int
+    token_placer: TokenPlacer
 
-    def __init__(self, x: int):
+    def __init__(self, x: int, token_placer: TokenPlacer):
 
-        if not isinstance(x, int): raise TypeError()
+        if not isinstance(x, int): raise TypeError("Тип данных не int")
+        if not isinstance(token_placer, TokenPlacer):  raise TypeError("Тип данных не TokenPlacer")
 
         self._x = x
+        self.token_placer = token_placer
 
     @abstractmethod
     def land(self, id: IdBusinessman): raise NotImplemented()
+
 
 class ChanceResultTypes:
 
@@ -50,14 +64,14 @@ class Chance(Cell):
 
     CASH = 30
 
-    __bank: Bank
+    __token_placer: TokenPlacer
 
-    def __init__(self, x: int, bank: Bank):
+    def __init__(self, x: int, token_placer: TokenPlacer):
         super().__init__(x)
 
-        if not isinstance(bank, Bank):  raise TypeError()
+        if not isinstance(token_placer, TokenPlacer):  raise TypeError("Тип данных не TokenPlacer")
 
-        self.__bank = bank
+        self.__token_placer = token_placer
 
     def land(self, id: IdBusinessman):
         self.__try_luck(id)
@@ -72,10 +86,10 @@ class Chance(Cell):
             self.__execute_negative_chance(id)
 
     def __execute_positive_chance(self, id: IdBusinessman):  # выполнить позитивный исход
-        self.__bank.charge_account(Chance.CASH, id)
+        self.__token_placer.put_on_positive_chance(Chance.CASH, id)
 
     def __execute_negative_chance(self, id: IdBusinessman):  # выполнить негативный исход
-        self.__bank.charge_account(Chance.CASH, id)
+        self.__token_placer.put_on_negative_chance(Chance.CASH, id)
 
     @staticmethod
     def __solve_chance() -> int:  # вычислить шанс
@@ -125,6 +139,7 @@ class Jail(Cell):
 
         self.__prisoners.append(id)
 
+
 class Ownership(Cell, ABC):
     # Модель Собственности
 
@@ -150,7 +165,7 @@ class Ownership(Cell, ABC):
     @abstractmethod
     def calculate_rent(self) -> int:  raise NotImplemented()
 
-    def get_price(self) -> int:  return self._price
+    def get_owner(self) -> IdBusinessman: return self._owner
 
     def set_owner(self, owner: IdBusinessman) -> None:
 
@@ -216,7 +231,8 @@ class Street(Ownership):
         return self._name == other._name
 
     def land(self, id: IdBusinessman):  # встать
-        pass
+
+        self.token_placer.put_on_ownership(self, id)
 
     def calculate_price(self) -> int:
         price_buildings = 0
@@ -256,6 +272,7 @@ class Street(Ownership):
 class BuildingRatioTypes:
     HOME = 2
     HOTEL = 9
+
 
 class BuildingTypes(Enum):
     HOME = 0
