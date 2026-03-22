@@ -1,9 +1,7 @@
-from multiprocessing.managers import Token
-
 from src.controllers.finance import Bank
 from src.controllers.tokenplacer import TokenPlacer
 from src.models.businesman import Businessman
-from src.models.gameboard import Board, CellTypes
+from src.models.gameboard import Board, Street, Chance, Cell, StatusOwnership, ChanceResultTypes
 
 
 class GameRules:
@@ -29,7 +27,27 @@ class GameRules:
 
         cell = self.__board.get_cell(new_position)
 
-        cell.land(businessman.id)
+        self.__processing_cell(cell, businessman)
+
+    def __processing_cell(self, cell: Cell, businessman: Businessman) -> None:
+        result = cell.land()
+
+        if isinstance(cell, Street):
+
+            if result == StatusOwnership.OWNED:
+                self.__token_placer.put_on_ownership_owned(cell, businessman.id)
+
+            elif result == StatusOwnership.UNOWNED:
+                self.__token_placer.put_on_ownership_unowned(cell, businessman.id)
+
+
+        elif isinstance(cell, Chance):
+
+            if result == ChanceResultTypes.POSITIVE:
+                self.__token_placer.put_on_positive_chance(Chance.CASH, businessman.id)
+
+            elif result == ChanceResultTypes.NEGATIVE:
+                self.__token_placer.put_on_negative_chance(Chance.CASH, businessman.id)
 
     def __move_token(self, points: int, businessman: Businessman) -> None:
 
