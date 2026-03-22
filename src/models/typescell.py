@@ -10,13 +10,6 @@ class ChanceResultTypes(Enum):
 
 
 @dataclass
-class StatusOwnership(Enum):
-
-    UNOWNED = 0
-    OWNED = 1
-
-
-@dataclass
 class NeighborhoodTypes(Enum):
     RED = 0
     BLUE = 1

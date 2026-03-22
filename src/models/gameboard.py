@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from src.models.building import Building
 from src.models.idbusinessman import IdBusinessman
-from src.models.typescell import ChanceResultTypes, StatusOwnership, Neighborhood
+from src.models.typescell import ChanceResultTypes, Neighborhood
 
 
 class Board:
@@ -37,34 +37,25 @@ class Cell(ABC):
 
         self._x = x
 
-    @abstractmethod
-    def land(self): raise NotImplemented()
-
 
 class Chance(Cell):
 
     CASH = 30
 
-    __result: ChanceResultTypes
 
     def __init__(self, x: int):
         super().__init__(x)
 
-        self.__result = None
-
-    def land(self):
-        self.__try_luck()
-
-        return self.__result
-
-    def __try_luck(self) -> None:  # испытать удачу
+    @staticmethod
+    def try_luck() -> ChanceResultTypes:  # испытать удачу
 
         result = Chance.__solve_chance()
 
         if result == ChanceResultTypes.POSITIVE:
-            self.__result = ChanceResultTypes.POSITIVE
+            return ChanceResultTypes.POSITIVE
+
         else:
-            self.__result = ChanceResultTypes.NEGATIVE
+            return ChanceResultTypes.NEGATIVE
 
     @staticmethod
     def __solve_chance() -> ChanceResultTypes:  # вычислить шанс
@@ -136,13 +127,6 @@ class Street(Ownership):
     def __eq__(self, other: Street):
         return self._name == other._name
 
-    def land(self):  # встать
-        if self.has_owner():
-            return StatusOwnership.OWNED
-
-        else:
-            return StatusOwnership.UNOWNED
-
     def calculate_price(self) -> int:
         price_buildings = 0
 
@@ -182,18 +166,14 @@ class Station(Ownership):
 
     __name: str
 
-    def __init__(self, name: str, x: int, price: int, rent: int):
-        super().__init__(name, x, price, rent)
-        self.__name = name
+    def __init__(self, x: int, name: str, price: int, rent: int):
+        super().__init__(x, name, price, rent)
 
     def calculate_price(self) -> int:
         return self._price
 
     def calculate_rent(self) -> int:
-        pass
-
-    def land(self, id: IdBusinessman):
-        pass
+        return self._rent
 
 
 class Jail(Cell):
@@ -205,10 +185,14 @@ class Jail(Cell):
 
         self.__prisoners = []
 
-    def land(self, id: IdBusinessman):
-        self.__conclude(id)
+    def conclude(self, id: IdBusinessman) -> None:
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
-    def give_freedom(self, id: IdBusinessman):
+        if self.__is_concluded(id):  raise AssertionError("Данный предприниматель уже заключён")
+
+        self.__prisoners.append(id)
+
+    def give_freedom(self, id: IdBusinessman) -> None:
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
         if not id in self.__prisoners:  raise AssertionError("Данного предпринимателя нет в тюрьме")
@@ -222,14 +206,8 @@ class Jail(Cell):
 
         self.__prisoners.pop(delete_index)
 
-    def is_concluded(self, id: IdBusinessman) -> bool:
+    def __is_concluded(self, id: IdBusinessman) -> bool:
+
         if id in self.__prisoners: return True
 
         return False
-
-    def __conclude(self, id: IdBusinessman) -> None:
-        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
-
-        if id in self.__prisoners:  raise AssertionError("Данный предприниматель уже заключён")
-
-        self.__prisoners.append(id)

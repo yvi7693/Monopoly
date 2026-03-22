@@ -1,4 +1,4 @@
-from src.models.businesman import IdBusinessman
+from src.models.idbusinessman import IdBusinessman
 
 class BankAccount:
 
@@ -41,7 +41,7 @@ class Bank:
     __accounts: list[BankAccount]
 
     def __init__(self, accounts: list[BankAccount] = None):
-        if not isinstance(accounts, list):  raise TypeError()
+        if not accounts is None and not isinstance(accounts, list):  raise TypeError()
 
         self.__accounts = accounts or []
 
