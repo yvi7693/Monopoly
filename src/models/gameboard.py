@@ -1,11 +1,10 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 
-from src.controllers.tokenplacer import TokenPlacer
-from src.models.businesman import IdBusinessman
+from src.models.building import Building
+from src.models.idbusinessman import IdBusinessman
+from src.models.typescell import ChanceResultTypes, StatusOwnership, Neighborhood
 
-from enum import Enum
 
 class Board:
 
@@ -28,77 +27,173 @@ class Board:
         return False
 
 
-@dataclass
-class CellTypes(Enum):
-
-        STREET = 1
-        STATION = 2
-        CHANCE = 3
-        JAIL = 4
-
-
 class Cell(ABC):
 
     _x: int
-    token_placer: TokenPlacer
 
-    def __init__(self, x: int, token_placer: TokenPlacer):
+    def __init__(self, x: int):
 
-        if not isinstance(x, int): raise TypeError("Тип данных не int")
-        if not isinstance(token_placer, TokenPlacer):  raise TypeError("Тип данных не TokenPlacer")
+        if not isinstance(x, int):  raise TypeError("Тип данных не int")
 
         self._x = x
-        self.token_placer = token_placer
 
     @abstractmethod
-    def land(self, id: IdBusinessman): raise NotImplemented()
-
-
-class ChanceResultTypes:
-
-    POSITIVE = 1
-    NEGATIVE = -1
+    def land(self): raise NotImplemented()
 
 
 class Chance(Cell):
 
     CASH = 30
 
-    __token_placer: TokenPlacer
+    __result: ChanceResultTypes
 
-    def __init__(self, x: int, token_placer: TokenPlacer):
+    def __init__(self, x: int):
         super().__init__(x)
 
-        if not isinstance(token_placer, TokenPlacer):  raise TypeError("Тип данных не TokenPlacer")
+        self.__result = None
 
-        self.__token_placer = token_placer
+    def land(self):
+        self.__try_luck()
 
-    def land(self, id: IdBusinessman):
-        self.__try_luck(id)
+        return self.__result
 
-    def __try_luck(self, id: IdBusinessman):  # испытать удачу
+    def __try_luck(self) -> None:  # испытать удачу
 
         result = Chance.__solve_chance()
 
         if result == ChanceResultTypes.POSITIVE:
-            self.__execute_positive_chance(id)
+            self.__result = ChanceResultTypes.POSITIVE
         else:
-            self.__execute_negative_chance(id)
-
-    def __execute_positive_chance(self, id: IdBusinessman):  # выполнить позитивный исход
-        self.__token_placer.put_on_positive_chance(Chance.CASH, id)
-
-    def __execute_negative_chance(self, id: IdBusinessman):  # выполнить негативный исход
-        self.__token_placer.put_on_negative_chance(Chance.CASH, id)
+            self.__result = ChanceResultTypes.NEGATIVE
 
     @staticmethod
-    def __solve_chance() -> int:  # вычислить шанс
+    def __solve_chance() -> ChanceResultTypes:  # вычислить шанс
         import random
 
         if random.randint(0, 10) > 5:
             return ChanceResultTypes.POSITIVE
         else:
             return ChanceResultTypes.NEGATIVE
+
+
+class Ownership(Cell, ABC):
+    # Модель Собственности
+
+    _name: str
+    _owner: IdBusinessman
+    _price: int
+    _rent: int
+
+    def __init__(self, x: int, name: str, price: int, rent: int):
+        super().__init__(x)
+
+        if not isinstance(price, int):  raise  TypeError("Тип данных не int")
+        if not isinstance(rent, int):  raise TypeError("Тип данных не int")
+
+        self._name = name
+        self._owner = None
+        self._price = price
+        self._rent = rent
+
+    @abstractmethod
+    def calculate_price(self) -> int: raise NotImplemented()
+
+    @abstractmethod
+    def calculate_rent(self) -> int:  raise NotImplemented()
+
+    def get_owner(self) -> IdBusinessman: return self._owner
+
+    def set_owner(self, owner: IdBusinessman) -> None:
+
+        if not isinstance(owner, IdBusinessman): raise TypeError("Тип данных не IdBusinessman")
+
+        self._owner = owner
+
+    def has_owner(self) -> bool:
+        return not self._owner is None
+
+    def identify_owner(self, owner: IdBusinessman) -> bool:
+        return self._owner == owner
+
+    def unset_owner(self) -> None:
+        self._owner = None
+
+
+class Street(Ownership):
+
+    HOME_MAX_COUNT = 4
+    HOTEL_MAX_COUNT = 1
+
+    __neighborhood: Neighborhood
+    __builds: list[Building]
+
+    def __init__(self, x: int, name: str, price: int, rent: int, neighborhood: Neighborhood):
+        super().__init__(x, name, price, rent)
+
+        self.__neighborhood =  neighborhood  # район
+        self.__builds = []
+
+    def __eq__(self, other: Street):
+        return self._name == other._name
+
+    def land(self):  # встать
+        if self.has_owner():
+            return StatusOwnership.OWNED
+
+        else:
+            return StatusOwnership.UNOWNED
+
+    def calculate_price(self) -> int:
+        price_buildings = 0
+
+        for build in self.__builds:
+            price_buildings += build.get_price()
+
+        return self._price + price_buildings
+
+    def calculate_rent(self) -> int:
+        build_ratio = 1
+
+        for build in self.__builds:
+            build_ratio += build.get_ratio()
+
+        return  self._rent * build_ratio
+
+    def create_build(self, price: int, type: int, ratio: int) -> None:  # построить дом
+        self.__builds.append(Building(price, type, ratio))
+
+    def can_build_home(self) -> bool: # можно ли построить дом
+        if len(self.__builds) < Street.HOME_MAX_COUNT: return True
+
+        return False
+
+    def can_build_hotel(self) -> bool: # можно ли построить отель
+        if len(self.__builds) == Street.HOME_MAX_COUNT : return True
+
+        return False
+
+    def __get_neighborhood(self) -> Neighborhood:
+        return self.__neighborhood
+
+    neighborhood = property(__get_neighborhood)
+
+
+class Station(Ownership):
+
+    __name: str
+
+    def __init__(self, name: str, x: int, price: int, rent: int):
+        super().__init__(name, x, price, rent)
+        self.__name = name
+
+    def calculate_price(self) -> int:
+        return self._price
+
+    def calculate_rent(self) -> int:
+        pass
+
+    def land(self, id: IdBusinessman):
+        pass
 
 
 class Jail(Cell):
@@ -138,190 +233,3 @@ class Jail(Cell):
         if id in self.__prisoners:  raise AssertionError("Данный предприниматель уже заключён")
 
         self.__prisoners.append(id)
-
-
-class Ownership(Cell, ABC):
-    # Модель Собственности
-
-    _name: str
-    _owner: IdBusinessman
-    _price: int
-    _rent: int
-
-    def __init__(self, name: str, x: int, price: int, rent: int):
-        super().__init__(x)
-
-        if not isinstance(price, int):  raise  TypeError("Тип данных не int")
-        if not isinstance(rent, int):  raise TypeError("Тип данных не int")
-
-        self._name = name
-        self._owner = None
-        self._price = price
-        self._rent = rent
-
-    @abstractmethod
-    def calculate_price(self) -> int: raise NotImplemented()
-
-    @abstractmethod
-    def calculate_rent(self) -> int:  raise NotImplemented()
-
-    def get_owner(self) -> IdBusinessman: return self._owner
-
-    def set_owner(self, owner: IdBusinessman) -> None:
-
-        if not isinstance(owner, IdBusinessman): raise TypeError("Тип данных не IdBusinessman")
-
-        self._owner = owner
-
-    def has_owner(self) -> bool:
-        return not self._owner is None
-
-    def identify_owner(self, owner: IdBusinessman) -> bool:
-        return self._owner == owner
-
-    def unset_owner(self) -> None:
-        self._owner = None
-
-
-class NeighborhoodTypes:
-    RED = 0
-    BLUE = 1
-    GREEN = 2
-    YELLOW = 3
-    BROWN = 4
-    PURPLE = 5
-    ORANGE = 7
-    BLACK = 8
-
-
-@dataclass
-class Neighborhood:
-
-    MAX_COUNT_STREET = 3
-
-    __type: NeighborhoodTypes
-    __build_price: int
-
-    def __eq__(self, other):
-        return self.type == other.type
-
-    def __get_build_price(self) -> int: return self.__build_price
-
-    def __get_type(self) -> NeighborhoodTypes: return self.__type
-
-    build_price = property(__get_build_price)
-    type = property(__get_type)
-
-
-class Street(Ownership):
-
-    HOME_MAX_COUNT = 4
-    HOTEL_MAX_COUNT = 1
-
-    __neighborhood: Neighborhood
-    __builds: list[Building]
-
-    def __init__(self, x: int, price: int, rent: int, neighborhood: Neighborhood):
-        super().__init__(x, price, rent)
-
-        self.__neighborhood =  neighborhood  # район
-        self.__builds = []
-
-    def __eq__(self, other: Street):
-        return self._name == other._name
-
-    def land(self, id: IdBusinessman):  # встать
-
-        self.token_placer.put_on_ownership(self, id)
-
-    def calculate_price(self) -> int:
-        price_buildings = 0
-
-        for build in self.__builds:
-            price_buildings += build.get_price()
-
-        return self._price + price_buildings
-
-    def calculate_rent(self) -> int:
-        build_ratio = 1
-
-        for build in self.__builds:
-            build_ratio += build.get_ratio()
-
-        return  self._rent * build_ratio
-
-    def create_build(self, price: int, type: int, ratio: int) -> None:  # построить дом
-        self.__builds.append(Building(price, type, ratio))
-
-    def can_build_home(self) -> bool: # можно ли построить дом
-        if len(self.__builds) < Street.HOME_MAX_COUNT: return True
-
-        return False
-
-    def can_build_hotel(self) -> bool: # можно ли построить отель
-        if len(self.__builds) == Street.HOME_MAX_COUNT : return True
-
-        return False
-
-    def __get_neighborhood(self) -> Neighborhood:
-        return self.__neighborhood
-
-    neighborhood = property(__get_neighborhood)
-
-
-class BuildingRatioTypes:
-    HOME = 2
-    HOTEL = 9
-
-
-class BuildingTypes(Enum):
-    HOME = 0
-    HOTEL = 1
-
-
-class Building:
-
-    # строение
-
-    __price: int
-    __type: BuildingTypes
-    __ratio: int
-
-    def __init__(self, price: int, type: BuildingTypes, ratio: int):
-        if not isinstance(price, int):  raise TypeError("Тип данных не int")
-        if not isinstance(type, BuildingTypes):  raise TypeError("Тип данных не int")
-        if not isinstance(ratio, int):  raise TypeError("Тип данных не int")
-
-        self.__price = price
-        self.__type = type
-        self.__ratio = ratio
-
-    def get_price(self) -> int:
-        return self.__price
-
-    def get_type(self) -> BuildingTypes:
-        return self.__type
-
-    def get_ratio(self) -> int:
-        return self.__ratio
-
-    def get_full_price(self) -> int:
-        return self.__price * self.__ratio
-
-
-class Station(Ownership):
-
-    __name: str
-
-    def __init__(self, name: str, x: int, price: int, rent: int):
-        super().__init__(name, x, price, rent)
-        self.__name = name
-
-    def calculate_price(self) -> int:
-        return self._price
-
-    def calculate_rent(self) -> int:
-        pass
-
-    def land(self, id: IdBusinessman):
-        pass
