@@ -16,21 +16,25 @@ class TokenPlacer:
         self.__manager_ownership = manager_ownership
         self.__bank = bank
 
-    def put_on_ownership(self, ownership: Ownership, id: IdBusinessman) -> None:
+    def put_on_ownership_owned(self, ownership: Ownership, id: IdBusinessman) -> None:
+
+        if not ownership.identify_owner(id):
+            if self.__manager_ownership.try_charge_rent(ownership, id):
+                return None
+
+            else:
+                return None
+
+        else:
+            return None
+
+    def put_on_ownership_unowned(self, ownership: Ownership, id: IdBusinessman) -> None:
+
         if self.__manager_ownership.try_buy_ownership(ownership, id):
             return None
 
         else:
-
-            if not ownership.identify_owner(id):
-                if self.__manager_ownership.try_charge_rent(ownership, id):
-                    return None
-
-                else:
-                    return None
-
-            else:
-                return None
+            return None
 
     def put_on_positive_chance(self, money: int, id: IdBusinessman) -> None:
 
