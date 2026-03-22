@@ -1,13 +1,8 @@
 from __future__ import annotations
-from dataclasses import dataclass
 
 from src.models.gameboard import Ownership, Board, Neighborhood
+from src.models.idbusinessman import IdBusinessman
 
-
-@dataclass
-class IdBusinessman:
-
-    id: int
 
 class Businessman:
 
