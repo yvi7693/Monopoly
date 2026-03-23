@@ -29,6 +29,10 @@ class Neighborhood:
     __type: NeighborhoodTypes
     __build_price: int
 
+    def __init__(self, type: NeighborhoodTypes, build_price: int):
+        self.__type = type
+        self.__build_price = build_price
+
     def __eq__(self, other):
         return self.type == other.type
 

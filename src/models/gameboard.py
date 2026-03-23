@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from src.models.building import Building
 from src.models.idbusinessman import IdBusinessman
-from src.models.typescell import ChanceResultTypes, Neighborhood
+from src.models.typescell import ChanceResultTypes, Neighborhood, NeighborhoodTypes
 
 
 class Board:
@@ -12,13 +12,45 @@ class Board:
     END = 39
 
     __cells: list[Cell]
+    __neighborhoods: list[Neighborhood]
 
-    def __init__(self, cells: list[Cell] = None):
+    def __init__(self, cells: list[Cell] = None, neighborhoods: list[Neighborhood] = None):
         self.__cells = cells or []
+        self.__neighborhoods = neighborhoods or []
 
     def get_cell(self, position) -> Cell: return self.__cells[position]
 
-    def add_cell(self, cell: Cell) -> None: self.__cells.append(cell)
+    def create_neighborhood(self) -> None:
+        self.__cells.clear()
+
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BROWN, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.PURPLE, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.ORANGE, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.RED, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.GREEN, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.YELLOW, 0))
+
+    def create_cells(self) -> None:
+        self.__cells.clear()
+
+        self.__cells.append(Cell(0, "Start"))
+        self.__cells.append(Cell(10, "Jail Cursion"))
+        self.__cells.append(Cell(20, "Free Parking"))
+        self.__cells.append(Cell(30, "Jail"))
+
+        for i in range(0, 40, 10):
+            for j in range(0, 8, 2):
+
+                self.__cells.append(Street(i + 1, "name1", 140, 0, self.__neighborhoods[j]))
+                self.__cells.append(Chance(i + 2, "Chance"))
+                self.__cells.append(Street(i + 3, "name2", 140, 0, self.__neighborhoods[j]))
+                self.__cells.append(Street(i + 4, "name3", 160, 0, self.__neighborhoods[j]))
+                self.__cells.append(Station(i + 5, "name4", 200, 0))
+                self.__cells.append(Street(i + 6, "name5", 160, 0, self.__neighborhoods[j + 1]))
+                self.__cells.append(Chance(i + 7, "Chance"))
+                self.__cells.append(Street(i + 8, "name6", 140, 0, self.__neighborhoods[j + 1]))
+                self.__cells.append(Street(i + 9, "name7", 200, 0, self.__neighborhoods[j + 1]))
 
     @staticmethod
     def is_passed_go(position: int, points: int) -> bool:
@@ -27,24 +59,25 @@ class Board:
         return False
 
 
-class Cell(ABC):
+class Cell:
 
     _x: int
+    _name: str
 
-    def __init__(self, x: int):
+    def __init__(self, x: int, name: str):
 
         if not isinstance(x, int):  raise TypeError("Тип данных не int")
 
         self._x = x
+        self._name = name
 
 
 class Chance(Cell):
 
     CASH = 30
 
-
-    def __init__(self, x: int):
-        super().__init__(x)
+    def __init__(self, x: int, name: str):
+        super().__init__(x, name)
 
     @staticmethod
     def try_luck() -> ChanceResultTypes:  # испытать удачу
@@ -70,18 +103,16 @@ class Chance(Cell):
 class Ownership(Cell, ABC):
     # Модель Собственности
 
-    _name: str
     _owner: IdBusinessman
     _price: int
     _rent: int
 
     def __init__(self, x: int, name: str, price: int, rent: int):
-        super().__init__(x)
+        super().__init__(x, name)
 
         if not isinstance(price, int):  raise  TypeError("Тип данных не int")
         if not isinstance(rent, int):  raise TypeError("Тип данных не int")
 
-        self._name = name
         self._owner = None
         self._price = price
         self._rent = rent
@@ -108,6 +139,9 @@ class Ownership(Cell, ABC):
 
     def unset_owner(self) -> None:
         self._owner = None
+
+    def copy(self, ownership: Ownership) -> Ownership:
+        return Ownership(ownership._x, ownership._name, ownership._price, ownership._rent)
 
 
 class Street(Ownership):
@@ -163,8 +197,6 @@ class Street(Ownership):
 
 
 class Station(Ownership):
-
-    __name: str
 
     def __init__(self, x: int, name: str, price: int, rent: int):
         super().__init__(x, name, price, rent)
