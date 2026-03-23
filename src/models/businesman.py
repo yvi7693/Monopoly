@@ -61,8 +61,17 @@ class Businessman:
     def __get_id(self) -> IdBusinessman:
         return self.__id
 
+    def __get_ownerships(self) -> list[Ownership]:
+        copy_ownerships = []
+
+        for i in range(len(self.__ownerships)):
+            copy_ownerships.append(Ownership.copy(self.__ownerships[i]))
+
+        return copy_ownerships
+
     @staticmethod
     def copy(businessman: Businessman) -> Businessman:
         return Businessman(businessman.id)
 
     id = property(__get_id)
+    ownerships = property(__get_ownerships)
