@@ -20,13 +20,12 @@ class PlayerManager:
         for businessman in self.__businessmen:
             businessmen.append(businessman.copy(businessman))
 
-
         return businessmen
 
-    def try_add_businessmen(self, businessmen_count: int) -> bool:
+    def add_businessmen(self, businessmen_count: int) -> None:
         current_count = len(self.__businessmen)
 
-        if current_count + businessmen_count > PlayerManager.MAX_COUNT: return False
+        if current_count + businessmen_count > PlayerManager.MAX_COUNT: raise AssertionError("max count player = 6")
 
         for i in range(businessmen_count+1):
             current_count = len(self.__businessmen)
@@ -36,8 +35,6 @@ class PlayerManager:
             self.__businessmen.append(Businessman(id))
 
             self.__bank.register_account(id)
-
-        return True
 
     def exclude_businessman(self, businessman: Businessman) -> None:
         if not isinstance(businessman, Businessman):  raise TypeError("Тип данных не Businessman")

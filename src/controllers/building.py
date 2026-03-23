@@ -1,5 +1,6 @@
 from src.models.businesman import Businessman
-from src.models.gameboard import Street, BuildingRatioTypes, BuildingTypes
+from src.models.gameboard import Street
+from src.models.building import BuildingRatioTypes, BuildingTypes
 from src.controllers.finance import Bank
 
 
