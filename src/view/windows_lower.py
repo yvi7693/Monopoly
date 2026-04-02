@@ -1,0 +1,2 @@
+class InteractionWindow:
+    pass

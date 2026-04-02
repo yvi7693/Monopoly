@@ -14,14 +14,14 @@ class GamePresenter:
 
     def run(self):
 
-        count_players = self.__game_view.start_window.entry.get()
+        count_players = 2
 
         self.__game.set_up(int(count_players))
 
-        self.__game_view.create_game_field(self.__game.board.get_name_cells())
 
-        self.__game_view.start_window.start_animation()
 
-        self.__game_view.show_present_window()
+        self.__game_view.start_window.start_loading()
+
+
 
 

@@ -3,10 +3,10 @@ import time
 from customtkinter import CTkButton, CTkProgressBar
 
 
-class MyButton(CTkButton):
+class Button(CTkButton):
 
-    def __init__(self, master, text, callback=None, bg_color="#DC143C", fg_color="#DC143C", hover_color = "#DC143C"):
-        super().__init__(master=master, text=text, command = self.__handler_click, bg_color = bg_color, fg_color = fg_color, hover_color = hover_color)
+    def __init__(self, master, text, callback=None, fg_color="#DC143C", hover_color = "#8B0000"):
+        super().__init__(master=master, text=text, command = self.__handler_click, fg_color = fg_color, hover_color = hover_color)
 
         self.__callback = callback
 
@@ -21,12 +21,10 @@ class ProgressBar(CTkProgressBar):
 
     __progress: int
 
-    def __init__(self, master, orientation, mode, width, progress_color, corner_radius):
-        super().__init__(master = master, orientation = orientation, mode = mode, width = width, progress_color = progress_color, corner_radius = corner_radius)
+    def __init__(self, master, width, progress_color):
+        super().__init__(master = master, width = width, progress_color = progress_color)
 
         self.__progress = 0
-
-
 
     def start(self) -> None:
         speed = 0.1
