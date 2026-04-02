@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 import tkinter
-
 from customtkinter import *
-from PIL import Image
-
 from src.view.widgets import Button, ProgressBar
 
 
@@ -51,8 +48,6 @@ class StartWindow(CTkFrame):
         self.__start_btn.pack(pady = 100, anchor = "center", side="top")
 
 
-
-
 class PresentWindow(CTkFrame):
 
     def __init__(self, master, width: int, height: int):
@@ -63,3 +58,21 @@ class GameWindow(CTkFrame):
 
     def __init__(self, master, width: int, height: int):
         super().__init__(master=master, height=height, width=width)
+
+        self.__game_field = None
+
+        self.create_field()
+
+
+    def create_field(self) -> None:
+        self.__game_field = CTkCanvas(master=self, width=763, height=763)
+        self.__game_field.pack(anchor="w")
+
+    def __create_rectangles(self) -> None:
+       pass
+
+    def __create_text(self) -> None:
+        pass
+
+    def __create_neighborhood(self) -> None:
+        pass

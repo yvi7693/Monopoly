@@ -15,10 +15,16 @@ class MainWindow(CTk):
         self.geometry(f"{width}x{height}")
         self.resizable(False, False)
 
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
         self.__start_window = StartWindow(self, 1100, 763)
+        self.__game_window = GameWindow(self, 1100, 763)
 
+        self.__start_window.grid(row=0, column=0, sticky="nsew")
+        self.__game_window.grid(row=0, column=0, sticky="nsew")
 
-        self.__start_window.pack()
+        self.__game_window.tkraise()
 
 
     def loop(self):

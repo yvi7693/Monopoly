@@ -18,9 +18,11 @@ class GamePresenter:
 
         self.__game.set_up(int(count_players))
 
-
-
         self.__game_view.start_window.start_loading()
+
+        self.__game_view.create_game_field(self.__game.board.get_name_cells())
+
+        self.__game_view.show_game_window()
 
 
 
