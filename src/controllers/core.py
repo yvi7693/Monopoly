@@ -51,3 +51,8 @@ class Game:
             if len(businessmen) == 1:
 
                 is_play = False
+
+    def __get_board(self) -> Board:
+        return self.__game_board
+
+    board = property(__get_board)

@@ -23,9 +23,6 @@ class PlayerManager:
         return businessmen
 
     def add_businessmen(self, businessmen_count: int) -> None:
-        current_count = len(self.__businessmen)
-
-        if current_count + businessmen_count > PlayerManager.MAX_COUNT: raise AssertionError("max count player = 6")
 
         for i in range(businessmen_count+1):
             current_count = len(self.__businessmen)

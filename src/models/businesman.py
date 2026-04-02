@@ -65,7 +65,7 @@ class Businessman:
         copy_ownerships = []
 
         for i in range(len(self.__ownerships)):
-            copy_ownerships.append(Ownership.copy(self.__ownerships[i]))
+            copy_ownerships.append(Ownership.copy())
 
         return copy_ownerships
 

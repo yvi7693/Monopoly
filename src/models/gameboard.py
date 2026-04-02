@@ -20,6 +20,15 @@ class Board:
 
     def get_cell(self, position) -> Cell: return self.__cells[position]
 
+    def get_name_cells(self) -> list[str]:
+        names_cells = []
+
+        for i in range(len(self.__cells)):
+            names_cells.append(self.__cells[i].get_name())
+
+        return names_cells
+
+
     def create_neighborhood(self) -> None:
         self.__cells.clear()
 
@@ -35,22 +44,24 @@ class Board:
         self.__cells.clear()
 
         self.__cells.append(Cell(0, "Start"))
-        self.__cells.append(Cell(10, "Jail Cursion"))
-        self.__cells.append(Cell(20, "Free Parking"))
-        self.__cells.append(Cell(30, "Jail"))
 
         for i in range(0, 40, 10):
-            for j in range(0, 8, 2):
+            for j in range(0, 6, 2):
 
                 self.__cells.append(Street(i + 1, "name1", 140, 0, self.__neighborhoods[j]))
-                self.__cells.append(Chance(i + 2, "Chance"))
                 self.__cells.append(Street(i + 3, "name2", 140, 0, self.__neighborhoods[j]))
+                self.__cells.append(Chance(i + 2, "Chance"))
                 self.__cells.append(Street(i + 4, "name3", 160, 0, self.__neighborhoods[j]))
-                self.__cells.append(Station(i + 5, "name4", 200, 0))
+                self.__cells.append(Station(i + 5, "station", 200, 0))
                 self.__cells.append(Street(i + 6, "name5", 160, 0, self.__neighborhoods[j + 1]))
-                self.__cells.append(Chance(i + 7, "Chance"))
                 self.__cells.append(Street(i + 8, "name6", 140, 0, self.__neighborhoods[j + 1]))
+                self.__cells.append(Chance(i + 7, "Chance"))
                 self.__cells.append(Street(i + 9, "name7", 200, 0, self.__neighborhoods[j + 1]))
+                self.__cells.append(Cell(i + 10, ""))
+
+        self.__cells[10] = Cell(10, "Cursion")
+        self.__cells[20] = Cell(20, "Free Park")
+        self.__cells[30] = Cell(30, "Jail")
 
     @staticmethod
     def is_passed_go(position: int, points: int) -> bool:
@@ -70,6 +81,9 @@ class Cell:
 
         self._x = x
         self._name = name
+
+    def get_name(self) -> str:
+        return self._name
 
 
 class Chance(Cell):
@@ -140,7 +154,8 @@ class Ownership(Cell, ABC):
     def unset_owner(self) -> None:
         self._owner = None
 
-    def copy(self, ownership: Ownership) -> Ownership:
+    @staticmethod
+    def copy(ownership: Ownership) -> Ownership:
         return Ownership(ownership._x, ownership._name, ownership._price, ownership._rent)
 
 
