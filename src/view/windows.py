@@ -124,6 +124,7 @@ class GameWindow(CTkFrame):
         self.__interaction_window.grid(row=0, column=1, sticky="nswe")
 
         self.__tokens = []
+        self.__tokens_image = []
 
         self.__logo = tkinter.PhotoImage(file = "images/logo.png")
         self.__token1 = tkinter.PhotoImage(file = "images/token1.png")
@@ -143,6 +144,7 @@ class GameWindow(CTkFrame):
         self.__create_text(names_cells)
         self.__create_neighborhood(colors)
         self.__create_logo()
+        self.__create_token_image()
         self.__create_token(count_players)
 
     def update_place_token(self, numer_token: int, position: int):
@@ -221,4 +223,12 @@ class GameWindow(CTkFrame):
 
     def __create_token(self, count_players: int) -> None:
         for i in range(count_players):
-            self.__tokens.append(self.__game_field.create_image(50, 50,  image = self.__token1))
+            self.__tokens.append(self.__game_field.create_image(50, 50,  image = self.__tokens_image[i]))
+
+    def __create_token_image(self) -> None:
+        self.__tokens_image.append(tkinter.PhotoImage(file = "token1.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="images/token1.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))

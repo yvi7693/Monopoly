@@ -15,8 +15,8 @@ from src.models.gameboard import Board, Jail
 class Game:
 
     __current_player: Businessman | None
-    __current_balance: int
-    __current_points: tuple[int, int]
+    __current_balance: int | None
+    __current_points: tuple[int, int] | None
 
     def __init__(self):
         self.__bank = Bank()

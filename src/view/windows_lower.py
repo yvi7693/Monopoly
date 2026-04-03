@@ -26,7 +26,6 @@ class InteractionWindow(CTkFrame):
         self.__dice_1.configure(image = self.__dices[points_1 - 1])
         self.__dice_2.configure(image=self.__dices[points_2 - 1])
 
-
     def add_listener_on_click_move(self, callback) -> None:
             self.__move_btn.add_listener(callback)
 
@@ -64,8 +63,8 @@ class InteractionWindow(CTkFrame):
         self.__dices.append(CTkImage(light_image=Image.open("images/6.png"), dark_image=Image.open("images/6.png"),
                                    size=(70, 70)))
 
-        self.__dice_1 = CTkLabel(self, text="")
-        self.__dice_2 = CTkLabel(self, text="")
+        self.__dice_1 = CTkLabel(self, text="", width=70, height=70)
+        self.__dice_2 = CTkLabel(self, text="", width=70, height=70)
 
 
 @dataclass
