@@ -5,7 +5,9 @@ from tkinter import PhotoImage
 
 from customtkinter import *
 from src.view.widgets import Button, ProgressBar
-from src.view.windows_lower import InteractionWindow
+from src.view.windows_lower import InteractionWindow, CoordCells
+
+from PIL import Image
 
 
 class StartWindow(CTkFrame):
@@ -13,11 +15,12 @@ class StartWindow(CTkFrame):
     __start_btn: Button | None
     __progressbar: ProgressBar | None
 
-    def __init__(self, master, width: int, height: int):
-        super().__init__(master = master, height = height, width = width)
+    def __init__(self, master, width: int, height: int, bg_color):
+        super().__init__(master = master, height = height, width = width, fg_color=bg_color)
 
         self.__progressbar = None
         self.__start_btn = None
+        self.radio_var = None
 
         self.__create_widgets()
 
@@ -25,27 +28,34 @@ class StartWindow(CTkFrame):
         self.__start_btn.add_listener(callback)
 
     def start_loading(self) -> None:
-        self.__progressbar = ProgressBar(self, 800, "red")
-        self.__progressbar.pack(pady=(200,0))
+        self.__progressbar = ProgressBar(self, 800, "#DC143C")
+        self.__progressbar.pack(pady=(100,0))
         self.__progressbar.start()
 
     def __create_widgets(self) -> None:
-        radio_frame = CTkFrame(self)
-        radio_frame.pack(pady=(200,0))
+        my_image = CTkImage(light_image=Image.open("images/LogoStart.png"),
+                            dark_image=Image.open("images/LogoStart.png"),
+                            size=(500, 100))
 
-        radio_var = tkinter.IntVar(value=0)
+        image_label = CTkLabel(self, image=my_image, text="")
+        image_label.pack(pady=(100,0))
 
-        players_2 = CTkRadioButton(radio_frame, text="2 Players", command=None, variable=radio_var, value=1)
-        players_3 = CTkRadioButton(radio_frame, text="3 Players", command=None, variable=radio_var, value=2)
-        players_4 = CTkRadioButton(radio_frame, text="4 Players", command=None, variable=radio_var, value=3)
-        players_5 = CTkRadioButton(radio_frame, text="5 Players", command=None, variable=radio_var, value=4)
-        players_6 = CTkRadioButton(radio_frame, text="6 Players", command=None, variable=radio_var, value=5)
+        radio_frame = CTkFrame(self, fg_color="#e7d5e7")
+        radio_frame.pack(pady=(100,0))
 
-        players_2.pack(side="left", pady = 20)
-        players_3.pack(side="left", pady = 20)
-        players_4.pack(side="left", pady = 20)
-        players_5.pack(side="left", pady = 20)
-        players_6.pack(side="left", pady = 20)
+        self.radio_var = tkinter.IntVar(value=2)
+
+        players_2 = CTkRadioButton(radio_frame, text="2 Players", variable=self.radio_var, value=2, fg_color="#DC143C", hover_color = "#8B0000")
+        players_3 = CTkRadioButton(radio_frame, text="3 Players", variable=self.radio_var, value=3, fg_color="#DC143C", hover_color = "#8B0000")
+        players_4 = CTkRadioButton(radio_frame, text="4 Players", variable=self.radio_var, value=4, fg_color="#DC143C", hover_color = "#8B0000")
+        players_5 = CTkRadioButton(radio_frame, text="5 Players", variable=self.radio_var, value=5, fg_color="#DC143C", hover_color = "#8B0000")
+        players_6 = CTkRadioButton(radio_frame, text="6 Players", variable=self.radio_var, value=6, fg_color="#DC143C", hover_color = "#8B0000")
+
+        players_2.pack(side = "left", pady = 20)
+        players_3.pack(side = "left", pady = 20)
+        players_4.pack(side = "left", pady = 20)
+        players_5.pack(side = "left", pady = 20)
+        players_6.pack(side = "left", pady = 20)
 
         self.__start_btn = Button(self, "Start", )
         self.__start_btn.pack(pady = 100, anchor = "center", side="top")
@@ -56,13 +66,18 @@ class PresentWindow(CTkFrame):
     def __init__(self, master, width: int, height: int):
         super().__init__(master=master, height=height, width=width)
 
+    def start_animate(self) -> None:
+        pass
+
 
 class GameWindow(CTkFrame):
 
-    __game_field: CTkCanvas | None
+    __game_field: tkinter.Canvas | None
     __interaction_window: InteractionWindow
 
     __logo: PhotoImage
+
+
 
     def __init__(self, master, width: int, height: int):
         super().__init__(master=master, height=height, width=width)
@@ -71,7 +86,11 @@ class GameWindow(CTkFrame):
         self.__interaction_window = InteractionWindow(self,337, 763)
         self.__interaction_window.grid(row=0, column=1, sticky="nswe")
 
-        self.__logo = tkinter.PhotoImage(file="logo.png")
+        self.__tokens = []
+
+        self.__logo = tkinter.PhotoImage(file = "images/logo.png")
+        self.__token1 = tkinter.PhotoImage(file = "images/token1.png")
+
 
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
@@ -79,14 +98,29 @@ class GameWindow(CTkFrame):
     def update_widgets(self, id: int, balance: int) -> None:
         self.__interaction_window.update_widgets(id, balance)
 
-    def create_game_field(self, names_cells: list[str], colors: list[str]) -> None:
-        self.__game_field = CTkCanvas(master=self, width=763, height=763, bg = "#c7f4bd")
+    def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int) -> None:
+        self.__game_field = tkinter.Canvas(master=self, width=763, height=763, bg = "#c7f4bd")
         self.__game_field.grid(row=0, column=0, sticky="w")
 
         self.__create_rectangles()
         self.__create_text(names_cells)
         self.__create_neighborhood(colors)
         self.__create_logo()
+        self.__create_token(count_players)
+
+    def update_place_token(self, numer_token: int, position: int):
+
+        if position <= 10:
+            self.__game_field.coords(self.__tokens[numer_token], CoordCells.TOP_X[position], 50)
+
+        elif position > 10 and position <= 20:
+            self.__game_field.coords(self.__tokens[numer_token], 720, CoordCells.RIGHT_Y[position-10])
+
+        elif position > 20 and position <= 30:
+            self.__game_field.coords(self.__tokens[numer_token], CoordCells.BOTTOM_X[position - 20], 720)
+
+        elif position > 30 and position <= 40:
+            self.__game_field.coords(self.__tokens[numer_token], 50, CoordCells.RIGHT_Y[position - 30])
 
     def __create_rectangles(self) -> None:
 
@@ -146,12 +180,8 @@ class GameWindow(CTkFrame):
             index += 1
 
     def __create_logo(self) -> None:
-        self.__game_field.create_image(380, 370, image=self.__logo)
+        self.__game_field.create_image(380, 370, image = self.__logo)
 
-
-
-
-
-
-
-
+    def __create_token(self, count_players: int) -> None:
+        for i in range(count_players):
+            self.__tokens.append(self.__game_field.create_image(50, 50,  image = self.__token1))

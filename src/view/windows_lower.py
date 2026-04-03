@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from customtkinter import *
 
 from src.view.widgets import Button
@@ -15,7 +17,7 @@ class InteractionWindow(CTkFrame):
         self.__create_widgets()
 
     def update_widgets(self, id: int, balance: int) -> None:
-        self.__player.configure(text = f"Player №{id}")
+        self.__player.configure(text = f"Player №{id+1}")
         self.__balance.configure(text = f"{balance} 💰")
 
     def __create_widgets(self) -> None:
@@ -33,3 +35,11 @@ class InteractionWindow(CTkFrame):
 
     def add_listener_on_click_move(self, callback) -> None:
         self.__move_btn.add_listener(callback)
+
+@dataclass
+class CoordCells:
+
+    TOP_X = list(range(50, 763, 67))
+    RIGHT_Y = list(range(50, 763, 67))
+    BOTTOM_X = list(range(720, 0, -67))
+    LEFT_Y = list(range(720, 0, -67))

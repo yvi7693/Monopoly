@@ -31,6 +31,7 @@ class Game:
 
         self.__current_player = None
         self.__current_balance = None
+        self.__current_points = None
 
     def set_up(self, count_businessmen: int):
         self.__player_manager.add_businessmen(count_businessmen)
@@ -42,15 +43,18 @@ class Game:
 
         self.__current_player = self.__player_manager.get_current_businessman()
         self.__current_balance = self.__bank.get_balance(self.__current_player.id)
+        self.__current_points = self.__dice.throw()
 
-        points = self.__dice.throw()
-        self.__game_rules.make_move(self.__current_player, points)
+        self.__game_rules.make_move(self.__current_player, self.__current_points)
 
     def get_current_player(self) -> Businessman:
         return self.__current_player
 
     def get_current_balance(self) -> int:
         return self.__current_balance
+
+    def get_current_points(self) -> int:
+        return self.__current_points
 
     def __get_board(self) -> Board:
         return self.__game_board

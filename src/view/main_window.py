@@ -18,13 +18,13 @@ class MainWindow(CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.__start_window = StartWindow(self, 1100, 763)
+        self.__start_window = StartWindow(self, 1100, 763, "#D8BFD8")
         self.__game_window = GameWindow(self, 1100, 763)
 
         self.__start_window.grid(row=0, column=0, sticky="nsew")
         self.__game_window.grid(row=0, column=0, sticky="nsew")
 
-        self.__game_window.tkraise()
+        self.__start_window.tkraise()
 
 
     def loop(self):
@@ -37,11 +37,12 @@ class MainWindow(CTk):
     def show_game_window(self) -> None:
         self.__game_window.tkraise()
 
-    def update_window(self, id: int, balance: int) -> None:
+    def update_window(self, id: int, balance: int, position: int) -> None:
         self.__game_window.update_widgets(id, balance)
+        self.__game_window.update_place_token(id, position)
 
-    def create_game_field(self, names_cells: list[str], colors: list[str]):
-        self.__game_window.create_game_field(names_cells, colors)
+    def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int):
+        self.__game_window.create_game_field(names_cells, colors, count_players)
 
     def __get_start_window(self) -> StartWindow: return self.__start_window
 

@@ -30,7 +30,7 @@ class PlayerManager:
 
     def add_businessmen(self, businessmen_count: int) -> None:
 
-        for i in range(businessmen_count+1):
+        for i in range(businessmen_count):
             current_count = len(self.__businessmen)
 
             id = IdBusinessman(current_count)

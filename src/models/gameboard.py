@@ -37,8 +37,6 @@ class Board:
 
         return colors
 
-
-
     def create_neighborhood(self) -> None:
         self.__cells.clear()
 
@@ -51,12 +49,13 @@ class Board:
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.GREEN, 0))
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 0))
 
-
     def create_cells(self) -> None:
         self.__cells.clear()
 
         self.__cells.append(Cell(0, "Start"))
+
         j = 0
+
         for i in range(0, 40, 10):
 
             self.__cells.append(Street(i + 1, "name1", 140, 0, self.__neighborhoods[j]))
@@ -153,7 +152,9 @@ class Ownership(Cell, ABC):
     @abstractmethod
     def calculate_rent(self) -> int:  raise NotImplemented()
 
-    def get_owner(self) -> IdBusinessman: return self._owner
+    def get_owner(self) -> IdBusinessman:
+        if self._owner is None:  raise AssertionError("У собственности нет владельца")
+        return self._owner
 
     def set_owner(self, owner: IdBusinessman) -> None:
 
@@ -165,7 +166,7 @@ class Ownership(Cell, ABC):
         return not self._owner is None
 
     def identify_owner(self, owner: IdBusinessman) -> bool:
-        return self._owner == owner
+        return self._owner == owner or self._owner is None
 
     def unset_owner(self) -> None:
         self._owner = None
