@@ -20,7 +20,7 @@ class GamePresenter:
         self.__game_view.create_game_field(self.__game.board.get_name_cells(), self.__game.board.get_colors(), self.__game_view.start_window.radio_var.get())
 
         self.__game_view.start_window.start_loading()
-        self.__game_view.show_game_window()
+        self.__game_view.show_present_window()
 
     def make_move(self) -> None:
         self.__game.make_move()

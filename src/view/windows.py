@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 import tkinter
 from tkinter import PhotoImage
 
@@ -63,11 +64,47 @@ class StartWindow(CTkFrame):
 
 class PresentWindow(CTkFrame):
 
-    def __init__(self, master, width: int, height: int):
-        super().__init__(master=master, height=height, width=width)
+    __label: CTkLabel | None
+    __step: int
 
-    def start_animate(self) -> None:
-        pass
+    def __init__(self, master,  width: int, height: int, fg_color):
+        super().__init__(master = master, width = width, height = height, fg_color = fg_color)
+
+        self.__label_name = CTkLabel(self, text = "Yaroslav Volkov", text_color="#000000", font=("Impact", 24))
+        self.__label_name.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.__label = CTkLabel(self, text="PRESENT", text_color="#000000", font=("Impact", 24))
+        self.__label.place(relx=0.5, rely=0.55, anchor="center")
+
+        self.__step = 0
+
+        self.__callback = None
+
+    def start_animate(self, callback) -> None:
+        self.__step = 0
+        self.__display_text()
+
+        self.__callback = callback
+
+    def __display_text(self) -> None:
+        max_step = 150
+
+        value = int((255 / max_step) * self.__step)
+
+        color = f"#{value:02x}{value:02x}{value:02x}"
+
+        self.__label.configure(text_color=color)
+        self.__label_name.configure(text_color=color)
+
+        self.__step += 1
+
+        if self.__step < max_step:
+            self.__step += 1
+            self.after(50, self.__display_text)
+
+        else:
+            time.sleep(2)
+            self.__callback()
 
 
 class GameWindow(CTkFrame):

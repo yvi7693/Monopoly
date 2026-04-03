@@ -20,6 +20,9 @@ class InteractionWindow(CTkFrame):
         self.__player.configure(text = f"Player №{id+1}")
         self.__balance.configure(text = f"{balance} 💰")
 
+    def add_listener_on_click_move(self, callback) -> None:
+        self.__move_btn.add_listener(callback)
+
     def __create_widgets(self) -> None:
         self.__player = CTkLabel(master = self, text=f"Player №", fg_color="transparent", text_color="black", font=("Arial", 20), pady = 20)
         self.__player.grid(row=0, column=0, columnspan=2)
@@ -33,8 +36,6 @@ class InteractionWindow(CTkFrame):
         self.__move_btn = Button(self, "MOVE")
         self.__move_btn.grid(row = 2, column =0, pady=(620,0), columnspan=2)
 
-    def add_listener_on_click_move(self, callback) -> None:
-        self.__move_btn.add_listener(callback)
 
 @dataclass
 class CoordCells:

@@ -19,9 +19,11 @@ class MainWindow(CTk):
         self.grid_rowconfigure(0, weight=1)
 
         self.__start_window = StartWindow(self, 1100, 763, "#D8BFD8")
+        self.__present_window = PresentWindow(self, 1100, 763, "black")
         self.__game_window = GameWindow(self, 1100, 763)
 
         self.__start_window.grid(row=0, column=0, sticky="nsew")
+        self.__present_window.grid(row=0, column=0, sticky="nsew")
         self.__game_window.grid(row=0, column=0, sticky="nsew")
 
         self.__start_window.tkraise()
