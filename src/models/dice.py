@@ -1,7 +1,7 @@
+import random
+
 class Dice:
 
     @staticmethod
-    def throw() -> int:
-        import random
-
-        return random.randint(2,12)
+    def throw() -> tuple[int, int]:
+        return random.randint(1,6), random.randint(1,6)

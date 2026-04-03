@@ -39,8 +39,8 @@ class MainWindow(CTk):
     def show_game_window(self) -> None:
         self.__game_window.tkraise()
 
-    def update_window(self, id: int, balance: int, position: int) -> None:
-        self.__game_window.update_widgets(id, balance)
+    def update_window(self, id: int, balance: int, position: int, points_1: int, points_2: int) -> None:
+        self.__game_window.update_widgets(id, balance, points_1, points_2)
         self.__game_window.update_place_token(id, position)
 
     def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int):

@@ -132,8 +132,8 @@ class GameWindow(CTkFrame):
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
 
-    def update_widgets(self, id: int, balance: int) -> None:
-        self.__interaction_window.update_widgets(id, balance)
+    def update_widgets(self, id: int, balance: int, points_1: int, points_2: int) -> None:
+        self.__interaction_window.update_widgets(id, balance, points_1, points_2)
 
     def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int) -> None:
         self.__game_field = tkinter.Canvas(master=self, width=763, height=763, bg = "#c7f4bd")

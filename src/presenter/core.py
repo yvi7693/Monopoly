@@ -28,8 +28,10 @@ class GamePresenter:
         id = self.__game.get_current_player().id.get_value()
         balance = self.__game.get_current_balance()
         position = self.__game.get_current_player().get_position()
+        points_1, points_2 = self.__game.get_current_points()
 
-        self.__game_view.update_window(id , balance, position)
+
+        self.__game_view.update_window(id , balance, position, points_1, points_2)
 
 
 

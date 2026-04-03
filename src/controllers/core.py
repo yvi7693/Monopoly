@@ -15,6 +15,8 @@ from src.models.gameboard import Board, Jail
 class Game:
 
     __current_player: Businessman | None
+    __current_balance: int
+    __current_points: tuple[int, int]
 
     def __init__(self):
         self.__bank = Bank()
@@ -45,7 +47,7 @@ class Game:
         self.__current_balance = self.__bank.get_balance(self.__current_player.id)
         self.__current_points = self.__dice.throw()
 
-        self.__game_rules.make_move(self.__current_player, self.__current_points)
+        self.__game_rules.make_move(self.__current_player, sum(self.__current_points))
 
     def get_current_player(self) -> Businessman:
         return self.__current_player
@@ -53,7 +55,7 @@ class Game:
     def get_current_balance(self) -> int:
         return self.__current_balance
 
-    def get_current_points(self) -> int:
+    def get_current_points(self) -> tuple[int, int]:
         return self.__current_points
 
     def __get_board(self) -> Board:
