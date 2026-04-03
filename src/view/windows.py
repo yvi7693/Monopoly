@@ -226,9 +226,9 @@ class GameWindow(CTkFrame):
             self.__tokens.append(self.__game_field.create_image(50, 50,  image = self.__tokens_image[i]))
 
     def __create_token_image(self) -> None:
-        self.__tokens_image.append(tkinter.PhotoImage(file = "token1.png"))
-        self.__tokens_image.append(tkinter.PhotoImage(file="images/token1.png"))
-        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))
-        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))
-        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))
-        self.__tokens_image.append(tkinter.PhotoImage(file="token1.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file = "images/token1.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="images/token2.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="images/token3.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="images/token4.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="images/token5.png"))
+        self.__tokens_image.append(tkinter.PhotoImage(file="images/token6.png"))
