@@ -9,16 +9,16 @@ class ChanceResultTypes(Enum):
     NEGATIVE = -1
 
 
-@dataclass
+
 class NeighborhoodTypes(Enum):
-    RED = 0
-    BLUE = 1
-    GREEN = 2
-    YELLOW = 3
-    BROWN = 4
-    PURPLE = 5
-    ORANGE = 7
-    BLACK = 8
+    RED = "red"
+    BLUE = "blue"
+    GREEN = "green"
+    YELLOW = "yellow"
+    BROWN = "brown"
+    PURPLE = "purple"
+    ORANGE = "orange"
+    WHITE_BLUE = "#87CEEB"
 
 
 @dataclass
@@ -35,6 +35,18 @@ class Neighborhood:
 
     def __eq__(self, other):
         return self.type == other.type
+
+    def get_color(self) -> str:
+        color = self.__type
+
+        if color == NeighborhoodTypes.BLUE: return "#4169E1"
+        if color == NeighborhoodTypes.RED: return "#FF0000"
+        if color == NeighborhoodTypes.YELLOW: return "#FFFF00"
+        if color == NeighborhoodTypes.BROWN: return "#8B4513"
+        if color == NeighborhoodTypes.PURPLE: return "#FF00FF"
+        if color == NeighborhoodTypes.GREEN: return "#00FF00"
+        if color == NeighborhoodTypes.ORANGE: return "#F4A460"
+        return "#87CEEB"
 
     def __get_build_price(self) -> int: return self.__build_price
 

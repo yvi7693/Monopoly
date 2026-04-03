@@ -61,18 +61,81 @@ class GameWindow(CTkFrame):
 
         self.__game_field = None
 
-        self.create_field()
+        self.__logo = tkinter.PhotoImage(file="logo.png")
 
-
-    def create_field(self) -> None:
-        self.__game_field = CTkCanvas(master=self, width=763, height=763)
+    def create_field(self, names_cells: list[str], colors: list[str]) -> None:
+        self.__game_field = CTkCanvas(master=self, width=763, height=763, bg = "#c7f4bd")
         self.__game_field.pack(anchor="w")
 
+        self.__create_rectangles()
+        self.__create_text(names_cells)
+        self.__create_neighborhood(colors)
+        self.__create_logo()
+
     def __create_rectangles(self) -> None:
-       pass
 
-    def __create_text(self) -> None:
-        pass
+        for i in range(80, 683, 67):
+            self.__game_field.create_rectangle(i, 0, i+67, 80)
+            self.__game_field.create_rectangle(i, 683, i + 67, 763)
+            self.__game_field.create_rectangle(683, i, 763, i + 67)
+            self.__game_field.create_rectangle(0, i, 80, i + 67)
 
-    def __create_neighborhood(self) -> None:
-        pass
+        self.__game_field.create_rectangle(0, 0, 80, 80)
+        self.__game_field.create_rectangle(683, 0, 763, 80)
+        self.__game_field.create_rectangle(0, 683, 80, 763)
+        self.__game_field.create_rectangle(683, 683, 763, 763)
+
+    def __create_text(self, names_cells: list[str]) -> None:
+
+        index = 0
+
+        for i in range(45, 763, 67):
+            self.__game_field.create_text(i, 40 , text = names_cells[index])
+            index += 1
+
+        for i in range(115, 700, 67):
+            self.__game_field.create_text(730, i, text = names_cells[index])
+            index += 1
+
+        for i in range(715, 20, -67):
+            self.__game_field.create_text(i, 725, text = names_cells[index])
+            index += 1
+
+        for i in range(650, 80, -67):
+            self.__game_field.create_text(30, i, text = names_cells[index])
+            index += 1
+
+    def __create_neighborhood(self, colors: list[str]) -> None:
+
+        index = 0
+
+        coord_first = [80, 147, 281, 415, 482, 616]
+        coord_last = [683, 616, 482, 348, 281, 147]
+
+
+        for x in coord_first:
+            self.__game_field.create_rectangle(x, 60, x + 67, 80, fill = colors[index])
+            index += 1
+
+        for y in coord_first:
+            self.__game_field.create_rectangle(683, y, 705, y + 67, fill = colors[index])
+            index += 1
+
+        for x in coord_last:
+            self.__game_field.create_rectangle(x, 683, x-67, 705, fill = colors[index])
+            index += 1
+
+        for y in coord_last:
+            self.__game_field.create_rectangle(60, y, 80, y-67, fill = colors[index])
+            index += 1
+
+    def __create_logo(self) -> None:
+        self.__game_field.create_image(380, 370, image=self.__logo)
+
+
+
+
+
+
+
+

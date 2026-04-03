@@ -28,36 +28,49 @@ class Board:
 
         return names_cells
 
+    def get_colors(self) -> list[str]:
+        colors = []
+
+        for cell in self.__cells:
+            if isinstance(cell, Street):
+                colors.append(cell.get_color())
+
+        return colors
+
+
 
     def create_neighborhood(self) -> None:
         self.__cells.clear()
 
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BROWN, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.WHITE_BLUE, 0))
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.PURPLE, 0))
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.ORANGE, 0))
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.RED, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.GREEN, 0))
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.YELLOW, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.GREEN, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 0))
+
 
     def create_cells(self) -> None:
         self.__cells.clear()
 
         self.__cells.append(Cell(0, "Start"))
-
+        j = 0
         for i in range(0, 40, 10):
-            for j in range(0, 6, 2):
 
-                self.__cells.append(Street(i + 1, "name1", 140, 0, self.__neighborhoods[j]))
-                self.__cells.append(Street(i + 3, "name2", 140, 0, self.__neighborhoods[j]))
-                self.__cells.append(Chance(i + 2, "Chance"))
-                self.__cells.append(Street(i + 4, "name3", 160, 0, self.__neighborhoods[j]))
-                self.__cells.append(Station(i + 5, "station", 200, 0))
-                self.__cells.append(Street(i + 6, "name5", 160, 0, self.__neighborhoods[j + 1]))
-                self.__cells.append(Street(i + 8, "name6", 140, 0, self.__neighborhoods[j + 1]))
-                self.__cells.append(Chance(i + 7, "Chance"))
-                self.__cells.append(Street(i + 9, "name7", 200, 0, self.__neighborhoods[j + 1]))
-                self.__cells.append(Cell(i + 10, ""))
+            self.__cells.append(Street(i + 1, "name1", 140, 0, self.__neighborhoods[j]))
+            self.__cells.append(Street(i + 3, "name2", 140, 0, self.__neighborhoods[j]))
+            self.__cells.append(Chance(i + 2, "Chance"))
+            self.__cells.append(Street(i + 4, "name3", 160, 0, self.__neighborhoods[j]))
+            self.__cells.append(Station(i + 5, "station", 200, 0))
+            self.__cells.append(Street(i + 6, "name5", 160, 0, self.__neighborhoods[j + 1]))
+            self.__cells.append(Street(i + 8, "name6", 140, 0, self.__neighborhoods[j + 1]))
+            self.__cells.append(Chance(i + 7, "Chance"))
+            self.__cells.append(Street(i + 9, "name7", 200, 0, self.__neighborhoods[j + 1]))
+            self.__cells.append(Cell(i + 10, ""))
+
+            j += 2
 
         self.__cells[10] = Cell(10, "Cursion")
         self.__cells[20] = Cell(20, "Free Park")
@@ -175,6 +188,9 @@ class Street(Ownership):
 
     def __eq__(self, other: Street):
         return self._name == other._name
+
+    def get_color(self) -> str:
+        return self.__neighborhood.get_color()
 
     def calculate_price(self) -> int:
         price_buildings = 0
