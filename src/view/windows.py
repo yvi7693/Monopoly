@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import tkinter
+from tkinter import PhotoImage
+
 from customtkinter import *
 from src.view.widgets import Button, ProgressBar
+from src.view.windows_lower import InteractionWindow
 
 
 class StartWindow(CTkFrame):
@@ -56,16 +59,29 @@ class PresentWindow(CTkFrame):
 
 class GameWindow(CTkFrame):
 
+    __game_field: CTkCanvas | None
+    __interaction_window: InteractionWindow
+
+    __logo: PhotoImage
+
     def __init__(self, master, width: int, height: int):
         super().__init__(master=master, height=height, width=width)
 
         self.__game_field = None
+        self.__interaction_window = InteractionWindow(self,337, 763)
+        self.__interaction_window.grid(row=0, column=1, sticky="nswe")
 
         self.__logo = tkinter.PhotoImage(file="logo.png")
 
-    def create_field(self, names_cells: list[str], colors: list[str]) -> None:
+    def add_listener_on_click_move(self, callback) -> None:
+        self.__interaction_window.add_listener_on_click_move(callback)
+
+    def update_widgets(self, id: int, balance: int) -> None:
+        self.__interaction_window.update_widgets(id, balance)
+
+    def create_game_field(self, names_cells: list[str], colors: list[str]) -> None:
         self.__game_field = CTkCanvas(master=self, width=763, height=763, bg = "#c7f4bd")
-        self.__game_field.pack(anchor="w")
+        self.__game_field.grid(row=0, column=0, sticky="w")
 
         self.__create_rectangles()
         self.__create_text(names_cells)

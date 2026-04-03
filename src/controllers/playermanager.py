@@ -13,14 +13,20 @@ class PlayerManager:
         self.__businessmen = []
         self.__bank = bank
 
-    def get_businessmen(self) -> list[Businessman]:
+        self.__queue = 0
 
-        businessmen = []
+    def get_current_businessman(self) -> Businessman:
 
-        for businessman in self.__businessmen:
-            businessmen.append(businessman.copy(businessman))
+        max_count_businessman = len(self.__businessmen)
 
-        return businessmen
+        current_businessman = self.__businessmen[self.__queue]
+
+        self.__queue += 1
+
+        if self.__queue >= max_count_businessman:
+            self.__queue = 0
+
+        return current_businessman
 
     def add_businessmen(self, businessmen_count: int) -> None:
 
@@ -58,7 +64,7 @@ class PlayerManager:
 
         if businessman is None:  raise AssertionError("Текущий предприниматель не найден")
 
-        businessman.delete_ownership(ownership)
+        businessman.add_ownership(ownership)
 
     def delete_ownership(self, ownership: Ownership, id: IdBusinessman) -> None:
 

@@ -130,7 +130,7 @@ class Chance(Cell):
 class Ownership(Cell, ABC):
     # Модель Собственности
 
-    _owner: IdBusinessman
+    _owner: IdBusinessman | None
     _price: int
     _rent: int
 
@@ -143,6 +143,9 @@ class Ownership(Cell, ABC):
         self._owner = None
         self._price = price
         self._rent = rent
+
+    def __eq__(self, other: Ownership):
+        return self._owner == other._owner and self._price == other._price and self._rent == other._rent
 
     @abstractmethod
     def calculate_price(self) -> int: raise NotImplemented()
@@ -187,7 +190,8 @@ class Street(Ownership):
         self.__builds = []
 
     def __eq__(self, other: Street):
-        return self._name == other._name
+        return super().__eq__(other) and self.__neighborhood == other.__neighborhood
+
 
     def get_color(self) -> str:
         return self.__neighborhood.get_color()

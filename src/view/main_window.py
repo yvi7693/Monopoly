@@ -37,10 +37,16 @@ class MainWindow(CTk):
     def show_game_window(self) -> None:
         self.__game_window.tkraise()
 
-    def create_game_field(self, names_cells: list[str], colors: list[str]):
-        self.__game_window.create_field(names_cells, colors)
+    def update_window(self, id: int, balance: int) -> None:
+        self.__game_window.update_widgets(id, balance)
 
+    def create_game_field(self, names_cells: list[str], colors: list[str]):
+        self.__game_window.create_game_field(names_cells, colors)
 
     def __get_start_window(self) -> StartWindow: return self.__start_window
 
+    def __get_game_window(self) -> GameWindow: return self.__game_window
+
     start_window = property(__get_start_window)
+    game_window = property(__get_game_window)
+

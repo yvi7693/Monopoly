@@ -11,7 +11,7 @@ class BankAccount:
         self.__id = id
         self.__balance = Bank.START_CAPITAL
 
-    def __get_id(self) -> IdBusinessman: return self.__id
+    def get_balance(self) -> int: return self.__balance
 
     def charge(self, money: int) -> None:
         if not isinstance(money, int):  raise TypeError()
@@ -30,6 +30,9 @@ class BankAccount:
 
         return self.__balance >= money
 
+    def __get_id(self) -> IdBusinessman:
+        return self.__id
+
     id = property(__get_id)
 
 
@@ -44,6 +47,12 @@ class Bank:
         if not accounts is None and not isinstance(accounts, list):  raise TypeError()
 
         self.__accounts = accounts or []
+
+    def get_balance(self, id: IdBusinessman) -> int:
+
+        account = self.__search_account(id)
+
+        return account.get_balance()
 
     def register_account(self, id: IdBusinessman) -> None:
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")

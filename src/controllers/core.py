@@ -6,12 +6,15 @@ from src.controllers.building import Builder
 from src.controllers.finance import Bank
 from src.controllers.tokenplacer import TokenPlacer
 from src.controllers.warden import Warden
+from src.models.businesman import Businessman
 
 from src.models.dice import Dice
 from src.models.gameboard import Board, Jail
 
 
 class Game:
+
+    __current_player: Businessman | None
 
     def __init__(self):
         self.__bank = Bank()
@@ -26,31 +29,28 @@ class Game:
         self.__bankrupt_manager = BankruptManager(self.__player_manager)
         self.__dice = Dice()
 
+        self.__current_player = None
+        self.__current_balance = None
+
     def set_up(self, count_businessmen: int):
         self.__player_manager.add_businessmen(count_businessmen)
 
         self.__game_board.create_neighborhood()
         self.__game_board.create_cells()
 
-    def mainloop(self):
+    def make_move(self) -> None:
 
-        is_play = True
+        self.__current_player = self.__player_manager.get_current_businessman()
+        self.__current_balance = self.__bank.get_balance(self.__current_player.id)
 
-        while is_play:
+        points = self.__dice.throw()
+        self.__game_rules.make_move(self.__current_player, points)
 
-            businessmen = self.__player_manager.get_businessmen()
+    def get_current_player(self) -> Businessman:
+        return self.__current_player
 
-            for i in range(0, len(businessmen)):
-
-                points = self.__dice.throw()
-
-                self.__game_rules.make_move(businessmen[i], points)
-
-                self.__bankrupt_manager.identify_bankrupt(businessmen[i])
-
-            if len(businessmen) == 1:
-
-                is_play = False
+    def get_current_balance(self) -> int:
+        return self.__current_balance
 
     def __get_board(self) -> Board:
         return self.__game_board
