@@ -1,5 +1,6 @@
 from customtkinter import CTk
 
+from src.constant_view import *
 from src.view.windows import StartWindow, PresentWindow, GameWindow
 
 
@@ -18,9 +19,9 @@ class MainWindow(CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.__start_window = StartWindow(self, 1100, 763, "#D8BFD8")
-        self.__present_window = PresentWindow(self, 1100, 763, "black")
-        self.__game_window = GameWindow(self, 1100, 763)
+        self.__start_window = StartWindow(self, WIDTH, HEIGHT, START_BG)
+        self.__present_window = PresentWindow(self, WIDTH, HEIGHT, PRESENT_BG)
+        self.__game_window = GameWindow(self, WIDTH, HEIGHT)
 
         self.__start_window.grid(row=0, column=0, sticky="nsew")
         self.__present_window.grid(row=0, column=0, sticky="nsew")

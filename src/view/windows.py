@@ -5,6 +5,8 @@ import tkinter
 from tkinter import PhotoImage
 
 from customtkinter import *
+
+from src.constant_view import *
 from src.view.widgets import Button, ProgressBar
 from src.view.windows_lower import InteractionWindow, CoordCells
 
@@ -29,28 +31,28 @@ class StartWindow(CTkFrame):
         self.__start_btn.add_listener(callback)
 
     def start_loading(self) -> None:
-        self.__progressbar = ProgressBar(self, 800, "#DC143C")
+        self.__progressbar = ProgressBar(self, PROGRESS_WIDTH, SYSTEM_FG)
         self.__progressbar.pack(pady=(100,0))
         self.__progressbar.start()
 
     def __create_widgets(self) -> None:
-        my_image = CTkImage(light_image=Image.open("images/LogoStart.png"),
-                            dark_image=Image.open("images/LogoStart.png"),
+        my_image = CTkImage(light_image=Image.open(PATH_LOGO_START),
+                            dark_image=Image.open(PATH_LOGO_START),
                             size=(500, 100))
 
         image_label = CTkLabel(self, image=my_image, text="")
         image_label.pack(pady=(100,0))
 
-        radio_frame = CTkFrame(self, fg_color="#e7d5e7")
+        radio_frame = CTkFrame(self, fg_color = RADIO_BG)
         radio_frame.pack(pady=(100,0))
 
         self.radio_var = tkinter.IntVar(value=2)
 
-        players_2 = CTkRadioButton(radio_frame, text="2 Players", variable=self.radio_var, value=2, fg_color="#DC143C", hover_color = "#8B0000")
-        players_3 = CTkRadioButton(radio_frame, text="3 Players", variable=self.radio_var, value=3, fg_color="#DC143C", hover_color = "#8B0000")
-        players_4 = CTkRadioButton(radio_frame, text="4 Players", variable=self.radio_var, value=4, fg_color="#DC143C", hover_color = "#8B0000")
-        players_5 = CTkRadioButton(radio_frame, text="5 Players", variable=self.radio_var, value=5, fg_color="#DC143C", hover_color = "#8B0000")
-        players_6 = CTkRadioButton(radio_frame, text="6 Players", variable=self.radio_var, value=6, fg_color="#DC143C", hover_color = "#8B0000")
+        players_2 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_2, variable=self.radio_var, value=2, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_3 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_3, variable=self.radio_var, value=3, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_4 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_4, variable=self.radio_var, value=4, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_5 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_5, variable=self.radio_var, value=5, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_6 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_6, variable=self.radio_var, value=6, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
 
         players_2.pack(side = "left", pady = 20)
         players_3.pack(side = "left", pady = 20)
@@ -58,7 +60,7 @@ class StartWindow(CTkFrame):
         players_5.pack(side = "left", pady = 20)
         players_6.pack(side = "left", pady = 20)
 
-        self.__start_btn = Button(self, "Start", )
+        self.__start_btn = Button(self, START_BUTTON_TEXT, )
         self.__start_btn.pack(pady = 100, anchor = "center", side="top")
 
 
@@ -120,15 +122,13 @@ class GameWindow(CTkFrame):
         super().__init__(master=master, height=height, width=width)
 
         self.__game_field = None
-        self.__interaction_window = InteractionWindow(self,337, 763)
+        self.__interaction_window = InteractionWindow(self,WIDTH_INTERACTIVE_WINDOW, HEIGHT)
         self.__interaction_window.grid(row=0, column=1, sticky="nswe")
 
         self.__tokens = []
         self.__tokens_image = []
 
-        self.__logo = tkinter.PhotoImage(file = "images/logo.png")
-        self.__token1 = tkinter.PhotoImage(file = "images/token1.png")
-
+        self.__logo = tkinter.PhotoImage(file = PATH_LOGO_GAME)
 
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
@@ -137,7 +137,7 @@ class GameWindow(CTkFrame):
         self.__interaction_window.update_widgets(id, balance, points_1, points_2)
 
     def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int) -> None:
-        self.__game_field = tkinter.Canvas(master=self, width=763, height=763, bg = "#c7f4bd")
+        self.__game_field = tkinter.Canvas(master=self, width=HEIGHT, height=HEIGHT, bg = FIELD_COLOR)
         self.__game_field.grid(row=0, column=0, sticky="w")
 
         self.__create_rectangles()
