@@ -12,6 +12,14 @@ class Businessman:
         self.__ownerships = []
         self.__position = Board.START
 
+    def get_ownerships_names(self):
+        names_ownership = ""
+
+        for ownership in self.__ownerships:
+            names_ownership += f"{ownership.get_name()}\n"
+
+        return names_ownership
+
     def get_position(self) -> int: return self.__position
 
     def set_position(self, points: int) -> None:

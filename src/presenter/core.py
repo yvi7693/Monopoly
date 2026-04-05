@@ -18,13 +18,14 @@ class GamePresenter:
         self.__game_view.loop()
 
     def run(self) -> None:
-        count_players = self.__game_view.start_window.radio_var.get()
-        names_cells = self.__game.board.get_name_cells()
-        colors = self.__game.board.get_colors()
+        count_players = self.__game_view.start_window.count_players.get()
 
         self.__game.set_up(count_players)
 
-        self.__game_view.create_game_field(names_cells, colors, count_players)
+        name_cells = self.__game.board.get_name_cells()
+        colors = self.__game.board.get_colors()
+
+        self.__game_view.create_game_field(name_cells, colors, count_players)
 
         self.__game_view.start_window.start_loading()
 
@@ -37,8 +38,9 @@ class GamePresenter:
         balance = self.__game.get_current_balance()
         position = self.__game.get_current_player().get_position()
         points_1, points_2 = self.__game.get_current_points()
+        ownership = self.__game.get_current_player().get_ownerships_names()
 
-        self.__game_view.update_window(id , balance, position, points_1, points_2)
+        self.__game_view.update_window(id , balance, position, points_1, points_2, ownership)
 
 
 

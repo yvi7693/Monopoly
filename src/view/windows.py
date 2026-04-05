@@ -23,7 +23,7 @@ class StartWindow(CTkFrame):
 
         self.__progressbar = None
         self.__start_btn = None
-        self.radio_var = None
+        self.__count_players = None
 
         self.__create_widgets()
 
@@ -46,13 +46,13 @@ class StartWindow(CTkFrame):
         radio_frame = CTkFrame(self, fg_color = RADIO_BG)
         radio_frame.pack(pady=(100,0))
 
-        self.radio_var = tkinter.IntVar(value=2)
+        self.__count_players = tkinter.IntVar(value=2)
 
-        players_2 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_2, variable=self.radio_var, value=2, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_3 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_3, variable=self.radio_var, value=3, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_4 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_4, variable=self.radio_var, value=4, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_5 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_5, variable=self.radio_var, value=5, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_6 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_6, variable=self.radio_var, value=6, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_2 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_2, variable=self.__count_players, value=2, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_3 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_3, variable=self.__count_players, value=3, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_4 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_4, variable=self.__count_players, value=4, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_5 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_5, variable=self.__count_players, value=5, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_6 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_6, variable=self.__count_players, value=6, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
 
         players_2.pack(side = "left", pady = 20)
         players_3.pack(side = "left", pady = 20)
@@ -62,6 +62,10 @@ class StartWindow(CTkFrame):
 
         self.__start_btn = Button(self, START_BUTTON_TEXT, )
         self.__start_btn.pack(pady = 100, anchor = "center", side="top")
+
+    def __get_count_players(self) -> IntVar: return self.__count_players
+
+    count_players = property(__get_count_players)
 
 
 class PresentWindow(CTkFrame):
@@ -133,8 +137,8 @@ class GameWindow(CTkFrame):
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
 
-    def update_widgets(self, id: int, balance: int, points_1: int, points_2: int) -> None:
-        self.__interaction_window.update_widgets(id, balance, points_1, points_2)
+    def update_widgets(self, id: int, balance: int, points_1: int, points_2: int, ownership: str) -> None:
+        self.__interaction_window.update_widgets(id, balance, points_1, points_2, ownership)
 
     def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int) -> None:
         self.__game_field = tkinter.Canvas(master=self, width=HEIGHT, height=HEIGHT, bg = FIELD_COLOR)

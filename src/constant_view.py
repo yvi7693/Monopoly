@@ -24,3 +24,10 @@ RADIO_BUTTON_TEXT_5 = "5 Players"
 RADIO_BUTTON_TEXT_6 = "6 Players"
 
 START_BUTTON_TEXT = "Start"
+MOVE_BUTTON_TEXT = "MOVE"
+
+OWNERSHIP_TEXT = "Ownerships:"
+
+FONT = "Arial"
+
+

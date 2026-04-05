@@ -1,6 +1,6 @@
 import time
 
-from customtkinter import CTkButton, CTkProgressBar
+from customtkinter import CTkButton, CTkProgressBar, CTkScrollableFrame, CTkLabel
 
 
 class Button(CTkButton):
@@ -36,3 +36,14 @@ class ProgressBar(CTkProgressBar):
             self.set(self.__progress)
 
             self.update()
+
+class Ownerships(CTkScrollableFrame):
+    
+    def __init__(self, master, width: int, height: int):
+        super().__init__(master=master, width=width, height=height)
+
+        self.__label = CTkLabel(self)
+        self.__label.grid(row=0, column=0, padx=20)
+
+    def update_text(self, text: str):
+        self.__label.configure(text=text)

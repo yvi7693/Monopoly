@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from customtkinter import *
 from PIL import Image
 
-from src.view.widgets import Button
+from src.constant_view import OWNERSHIP_TEXT, FONT, MOVE_BUTTON_TEXT, HEIGHT, WIDTH
+from src.view.widgets import Button, Ownerships
 
 
 class InteractionWindow(CTkFrame):
@@ -14,14 +15,17 @@ class InteractionWindow(CTkFrame):
         self.grid_columnconfigure(0, weight=0, minsize=163)
         self.grid_columnconfigure(1, weight=0, minsize=163)
         self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(3, minsize=100)
 
         self.__dices = []
 
         self.__create_widgets()
 
-    def update_widgets(self, id: int, balance: int, points_1: int, points_2: int) -> None:
+    def update_widgets(self, id: int, balance: int, points_1: int, points_2: int, ownerships: str) -> None:
         self.__player.configure(text = f"Player №{id+1}")
         self.__balance.configure(text = f"{balance} 💰")
+
+        self.__ownerships.update_text(text=f"{ownerships}")
 
         self.__dice_1.configure(image = self.__dices[points_1 - 1])
         self.__dice_2.configure(image=self.__dices[points_2 - 1])
@@ -30,7 +34,7 @@ class InteractionWindow(CTkFrame):
             self.__move_btn.add_listener(callback)
 
     def __create_widgets(self) -> None:
-        self.__player = CTkLabel(master = self, text=f"Player №", fg_color="transparent", text_color="black", font=("Arial", 20), pady = 20)
+        self.__player = CTkLabel(master = self, text=f"Player №", fg_color="transparent", text_color="black", font=(FONT, 20), pady = 20)
         self.__player.grid(row=0, column=0, columnspan=2)
 
         self.__label_balance = CTkLabel(master=self, text="Balance:", fg_color="transparent", text_color="black")
@@ -39,14 +43,20 @@ class InteractionWindow(CTkFrame):
         self.__balance = CTkLabel(master=self, text="💰", fg_color="transparent", text_color="black")
         self.__balance.grid(row=1, column=1, padx=0, sticky="w")
 
+        self.__ownership_label = CTkLabel(master=self, text=OWNERSHIP_TEXT, fg_color="transparent", text_color="black",
+                                 font=(FONT, 20), pady=0)
+        self.__ownership_label.grid(row=2, column=0, columnspan=2)
+
+        self.__ownerships = Ownerships(self, 100,100)
+        self.__ownerships.grid(row=3, column=0, columnspan=2, sticky="nswe", pady=20)
+
         self.__create_dice()
 
-        self.__dice_1.grid(row = 2, column = 0, pady=(400,0), sticky = "e")
-        self.__dice_2.grid(row=2, column=1, pady=(400, 0), sticky = "w")
+        self.__dice_1.grid(row = 4, column = 0, pady=(100,0), sticky = "e")
+        self.__dice_2.grid(row=4, column=1, pady=(150, 0), sticky = "w")
 
-
-        self.__move_btn = Button(self, "MOVE")
-        self.__move_btn.grid(row = 3, column =0, pady=(100,0), columnspan=2)
+        self.__move_btn = Button(self, MOVE_BUTTON_TEXT)
+        self.__move_btn.grid(row = 5, column =0, pady=(100,0), columnspan=2)
 
     def __create_dice(self) -> None:
 
