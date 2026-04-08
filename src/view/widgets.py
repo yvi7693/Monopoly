@@ -2,10 +2,12 @@ import time
 
 from customtkinter import CTkButton, CTkProgressBar, CTkScrollableFrame, CTkLabel
 
+from src.constant_view import EMPTY_TEXT, SYSTEM_FG, SYSTEM_HOVER
+
 
 class Button(CTkButton):
 
-    def __init__(self, master, text, callback=None, fg_color="#DC143C", hover_color = "#8B0000"):
+    def __init__(self, master, text, callback=None, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER):
         super().__init__(master=master, text=text, command = self.__handler_click, fg_color = fg_color, hover_color = hover_color)
 
         self.__callback = callback
@@ -37,12 +39,12 @@ class ProgressBar(CTkProgressBar):
 
             self.update()
 
-class Ownerships(CTkScrollableFrame):
+class ScrollableOwnerships(CTkScrollableFrame):
     
     def __init__(self, master, width: int, height: int):
         super().__init__(master=master, width=width, height=height)
 
-        self.__label = CTkLabel(self)
+        self.__label = CTkLabel(self, text = EMPTY_TEXT)
         self.__label.grid(row=0, column=0, padx=20)
 
     def update_text(self, text: str):

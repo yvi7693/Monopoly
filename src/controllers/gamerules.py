@@ -2,6 +2,7 @@ from src.controllers.finance import Bank
 from src.controllers.tokenplacer import TokenPlacer
 from src.models.businesman import Businessman
 from src.models.gameboard import Board, Street, Chance, Cell, Jail, Station
+from src.models.typescell import CurrentStatusOwner
 
 
 class GameRules:
@@ -19,7 +20,7 @@ class GameRules:
         self.__bank = bank
         self.__token_placer = token_placer
 
-    def make_move(self, businessman: Businessman, points: int):
+    def make_move(self, businessman: Businessman, points: int, buying_permission: bool | None, purchased: CurrentStatusOwner):
 
         self.__move_token(points, businessman)
 
@@ -27,15 +28,15 @@ class GameRules:
 
         cell = self.__board.get_cell(new_position)
 
-        self.__processing_cell(cell, businessman)
+        self.__processing_cell(cell, businessman, buying_permission, purchased)
 
-    def __processing_cell(self, cell: Cell, businessman: Businessman) -> None:
+    def __processing_cell(self, cell: Cell, businessman: Businessman, buying_permission: bool | None, purchased: CurrentStatusOwner) -> None:
 
         if isinstance(cell, Street):
-            self.__token_placer.put_on_ownership(cell, businessman.id)
+            self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission, purchased)
 
         elif isinstance(cell, Station):
-            self.__token_placer.put_on_ownership(cell, businessman.id)
+            self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission, purchased)
 
         elif isinstance(cell, Chance):
             self.__token_placer.put_on_chance(Chance.CASH, Chance.try_luck(), businessman.id)

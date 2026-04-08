@@ -9,6 +9,7 @@ from customtkinter import *
 from src.constant_view import *
 from src.view.widgets import Button, ProgressBar
 from src.view.windows_lower import InteractionWindow, CoordCells
+from tkinter.messagebox import showinfo, askyesno
 
 from PIL import Image
 
@@ -17,6 +18,7 @@ class StartWindow(CTkFrame):
 
     __start_btn: Button | None
     __progressbar: ProgressBar | None
+    __count_players: IntVar | None
 
     def __init__(self, master, width: int, height: int, bg_color):
         super().__init__(master = master, height = height, width = width, fg_color=bg_color)
@@ -36,12 +38,12 @@ class StartWindow(CTkFrame):
         self.__progressbar.start()
 
     def __create_widgets(self) -> None:
-        my_image = CTkImage(light_image=Image.open(PATH_LOGO_START),
+        logo = CTkImage(light_image=Image.open(PATH_LOGO_START),
                             dark_image=Image.open(PATH_LOGO_START),
                             size=(500, 100))
 
-        image_label = CTkLabel(self, image=my_image, text="")
-        image_label.pack(pady=(100,0))
+        logo_label = CTkLabel(self, image=logo, text="")
+        logo_label.pack(pady=(100,0))
 
         radio_frame = CTkFrame(self, fg_color = RADIO_BG)
         radio_frame.pack(pady=(100,0))
@@ -70,27 +72,33 @@ class StartWindow(CTkFrame):
 
 class PresentWindow(CTkFrame):
 
-    __label: CTkLabel | None
+    __label_name: CTkLabel
+    __label_present: CTkLabel
+
     __step: int
+    __next_callback: None
 
     def __init__(self, master,  width: int, height: int, fg_color):
         super().__init__(master = master, width = width, height = height, fg_color = fg_color)
 
-        self.__label_name = CTkLabel(self, text = "Yaroslav Volkov", text_color="#000000", font=("Impact", 24))
-        self.__label_name.place(relx=0.5, rely=0.5, anchor="center")
-
-        self.__label = CTkLabel(self, text="PRESENT", text_color="#000000", font=("Impact", 24))
-        self.__label.place(relx=0.5, rely=0.55, anchor="center")
-
         self.__step = 0
-
         self.__callback = None
+
+        self.__create_widgets()
 
     def start_animate(self, callback) -> None:
         self.__step = 0
         self.__display_text()
 
         self.__callback = callback
+
+    def __create_widgets(self) -> None:
+
+        self.__label_name = CTkLabel(self, text=NAME_PRESENT, text_color=START_COLOR, font=(FONT_PRESENT, FONT_SIZE_PRESENT))
+        self.__label_name.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.__label_present = CTkLabel(self, text=TEXT_PRESENT, text_color=START_COLOR, font=(FONT_PRESENT, FONT_SIZE_PRESENT))
+        self.__label_present.place(relx=0.5, rely=0.55, anchor="center")
 
     def __display_text(self) -> None:
         max_step = 150
@@ -99,7 +107,7 @@ class PresentWindow(CTkFrame):
 
         color = f"#{value:02x}{value:02x}{value:02x}"
 
-        self.__label.configure(text_color=color)
+        self.__label_present.configure(text_color=color)
         self.__label_name.configure(text_color=color)
 
         self.__step += 1
@@ -116,23 +124,25 @@ class PresentWindow(CTkFrame):
 class GameWindow(CTkFrame):
 
     __game_field: tkinter.Canvas | None
-    __interaction_window: InteractionWindow
+    __interaction_window: InteractionWindow | None
 
     __logo: PhotoImage
-
-
 
     def __init__(self, master, width: int, height: int):
         super().__init__(master=master, height=height, width=width)
 
         self.__game_field = None
-        self.__interaction_window = InteractionWindow(self,WIDTH_INTERACTIVE_WINDOW, HEIGHT)
-        self.__interaction_window.grid(row=0, column=1, sticky="nswe")
+        self.__interaction_window = None
 
         self.__tokens = []
         self.__tokens_image = []
 
         self.__logo = tkinter.PhotoImage(file = PATH_LOGO_GAME)
+
+        self.__create_interaction_window()
+
+
+
 
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
@@ -164,6 +174,10 @@ class GameWindow(CTkFrame):
 
         elif position > 30 and position <= 40:
             self.__game_field.coords(self.__tokens[numer_token], 50, CoordCells.RIGHT_Y[position - 30])
+
+    def __create_interaction_window(self) -> None:
+        self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
+        self.__interaction_window.grid(row=0, column=1, sticky="nswe")
 
     def __create_rectangles(self) -> None:
 

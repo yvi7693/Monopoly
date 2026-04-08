@@ -5,10 +5,6 @@ WIDTH_INTERACTIVE_WINDOW = 337
 
 PROGRESS_WIDTH = 800
 
-START_BG = "#D8BFD8"
-PRESENT_BG = "black"
-RADIO_BG = "#e7d5e7"
-
 SYSTEM_FG = "#DC143C"
 SYSTEM_HOVER = "#8B0000"
 
@@ -29,5 +25,39 @@ MOVE_BUTTON_TEXT = "MOVE"
 OWNERSHIP_TEXT = "Ownerships:"
 
 FONT = "Arial"
+
+# PresentWindow
+NAME_PRESENT = "Yaroslav Volkov"
+TEXT_PRESENT = "PRESENT"
+START_COLOR = "#000000"
+FONT_PRESENT = "Impact"
+FONT_SIZE_PRESENT = 24
+
+# MainWindow
+START_BG = "#D8BFD8"
+PRESENT_BG = "black"
+RADIO_BG = "#e7d5e7"
+
+# InterationWindow
+
+PLAYER_LABEL = "Player №"
+BALANCE_LABEL = "Balance:"
+MONEY_EMOJI = "💰"
+TEXT_COLOR = "black"
+FONT_SIZE_INTER = 20
+
+WIDTH_OWNERSHIP = 100
+HEIGHT_OWNERSHIP = 100
+
+PATH_DICE1 = "images/1.png"
+PATH_DICE2 = "images/2.png"
+PATH_DICE3 = "images/3.png"
+PATH_DICE4 = "images/4.png"
+PATH_DICE5 = "images/5.png"
+PATH_DICE6 = "images/6.png"
+
+SIZE_DICE = 70
+
+EMPTY_TEXT = ""
 
 

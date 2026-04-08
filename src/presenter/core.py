@@ -2,6 +2,7 @@ from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
 from src.view.main_window import MainWindow
 
+
 class GamePresenter:
 
     __game: Game
@@ -9,7 +10,6 @@ class GamePresenter:
 
     def __init__(self):
         self.__game = Game()
-
         self.__game_view = MainWindow(WIDTH, HEIGHT)
 
         self.__game_view.start_window.add_listener_on_click_start(self.run)
@@ -32,15 +32,20 @@ class GamePresenter:
         self.__game_view.show_present_window()
 
     def make_move(self) -> None:
+        self.__game.update_players_data()
+
         self.__game.make_move()
 
+        self.__update_info()
+
+    def __update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()
         balance = self.__game.get_current_balance()
         position = self.__game.get_current_player().get_position()
         points_1, points_2 = self.__game.get_current_points()
         ownership = self.__game.get_current_player().get_ownerships_names()
 
-        self.__game_view.update_window(id , balance, position, points_1, points_2, ownership)
+        self.__game_view.update_window(id, balance, position, points_1, points_2, ownership)
 
 
 

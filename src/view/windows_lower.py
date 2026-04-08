@@ -3,11 +3,17 @@ from dataclasses import dataclass
 from customtkinter import *
 from PIL import Image
 
-from src.constant_view import OWNERSHIP_TEXT, FONT, MOVE_BUTTON_TEXT, HEIGHT, WIDTH
-from src.view.widgets import Button, Ownerships
+from src.constant_view import *
+from src.view.widgets import Button, ScrollableOwnerships
 
 
 class InteractionWindow(CTkFrame):
+
+    __label_player: CTkLabel
+    __label_balance: CTkLabel
+    __balance: CTkLabel
+    __label_ownerships: CTkLabel
+    __scroll_ownerships: ScrollableOwnerships
 
     def __init__(self, master, width: int, height: int):
         super().__init__(master = master, width = width, height = height)
@@ -15,17 +21,16 @@ class InteractionWindow(CTkFrame):
         self.grid_columnconfigure(0, weight=0, minsize=163)
         self.grid_columnconfigure(1, weight=0, minsize=163)
         self.grid_rowconfigure(0, weight=0)
-        self.grid_rowconfigure(3, minsize=100)
 
         self.__dices = []
 
         self.__create_widgets()
 
     def update_widgets(self, id: int, balance: int, points_1: int, points_2: int, ownerships: str) -> None:
-        self.__player.configure(text = f"Player №{id+1}")
+        self.__label_player.configure(text = f"{PLAYER_LABEL}{id+1}")
         self.__balance.configure(text = f"{balance} 💰")
 
-        self.__ownerships.update_text(text=f"{ownerships}")
+        self.__scroll_ownerships.update_text(text=f"{ownerships}")
 
         self.__dice_1.configure(image = self.__dices[points_1 - 1])
         self.__dice_2.configure(image=self.__dices[points_2 - 1])
@@ -34,21 +39,21 @@ class InteractionWindow(CTkFrame):
             self.__move_btn.add_listener(callback)
 
     def __create_widgets(self) -> None:
-        self.__player = CTkLabel(master = self, text=f"Player №", fg_color="transparent", text_color="black", font=(FONT, 20), pady = 20)
-        self.__player.grid(row=0, column=0, columnspan=2)
+        self.__label_player = CTkLabel(master = self, text=f"{PLAYER_LABEL}", fg_color="transparent", text_color=TEXT_COLOR, font=(FONT, FONT_SIZE_INTER), pady = 20)
+        self.__label_player.grid(row=0, column=0, columnspan=2)
 
-        self.__label_balance = CTkLabel(master=self, text="Balance:", fg_color="transparent", text_color="black")
+        self.__label_balance = CTkLabel(master=self, text=BALANCE_LABEL, fg_color="transparent", text_color=TEXT_COLOR)
         self.__label_balance.grid(row=1, column=0, padx=5, sticky="e")
 
-        self.__balance = CTkLabel(master=self, text="💰", fg_color="transparent", text_color="black")
+        self.__balance = CTkLabel(master=self, text=MONEY_EMOJI, fg_color="transparent", text_color=TEXT_COLOR)
         self.__balance.grid(row=1, column=1, padx=0, sticky="w")
 
-        self.__ownership_label = CTkLabel(master=self, text=OWNERSHIP_TEXT, fg_color="transparent", text_color="black",
-                                 font=(FONT, 20), pady=0)
-        self.__ownership_label.grid(row=2, column=0, columnspan=2)
+        self.__label_ownership = CTkLabel(master=self, text=OWNERSHIP_TEXT, fg_color="transparent", text_color=TEXT_COLOR,
+                                 font=(FONT, FONT_SIZE_INTER), pady=0)
+        self.__label_ownership.grid(row=2, column=0, columnspan=2)
 
-        self.__ownerships = Ownerships(self, 100,100)
-        self.__ownerships.grid(row=3, column=0, columnspan=2, sticky="nswe", pady=20)
+        self.__scroll_ownerships = ScrollableOwnerships(self,width=WIDTH_OWNERSHIP,height=HEIGHT_OWNERSHIP)
+        self.__scroll_ownerships.grid(row=3, column=0, columnspan=2, sticky="nswe", pady=20)
 
         self.__create_dice()
 
@@ -60,21 +65,26 @@ class InteractionWindow(CTkFrame):
 
     def __create_dice(self) -> None:
 
-        self.__dices.append(CTkImage(light_image=Image.open("images/1.png"), dark_image=Image.open("images/1.png"),
-                                  size=(70, 70)))
-        self.__dices.append(CTkImage(light_image=Image.open("images/2.png"), dark_image=Image.open("images/2.png"),
-                                   size=(70, 70)))
-        self.__dices.append(CTkImage(light_image=Image.open("images/3.png"), dark_image=Image.open("images/3.png"),
-                                   size=(70, 70)))
-        self.__dices.append(CTkImage(light_image=Image.open("images/4.png"), dark_image=Image.open("images/4.png"),
-                                   size=(70, 70)))
-        self.__dices.append(CTkImage(light_image=Image.open("images/5.png"), dark_image=Image.open("images/5.png"),
-                                   size=(70, 70)))
-        self.__dices.append(CTkImage(light_image=Image.open("images/6.png"), dark_image=Image.open("images/6.png"),
-                                   size=(70, 70)))
+        self.__dices.append(CTkImage(light_image=Image.open(PATH_DICE1), dark_image=Image.open(PATH_DICE1),
+                                  size=(SIZE_DICE, SIZE_DICE)))
 
-        self.__dice_1 = CTkLabel(self, text="", width=70, height=70)
-        self.__dice_2 = CTkLabel(self, text="", width=70, height=70)
+        self.__dices.append(CTkImage(light_image=Image.open(PATH_DICE2), dark_image=Image.open(PATH_DICE2),
+                                   size=(SIZE_DICE, SIZE_DICE)))
+
+        self.__dices.append(CTkImage(light_image=Image.open(PATH_DICE3), dark_image=Image.open(PATH_DICE3),
+                                   size=(SIZE_DICE, SIZE_DICE)))
+
+        self.__dices.append(CTkImage(light_image=Image.open(PATH_DICE4), dark_image=Image.open(PATH_DICE4),
+                                   size=(SIZE_DICE, SIZE_DICE)))
+
+        self.__dices.append(CTkImage(light_image=Image.open(PATH_DICE5), dark_image=Image.open(PATH_DICE5),
+                                   size=(SIZE_DICE, SIZE_DICE)))
+
+        self.__dices.append(CTkImage(light_image=Image.open(PATH_DICE6), dark_image=Image.open(PATH_DICE6),
+                                   size=(SIZE_DICE, SIZE_DICE)))
+
+        self.__dice_1 = CTkLabel(self, text="", width=SIZE_DICE, height=SIZE_DICE)
+        self.__dice_2 = CTkLabel(self, text="", width=SIZE_DICE, height=SIZE_DICE)
 
 
 @dataclass
