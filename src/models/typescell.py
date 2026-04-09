@@ -80,6 +80,9 @@ class CurrentStatusOwner:
 
         self.__status = new_status
 
+    def get_status(self) -> Literal[StatusOwner.BOUGHT, StatusOwner.NOT_MONEY, StatusOwner.NOT_WISH, StatusOwner.PAID_RENT] | None:
+        return self.__status
+
 class TypeMessage(Enum):
     INFO = 0
     ASK = 1

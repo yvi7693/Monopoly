@@ -1,6 +1,10 @@
+from tkinter.messagebox import askyesno
+
 from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
+from src.models.typescell import StatusOwner
 from src.view.main_window import MainWindow
+from src.view.message import MessageDropper
 
 
 class GamePresenter:
@@ -32,9 +36,29 @@ class GamePresenter:
         self.__game_view.show_present_window()
 
     def make_move(self) -> None:
-        self.__game.update_players_data()
-
         self.__game.make_move()
+
+        buying_permission = None
+
+        if self.__game.board.is_ownerless(self.__game.get_current_cell()):
+            buying_permission = MessageDropper.drop_message_ask(str(self.__game.get_current_cell()))
+
+        elif not self.__game.board.is_free_parking(self.__game.get_current_cell()):
+            MessageDropper.drop_message_info(str(self.__game.get_current_cell()))
+
+        self.__game.processing_move(buying_permission)
+
+
+        status = self.__game.get_current_status_owner()
+
+        if status == StatusOwner.NOT_MONEY:
+            MessageDropper.drop_message_info("Не достаточно средств")
+
+
+
+
+
+
 
         self.__update_info()
 

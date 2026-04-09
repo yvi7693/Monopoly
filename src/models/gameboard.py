@@ -50,30 +50,47 @@ class Board:
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 0))
 
     def create_cells(self) -> None:
+        companies = ['MAX', 'VK', 'RU Tube', 'Amazon', 'Google', 'Meta', 'Tesla', 'Intel', 'AMD', 'Oracle', 'IBM', 'Apple', 'Yandex', 'Nike', 'Sber', 'Tinkoff', 'Ozon', 'Avito', '1C', 'Kaspersky', 'ABBYY', 'Nexign', 'Naumen', 'Drom']
         self.__cells.clear()
 
-        self.__cells.append(Cell(0, "Start"))
+        self.__cells.append(FreeParking(0, "Start"))
 
         j = 0
+        k = 0
 
         for i in range(0, 40, 10):
 
-            self.__cells.append(Street(i + 1, "name1", 140, 0, self.__neighborhoods[j]))
-            self.__cells.append(Street(i + 3, "name2", 140, 0, self.__neighborhoods[j]))
+            self.__cells.append(Street(i + 1, companies[k], 140, 50, self.__neighborhoods[j]))
+            self.__cells.append(Street(i + 3, companies[k+1], 140, 70, self.__neighborhoods[j]))
             self.__cells.append(Chance(i + 2, "Chance"))
-            self.__cells.append(Street(i + 4, "name3", 160, 0, self.__neighborhoods[j]))
-            self.__cells.append(Station(i + 5, "station", 200, 0))
-            self.__cells.append(Street(i + 6, "name5", 160, 0, self.__neighborhoods[j + 1]))
-            self.__cells.append(Street(i + 8, "name6", 140, 0, self.__neighborhoods[j + 1]))
+            self.__cells.append(Street(i + 4, companies[k+2], 160, 40, self.__neighborhoods[j]))
+            self.__cells.append(Station(i + 5, "Station", 200, 30))
+            self.__cells.append(Street(i + 6, companies[k+3], 160, 60, self.__neighborhoods[j + 1]))
+            self.__cells.append(Street(i + 8, companies[k+4], 140, 50, self.__neighborhoods[j + 1]))
             self.__cells.append(Chance(i + 7, "Chance"))
-            self.__cells.append(Street(i + 9, "name7", 200, 0, self.__neighborhoods[j + 1]))
-            self.__cells.append(Cell(i + 10, ""))
+            self.__cells.append(Street(i + 9, companies[k+5], 200, 70, self.__neighborhoods[j + 1]))
+            self.__cells.append(FreeParking(i + 10, ""))
 
             j += 2
+            k += 6
 
-        self.__cells[10] = Cell(10, "Cursion")
-        self.__cells[20] = Cell(20, "Free Park")
-        self.__cells[30] = Cell(30, "Jail")
+        self.__cells[10] = FreeParking(10, "Cursion")
+        self.__cells[20] = FreeParking(20, "Free Park")
+        self.__cells[30] = Jail(30, "Jail")
+
+    @staticmethod
+    def is_free_parking(cell: Cell) -> bool:
+        if isinstance(cell, FreeParking):
+            return True
+
+        return False
+
+    @staticmethod
+    def is_ownerless(cell: Cell) -> bool:
+        if isinstance(cell, Ownership) and not cell.has_owner():
+            return True
+
+        return False
 
     @staticmethod
     def is_passed_go(position: int, points: int) -> bool:
@@ -82,7 +99,7 @@ class Board:
         return False
 
 
-class Cell:
+class Cell(ABC):
 
     _x: int
     _name: str
@@ -97,33 +114,44 @@ class Cell:
     def get_name(self) -> str:
         return self._name
 
-
-class Chance(Cell):
-
-    CASH = 30
+class FreeParking(Cell):
 
     def __init__(self, x: int, name: str):
         super().__init__(x, name)
 
-    @staticmethod
-    def try_luck() -> ChanceResultTypes:  # испытать удачу
 
-        result = Chance.__solve_chance()
+class Chance(Cell):
 
-        if result == ChanceResultTypes.POSITIVE:
+    CASH = 200
+
+    def __init__(self, x: int, name: str):
+        super().__init__(x, name)
+        self.__result = None
+
+    def __str__(self):
+        if self.__result == ChanceResultTypes.POSITIVE:
+            return f"Вы попали на клетку шанс\n и получаете {Chance.CASH}💰"
+
+        return f"Вы попали на клетку шанс\n вы вынуждены заплатить {Chance.CASH}💰"
+
+    def try_luck(self) -> ChanceResultTypes:  # испытать удачу
+
+        self.__solve_chance()
+
+        if self.__result == ChanceResultTypes.POSITIVE:
             return ChanceResultTypes.POSITIVE
 
         else:
             return ChanceResultTypes.NEGATIVE
 
-    @staticmethod
-    def __solve_chance() -> ChanceResultTypes:  # вычислить шанс
+
+    def __solve_chance(self) -> None:  # вычислить шанс
         import random
 
         if random.randint(0, 10) > 5:
-            return ChanceResultTypes.POSITIVE
+            self.__result = ChanceResultTypes.POSITIVE
         else:
-            return ChanceResultTypes.NEGATIVE
+            self.__result = ChanceResultTypes.NEGATIVE
 
 
 class Ownership(Cell, ABC):
@@ -143,6 +171,12 @@ class Ownership(Cell, ABC):
         self._price = price
         self._rent = rent
 
+    def __str__(self):
+        if self.has_owner():
+            return f"Вы заплатили ренту {self.calculate_rent()}💰"
+
+        return f"{self._name}: {self._price}💰"
+
     def __eq__(self, other: Ownership):
         return self._owner == other._owner and self._price == other._price and self._rent == other._rent
 
@@ -155,6 +189,9 @@ class Ownership(Cell, ABC):
     def get_owner(self) -> IdBusinessman:
         if self._owner is None:  raise AssertionError("У собственности нет владельца")
         return self._owner
+
+    def get_price(self) -> int:
+        return self._price
 
     def set_owner(self, owner: IdBusinessman) -> None:
 
@@ -248,10 +285,13 @@ class Jail(Cell):
 
     __prisoners: list[IdBusinessman]
 
-    def __init__(self, x: int):
-        super().__init__(x)
+    def __init__(self, x: int, name: str):
+        super().__init__(x, name)
 
         self.__prisoners = []
+
+    def __str__(self):
+        return f"Вы попадаете в тюрьму и пропускаете ход 🙈"
 
     def conclude(self, id: IdBusinessman) -> None:
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")

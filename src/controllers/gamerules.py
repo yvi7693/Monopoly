@@ -20,9 +20,18 @@ class GameRules:
         self.__bank = bank
         self.__token_placer = token_placer
 
-    def make_move(self, businessman: Businessman, points: int, buying_permission: bool | None, purchased: CurrentStatusOwner):
+    def move_token(self, points: int, businessman: Businessman) -> None:
 
-        self.__move_token(points, businessman)
+        position = businessman.get_position()
+
+        new_position = (position + points) % Board.END
+
+        businessman.set_position(new_position)
+
+        if Board.is_passed_go(position, points):
+            self.__give_bonus_go(businessman)
+
+    def processing_move(self, businessman: Businessman,  buying_permission: bool | None, purchased: CurrentStatusOwner):
 
         new_position = businessman.get_position()
 
@@ -39,21 +48,10 @@ class GameRules:
             self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission, purchased)
 
         elif isinstance(cell, Chance):
-            self.__token_placer.put_on_chance(Chance.CASH, Chance.try_luck(), businessman.id)
+            self.__token_placer.put_on_chance(Chance.CASH, cell.try_luck(), businessman.id)
 
         elif isinstance(cell, Jail):
-            self.__token_placer.put_on_jail(businessman.id)
-
-    def __move_token(self, points: int, businessman: Businessman) -> None:
-
-        position = businessman.get_position()
-
-        new_position = (position + points) % Board.END
-
-        businessman.set_position(new_position)
-
-        if Board.is_passed_go(position, points):
-            self.__give_bonus_go(businessman)
+            self.__token_placer.put_on_jail(businessman.id, cell)
 
     def __give_bonus_go(self, businessman: Businessman) -> None:
         if not isinstance(businessman, Businessman):  raise TypeError("Тип данных не Businessman")
