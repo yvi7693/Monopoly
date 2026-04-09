@@ -88,17 +88,5 @@ class TypeMessage(Enum):
     ASK = 1
     ERROR = 2
 
-class MessageManager:
-
-    __type_message: TypeMessage | None
-
-    def __init__(self):
-        self.__type_message = None
-
-    def set_type_message(self, new_type: TypeMessage) -> None:
-        self.__type_message = new_type
-
-
-
 
 

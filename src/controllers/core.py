@@ -9,8 +9,8 @@ from src.controllers.warden import Warden
 from src.models.businesman import Businessman
 
 from src.models.dice import Dice
-from src.models.gameboard import Board, Ownership, Cell
-from src.models.typescell import CurrentStatusOwner, MessageManager
+from src.models.gameboard import Board, Cell
+from src.models.typescell import CurrentStatusOwner
 
 
 class Game:
@@ -26,12 +26,12 @@ class Game:
         self.__warden = Warden()
         self.__player_manager = PlayerManager(self.__bank)
         self.__manager_ownership = ManagerOwnership(self.__bank, self.__player_manager)
-        self.__token_placer = TokenPlacer(self.__manager_ownership, self.__bank, self.__warden)
+        self.__bankrupt_manager = BankruptManager(self.__player_manager)
+        self.__token_placer = TokenPlacer(self.__manager_ownership, self.__bank, self.__warden, self.__bankrupt_manager)
         self.__game_rules = GameRules(self.__game_board, self.__bank, self.__token_placer)
         self.__builder = Builder(self.__bank)
-        self.__bankrupt_manager = BankruptManager(self.__player_manager)
+
         self.__dice = Dice()
-        self.__current_status_owner = CurrentStatusOwner()
 
         self.__current_player = None
         self.__current_balance = None
@@ -56,11 +56,10 @@ class Game:
         self.__current_cell = self.__game_board.get_cell(self.__current_player.get_position())
 
     def processing_move(self, buying_permission: bool | None) -> None:
-        self.__game_rules.processing_move(self.__current_player, buying_permission, self.__current_status_owner)
+        self.__game_rules.processing_move(self.__current_player, buying_permission)
 
     def get_current_status_owner(self) -> CurrentStatusOwner:
         return self.__current_status_owner
-
 
     def get_current_player(self) -> Businessman:
         return self.__current_player
@@ -73,6 +72,9 @@ class Game:
 
     def get_current_cell(self) -> Cell:
         return self.__current_cell
+
+    def get_bankrupt_manager(self) -> BankruptManager:
+        return self.__bankrupt_manager
 
     def __get_board(self) -> Board:
         return self.__game_board

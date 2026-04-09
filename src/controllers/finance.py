@@ -64,7 +64,7 @@ class Bank:
     def deregister_account(self, id: IdBusinessman) -> None:
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
-        if not id in self.__accounts:  raise AssertionError("Аккаунта нет в списке")
+        if self.__search_account(id) is None:  raise AssertionError("Аккаунта нет в списке")
 
         delete_index = 0
 
@@ -84,7 +84,7 @@ class Bank:
 
         account.charge(money)
 
-    def debit_account(self, money: int, id: IdBusinessman) -> None:
+    def try_debit_account(self, money: int, id: IdBusinessman) -> bool:
         if not isinstance(money, int):  raise TypeError()
         if not isinstance(id, IdBusinessman):  raise TypeError()
 
@@ -92,7 +92,12 @@ class Bank:
 
         if account is None:  raise ValueError()
 
-        account.debit(money)
+        if account.has_enough_money(money):
+            account.debit(money)
+
+            return True
+
+        return False
 
     def has_enough_money(self, money: int, id: IdBusinessman) -> bool:
         if not isinstance(money, int):  raise TypeError()

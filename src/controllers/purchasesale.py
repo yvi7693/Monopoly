@@ -13,13 +13,11 @@ class ManagerOwnership:
 
     def try_buy_ownership(self, ownership: Ownership, id: IdBusinessman) -> bool: # попытка купить собственность
 
-        if ownership.has_owner():  return False
+        if ownership.has_owner():  raise AssertionError("У собственности уже есть владелец")
 
         price = ownership.calculate_price()
 
-        if not self.__bank.has_enough_money(price, id): return False
-
-        self.__bank.debit_account(price, id)
+        if not self.__bank.try_debit_account(price, id): return False
 
         self.__player_manager.add_ownership(ownership, id)
 
@@ -44,9 +42,7 @@ class ManagerOwnership:
     def try_charge_rent(self, ownership: Ownership, tenant: IdBusinessman) -> bool:
         rent = ownership.calculate_rent()
 
-        if not self.__bank.has_enough_money(rent, tenant): return False
-
-        self.__bank.debit_account(rent, tenant)
+        if not self.__bank.try_debit_account(rent, tenant): return False
 
         owner = ownership.get_owner()
 

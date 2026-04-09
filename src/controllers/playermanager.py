@@ -39,21 +39,23 @@ class PlayerManager:
 
             self.__bank.register_account(id)
 
-    def exclude_businessman(self, businessman: Businessman) -> None:
-        if not isinstance(businessman, Businessman):  raise TypeError("Тип данных не Businessman")
+    def exclude_businessman(self, id : IdBusinessman) -> None:
+        if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
-        if not businessman in self.__businessmen: raise AssertionError("Данного предпринимателя нет в списке")
+        businessman = self.__search_businessman(id)
 
         delete_index = 0
 
         for i in range(len(self.__businessmen)):
-            if self.__businessmen == businessman:
+            if self.__businessmen[i] == businessman:
                 delete_index = i
                 break
 
         self.__businessmen.pop(delete_index)
 
         self.__bank.deregister_account(businessman.id)
+
+        self.__queue -= 1
 
     def add_ownership(self, ownership: Ownership, id: IdBusinessman) -> None:
 

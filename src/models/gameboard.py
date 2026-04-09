@@ -60,15 +60,15 @@ class Board:
 
         for i in range(0, 40, 10):
 
-            self.__cells.append(Street(i + 1, companies[k], 140, 50, self.__neighborhoods[j]))
-            self.__cells.append(Street(i + 3, companies[k+1], 140, 70, self.__neighborhoods[j]))
+            self.__cells.append(Street(i + 1, companies[k], 140, 50000, self.__neighborhoods[j]))
+            self.__cells.append(Street(i + 3, companies[k+1], 140, 7000, self.__neighborhoods[j]))
             self.__cells.append(Chance(i + 2, "Chance"))
-            self.__cells.append(Street(i + 4, companies[k+2], 160, 40, self.__neighborhoods[j]))
-            self.__cells.append(Station(i + 5, "Station", 200, 30))
-            self.__cells.append(Street(i + 6, companies[k+3], 160, 60, self.__neighborhoods[j + 1]))
-            self.__cells.append(Street(i + 8, companies[k+4], 140, 50, self.__neighborhoods[j + 1]))
+            self.__cells.append(Street(i + 4, companies[k+2], 160, 4000, self.__neighborhoods[j]))
+            self.__cells.append(Station(i + 5, "Station", 200, 3000))
+            self.__cells.append(Street(i + 6, companies[k+3], 160, 6000, self.__neighborhoods[j + 1]))
+            self.__cells.append(Street(i + 8, companies[k+4], 140, 50000, self.__neighborhoods[j + 1]))
             self.__cells.append(Chance(i + 7, "Chance"))
-            self.__cells.append(Street(i + 9, companies[k+5], 200, 70, self.__neighborhoods[j + 1]))
+            self.__cells.append(Street(i + 9, companies[k+5], 200, 7000, self.__neighborhoods[j + 1]))
             self.__cells.append(FreeParking(i + 10, ""))
 
             j += 2

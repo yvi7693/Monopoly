@@ -48,17 +48,8 @@ class GamePresenter:
 
         self.__game.processing_move(buying_permission)
 
-
-        status = self.__game.get_current_status_owner()
-
-        if status == StatusOwner.NOT_MONEY:
-            MessageDropper.drop_message_info("Не достаточно средств")
-
-
-
-
-
-
+        if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
+            MessageDropper.drop_message_info("Игрок обанкротился \nи выбывает из игры 🚫")
 
         self.__update_info()
 

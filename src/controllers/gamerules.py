@@ -31,21 +31,21 @@ class GameRules:
         if Board.is_passed_go(position, points):
             self.__give_bonus_go(businessman)
 
-    def processing_move(self, businessman: Businessman,  buying_permission: bool | None, purchased: CurrentStatusOwner):
+    def processing_move(self, businessman: Businessman,  buying_permission: bool | None):
 
         new_position = businessman.get_position()
 
         cell = self.__board.get_cell(new_position)
 
-        self.__processing_cell(cell, businessman, buying_permission, purchased)
+        self.__processing_cell(cell, businessman, buying_permission)
 
-    def __processing_cell(self, cell: Cell, businessman: Businessman, buying_permission: bool | None, purchased: CurrentStatusOwner) -> None:
+    def __processing_cell(self, cell: Cell, businessman: Businessman, buying_permission: bool | None) -> None:
 
         if isinstance(cell, Street):
-            self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission, purchased)
+            self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission)
 
         elif isinstance(cell, Station):
-            self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission, purchased)
+            self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission)
 
         elif isinstance(cell, Chance):
             self.__token_placer.put_on_chance(Chance.CASH, cell.try_luck(), businessman.id)
