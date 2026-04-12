@@ -52,6 +52,8 @@ class Bank:
 
         account = self.__search_account(id)
 
+        if account is None: return 0
+
         return account.get_balance()
 
     def register_account(self, id: IdBusinessman) -> None:

@@ -50,15 +50,15 @@ class Game:
 
         self.__game_rules.move_token(sum(self.__current_points), self.__current_player)
 
-        self.__current_balance = self.__bank.get_balance(self.__current_player.id)
-        self.__current_cell_name = self.__game_board.get_cell(self.__current_player.get_position()).get_name()
-        self.__current_cell = self.__game_board.get_cell(self.__current_player.get_position())
+        self.__update_data()
 
         if self.__winner_manager.chek_winner():
             self.__winner_manager.declare_winner(self.__current_player)
 
     def processing_move(self, buying_permission: bool | None) -> None:
         self.__game_rules.processing_move(self.__current_player, buying_permission)
+
+        self.__update_data()
 
     def get_current_player(self) -> Businessman:
         return self.__current_player
@@ -83,6 +83,11 @@ class Game:
 
     def __get_token_placer(self):
         return self.__token_placer
+
+    def __update_data(self) -> None:
+        self.__current_balance = self.__bank.get_balance(self.__current_player.id)
+        self.__current_cell_name = self.__game_board.get_cell(self.__current_player.get_position()).get_name()
+        self.__current_cell = self.__game_board.get_cell(self.__current_player.get_position())
 
     board = property(__get_board)
     token_placer = property(__get_token_placer)
