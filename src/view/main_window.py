@@ -45,7 +45,7 @@ class MainWindow(CTk):
     def show_game_window(self) -> None:
         self.__game_window.tkraise()
 
-    def show_winner_window(self, id: str) -> None:
+    def show_winner_window(self, id: int) -> None:
         self.__winner_window.create_widgets(id)
         self.__winner_window.tkraise()
 

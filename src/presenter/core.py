@@ -49,9 +49,10 @@ class GamePresenter:
 
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
             MessageDropper.drop_message_info("Игрок обанкротился \nи выбывает из игры 🚫")
+            self.__game_view.game_window.delete_token(self.__game.get_current_player().id.get_value())
 
         if self.__game.get_winner_manager().is_winner():
-            self.__game_view.show_winner_window(str(self.__game.get_current_player().id))
+            self.__game_view.show_winner_window(self.__game.get_current_player().id.get_value()+1)
 
         self.__update_info()
 

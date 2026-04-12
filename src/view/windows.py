@@ -157,19 +157,22 @@ class GameWindow(CTkFrame):
         self.__create_token_image()
         self.__create_token(count_players)
 
-    def update_place_token(self, numer_token: int, position: int):
+    def update_place_token(self, number_token: int, position: int):
 
         if position <= 10:
-            self.__game_field.coords(self.__tokens[numer_token], CoordCells.TOP_X[position], 50)
+            self.__game_field.coords(self.__tokens[number_token], CoordCells.TOP_X[position], 50)
 
         elif position > 10 and position <= 20:
-            self.__game_field.coords(self.__tokens[numer_token], 720, CoordCells.RIGHT_Y[position-10])
+            self.__game_field.coords(self.__tokens[number_token], 720, CoordCells.RIGHT_Y[position-10])
 
         elif position > 20 and position <= 30:
-            self.__game_field.coords(self.__tokens[numer_token], CoordCells.BOTTOM_X[position - 20], 720)
+            self.__game_field.coords(self.__tokens[number_token], CoordCells.BOTTOM_X[position - 20], 720)
 
         elif position > 30 and position <= 40:
-            self.__game_field.coords(self.__tokens[numer_token], 50, CoordCells.RIGHT_Y[position - 30])
+            self.__game_field.coords(self.__tokens[number_token], 50, CoordCells.RIGHT_Y[position - 30])
+
+    def delete_token(self, id: int) -> None:
+        self.__game_field.itemconfig(self.__tokens[id], state='hidden')
 
     def __create_interaction_window(self) -> None:
         self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
@@ -255,7 +258,7 @@ class WinnerWindow(CTkFrame):
 
         self.__restart_btn = Button(self, "Restart")
 
-    def create_widgets(self, id: str) -> None:
+    def create_widgets(self, id: int) -> None:
 
         my_image = CTkImage(light_image=Image.open("images/MrMonopoly.png"),
                                           dark_image=Image.open("images/MrMonopoly.png"),
