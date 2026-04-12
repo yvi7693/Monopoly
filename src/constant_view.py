@@ -60,4 +60,11 @@ SIZE_DICE = 70
 
 EMPTY_TEXT = ""
 
+# WinnerWindow: PNG-кадры (приоритет) или один GIF, если glob не нашёл файлов
+PATH_WINNER_FRAMES_GLOB = "images/winner_frames/*.png"
+PATH_WINNER_GIF = "images/confetti.gif"
+WINNER_BG = "#1e1e2e"
+WINNER_ANIM_FRAME_MS = 50
+WINNER_GIF_FRAME_MS = WINNER_ANIM_FRAME_MS
+
 

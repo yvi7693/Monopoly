@@ -90,6 +90,14 @@ class PlayerManager:
 
         return businessman.has_title_deeds(ownership)
 
+    def get_businessmen(self) -> list[Businessman]:
+        businessmen_copy = []
+
+        for i in range(len(self.__businessmen)):
+            businessmen_copy.append(Businessman.copy(self.__businessmen[i]))
+
+        return businessmen_copy
+
     def __search_businessman(self, id: IdBusinessman) -> Businessman | None:
 
         for i in range(len(self.__businessmen)):
@@ -101,6 +109,51 @@ class PlayerManager:
                 return businessman
 
         return None
+
+
+class BankruptManager:
+
+    __player_manager: PlayerManager
+    __bankrupts: list[IdBusinessman]
+
+    def __init__(self, player_manager: PlayerManager):
+        self.__player_manager = player_manager
+        self.__bankrupts = []
+
+    def bankrupting(self, id: IdBusinessman) -> None:
+        if id in self.__bankrupts: return None
+
+        self.__bankrupts.append(id)
+        self.__player_manager.exclude_businessman(id)
+
+        return None
+
+    def is_bankrupt(self, id: IdBusinessman) -> bool:
+        return id in self.__bankrupts
+
+
+class WinnerManager:
+
+    ONE_PLAYER = 1
+
+    __player_manager: PlayerManager
+    __winner: Businessman | None
+
+    def __init__(self, player_manager: PlayerManager):
+
+        self.__player_manager = player_manager
+        self.__winner = None
+
+    def chek_winner(self) -> bool:
+        return len(self.__player_manager.get_businessmen()) == WinnerManager.ONE_PLAYER
+
+    def declare_winner(self, businessman: Businessman) -> None:
+        self.__winner = businessman
+
+    def is_winner(self) -> bool:
+        return not self.__winner is None
+
+
 
 
 

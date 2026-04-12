@@ -1,8 +1,6 @@
-from tkinter.messagebox import askyesno
-
 from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
-from src.models.typescell import StatusOwner
+
 from src.view.main_window import MainWindow
 from src.view.message import MessageDropper
 
@@ -18,6 +16,7 @@ class GamePresenter:
 
         self.__game_view.start_window.add_listener_on_click_start(self.run)
         self.__game_view.game_window.add_listener_on_click_move(self.make_move)
+        self.__game_view.winner_window.add_listener_on_click_restart(self.restart)
 
         self.__game_view.loop()
 
@@ -51,7 +50,14 @@ class GamePresenter:
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
             MessageDropper.drop_message_info("Игрок обанкротился \nи выбывает из игры 🚫")
 
+        if self.__game.get_winner_manager().is_winner():
+            self.__game_view.show_winner_window(str(self.__game.get_current_player().id))
+
         self.__update_info()
+
+    def restart(self) -> None:
+        self.__game = Game()
+        self.__game_view.show_start_window()
 
     def __update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()

@@ -1,10 +1,10 @@
-from src.controllers.bankruptmanager import BankruptManager
+from src.controllers.playermanager import BankruptManager
 from src.controllers.finance import Bank
 from src.controllers.purchasesale import ManagerOwnership
 from src.controllers.warden import Warden
 from src.models.businesman import IdBusinessman
 from src.models.gameboard import Ownership, Jail
-from src.models.typescell import ChanceResultTypes, CurrentStatusOwner
+from src.models.typescell import ChanceResultTypes
 
 
 class TokenPlacer:

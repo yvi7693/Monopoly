@@ -9,7 +9,6 @@ from customtkinter import *
 from src.constant_view import *
 from src.view.widgets import Button, ProgressBar
 from src.view.windows_lower import InteractionWindow, CoordCells
-from tkinter.messagebox import showinfo, askyesno
 
 from PIL import Image
 
@@ -62,7 +61,7 @@ class StartWindow(CTkFrame):
         players_5.pack(side = "left", pady = 20)
         players_6.pack(side = "left", pady = 20)
 
-        self.__start_btn = Button(self, START_BUTTON_TEXT, )
+        self.__start_btn = Button(self, START_BUTTON_TEXT)
         self.__start_btn.pack(pady = 100, anchor = "center", side="top")
 
     def __get_count_players(self) -> IntVar: return self.__count_players
@@ -140,9 +139,6 @@ class GameWindow(CTkFrame):
         self.__logo = tkinter.PhotoImage(file = PATH_LOGO_GAME)
 
         self.__create_interaction_window()
-
-
-
 
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
@@ -250,3 +246,34 @@ class GameWindow(CTkFrame):
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token4.png"))
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token5.png"))
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token6.png"))
+
+
+class WinnerWindow(CTkFrame):
+
+    def __init__(self, master, width: int, height: int):
+        super().__init__(master=master, width=width, height=height)
+
+        self.__restart_btn = Button(self, "Restart")
+
+    def create_widgets(self, id: str) -> None:
+
+        my_image = CTkImage(light_image=Image.open("images/MrMonopoly.png"),
+                                          dark_image=Image.open("images/MrMonopoly.png"),
+                                          size=(400, 400))
+
+        image_label = CTkLabel(self, image=my_image, text="")
+        image_label.pack()
+
+        label_win = CTkLabel(self, text="WINNER", fg_color="transparent", text_color="red", font=(FONT_PRESENT, 60, "bold"))
+        label_win.pack(anchor="center", pady=(20, 0))
+
+        label_win = CTkLabel(self, text=f"Player №{id}", fg_color="transparent", font=(FONT_PRESENT, 30))
+        label_win.pack(anchor="center", pady=10)
+
+        self.__restart_btn.pack(pady = (60, 0))
+
+    def add_listener_on_click_restart(self, callback) -> None:
+        self.__restart_btn.add_listener(callback)
+
+
+

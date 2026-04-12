@@ -6,11 +6,11 @@ from src.models.idbusinessman import IdBusinessman
 
 class Businessman:
 
-    def __init__(self, id: IdBusinessman):
+    def __init__(self, id: IdBusinessman, position: int = Board.START, ownerships: list[Ownership] = None):
 
         self.__id = id
-        self.__ownerships = []
-        self.__position = Board.START
+        self.__ownerships = ownerships or []
+        self.__position = position
 
     def get_ownerships_names(self):
         names_ownership = ""
@@ -73,13 +73,13 @@ class Businessman:
         copy_ownerships = []
 
         for i in range(len(self.__ownerships)):
-            copy_ownerships.append(Ownership.copy())
+            copy_ownerships.append(Ownership.copy(self.__ownerships[i]))
 
         return copy_ownerships
 
     @staticmethod
     def copy(businessman: Businessman) -> Businessman:
-        return Businessman(businessman.id)
+        return Businessman(businessman.id, businessman.get_position() ,businessman.__ownerships)
 
     id = property(__get_id)
     ownerships = property(__get_ownerships)
