@@ -36,7 +36,13 @@ class InteractionWindow(CTkFrame):
         self.__dice_2.configure(image=self.__dices[points_2 - 1])
 
     def add_listener_on_click_move(self, callback) -> None:
-            self.__move_btn.add_listener(callback)
+        self.__move_btn.add_listener(callback)
+
+    def add_listener_on_click_sell(self, callback) -> None:
+        self.__sell_btn.add_listener(callback)
+
+    def add_listener_on_click_build(self, callback) -> None:
+        self.__build_btn.add_listener(callback)
 
     def __create_widgets(self) -> None:
         self.__label_player = CTkLabel(master = self, text=f"{PLAYER_LABEL}", fg_color="transparent", text_color=TEXT_COLOR, font=(FONT, FONT_SIZE_INTER), pady = 20)
@@ -55,13 +61,19 @@ class InteractionWindow(CTkFrame):
         self.__scroll_ownerships = ScrollableOwnerships(self,width=WIDTH_OWNERSHIP,height=HEIGHT_OWNERSHIP)
         self.__scroll_ownerships.grid(row=3, column=0, columnspan=2, sticky="nswe", pady=20)
 
+        self.__sell_btn = Button(self, "SELL", width=80, fg_color="#696969", hover_color="#505050")
+        self.__sell_btn.grid(row=4, column=0, padx=10, sticky="e")
+
+        self.__build_btn = Button(self, "BUILD", width=80, fg_color="#696969", hover_color="#505050")
+        self.__build_btn.grid(row=4, column=1, padx=10, sticky="w")
+
         self.__create_dice()
 
-        self.__dice_1.grid(row = 4, column = 0, pady=(100,0), sticky = "e")
-        self.__dice_2.grid(row=4, column=1, pady=(150, 0), sticky = "w")
+        self.__dice_1.grid(row = 5, column = 0, pady=(100,0), sticky = "e")
+        self.__dice_2.grid(row=5, column=1, pady=(150, 0), sticky = "w")
 
         self.__move_btn = Button(self, MOVE_BUTTON_TEXT)
-        self.__move_btn.grid(row = 5, column =0, pady=(100,0), columnspan=2)
+        self.__move_btn.grid(row = 6, column =0, pady=(70,0), columnspan=2)
 
     def __create_dice(self) -> None:
 
@@ -94,3 +106,15 @@ class CoordCells:
     RIGHT_Y = list(range(50, 763, 67))
     BOTTOM_X = list(range(720, 0, -67))
     LEFT_Y = list(range(720, 0, -67))
+
+
+
+class SellWindow(CTkToplevel):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
+
+        self.label = CTkLabel(self, text="ToplevelWindow")
+        self.label.pack(padx=20, pady=20)
+

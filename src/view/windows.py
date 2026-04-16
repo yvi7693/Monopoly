@@ -143,6 +143,12 @@ class GameWindow(CTkFrame):
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
 
+    def add_listener_on_click_sell(self, callback) -> None:
+        self.__interaction_window.add_listener_on_click_sell(callback)
+
+    def add_listener_on_click_build(self, callback) -> None:
+        self.__interaction_window.add_listener_on_click_build(callback)
+
     def update_widgets(self, id: int, balance: int, points_1: int, points_2: int, ownership: str) -> None:
         self.__interaction_window.update_widgets(id, balance, points_1, points_2, ownership)
 

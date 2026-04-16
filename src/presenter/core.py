@@ -15,8 +15,13 @@ class GamePresenter:
         self.__game_view = MainWindow(WIDTH, HEIGHT)
 
         self.__game_view.start_window.add_listener_on_click_start(self.run)
+
         self.__game_view.game_window.add_listener_on_click_move(self.make_move)
+        self.__game_view.game_window.add_listener_on_click_sell(self.sell)
+        self.__game_view.game_window.add_listener_on_click_build(self.build)
+
         self.__game_view.winner_window.add_listener_on_click_restart(self.restart)
+
 
         self.__game_view.loop()
 
@@ -37,6 +42,10 @@ class GamePresenter:
     def make_move(self) -> None:
         self.__game.make_move()
 
+        self.__update_info()
+
+        self.__game_view.update_idletasks()
+
         buying_permission = None
 
         if self.__game.board.is_ownerless(self.__game.get_current_cell()):
@@ -54,11 +63,19 @@ class GamePresenter:
         if self.__game.get_winner_manager().is_winner():
             self.__game_view.show_winner_window(self.__game.get_current_player().id.get_value()+1)
 
-        self.__update_info()
 
     def restart(self) -> None:
         self.__game = Game()
         self.__game_view.show_start_window()
+
+
+    def sell(self) -> None:
+        pass
+
+
+    def build(self) -> None:
+        pass
+
 
     def __update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()

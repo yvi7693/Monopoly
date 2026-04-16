@@ -78,6 +78,9 @@ class Game:
     def get_winner_manager(self) -> WinnerManager:
         return self.__winner_manager
 
+    def get_builder(self) -> Builder:
+        return self.__builder
+
     def __get_board(self) -> Board:
         return self.__game_board
 
