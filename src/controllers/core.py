@@ -44,21 +44,23 @@ class Game:
         self.__game_board.create_neighborhood()
         self.__game_board.create_cells()
 
+
     def make_move(self) -> None:
         self.__current_player = self.__player_manager.get_current_businessman()
         self.__current_points = self.__dice.throw()
 
         self.__game_rules.move_token(sum(self.__current_points), self.__current_player)
 
-        self.__update_data()
+        self.update_data()
 
         if self.__winner_manager.chek_winner():
             self.__winner_manager.declare_winner(self.__current_player)
 
+
     def processing_move(self, buying_permission: bool | None) -> None:
         self.__game_rules.processing_move(self.__current_player, buying_permission)
 
-        self.__update_data()
+        self.update_data()
 
     def get_current_player(self) -> Businessman:
         return self.__current_player
@@ -66,7 +68,7 @@ class Game:
     def get_current_balance(self) -> int:
         return self.__current_balance
 
-    def get_current_points(self) -> tuple[int, int]:
+    def get_current_points(self) -> tuple[int , int]:
         return self.__current_points
 
     def get_current_cell(self) -> Cell:
@@ -74,6 +76,9 @@ class Game:
 
     def get_bankrupt_manager(self) -> BankruptManager:
         return self.__bankrupt_manager
+
+    def get_manager_ownership(self) -> ManagerOwnership:
+        return self.__manager_ownership
 
     def get_winner_manager(self) -> WinnerManager:
         return self.__winner_manager
@@ -87,7 +92,7 @@ class Game:
     def __get_token_placer(self):
         return self.__token_placer
 
-    def __update_data(self) -> None:
+    def update_data(self) -> None:
         self.__current_balance = self.__bank.get_balance(self.__current_player.id)
         self.__current_cell_name = self.__game_board.get_cell(self.__current_player.get_position()).get_name()
         self.__current_cell = self.__game_board.get_cell(self.__current_player.get_position())

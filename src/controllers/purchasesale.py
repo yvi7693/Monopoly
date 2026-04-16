@@ -25,9 +25,9 @@ class ManagerOwnership:
 
         return True
 
-    def try_sell_ownership(self, ownership: Ownership, id: IdBusinessman) -> bool:
+    def sell_ownership(self, ownership: Ownership, id: IdBusinessman) -> None:
 
-        if not self.__player_manager.has_tittle_deeds(ownership, id): return False
+        if not self.__player_manager.has_tittle_deeds(ownership, id): raise AssertionError("У предпринимателя нет прав собственности")
 
         price = ownership.calculate_price()
 
@@ -36,8 +36,6 @@ class ManagerOwnership:
         self.__bank.charge_account(price, id)
 
         ownership.unset_owner()
-
-        return True
 
     def try_charge_rent(self, ownership: Ownership, tenant: IdBusinessman) -> bool:
         rent = ownership.calculate_rent()

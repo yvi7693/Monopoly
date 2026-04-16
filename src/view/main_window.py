@@ -16,6 +16,7 @@ class MainWindow(CTk):
 
         self.geometry(f"{width}x{height}")
         self.resizable(False, False)
+        self.title("Monopoly")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)

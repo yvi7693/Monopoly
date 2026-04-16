@@ -1,3 +1,4 @@
+import tkinter
 from dataclasses import dataclass
 
 from customtkinter import *
@@ -27,8 +28,8 @@ class InteractionWindow(CTkFrame):
         self.__create_widgets()
 
     def update_widgets(self, id: int, balance: int, points_1: int, points_2: int, ownerships: str) -> None:
-        self.__label_player.configure(text = f"{PLAYER_LABEL}{id+1}")
-        self.__balance.configure(text = f"{balance} 💰")
+        self.__label_player.configure(text=f"{PLAYER_LABEL}{id + 1}")
+        self.__balance.configure(text=f"{balance} 💰")
 
         self.__scroll_ownerships.update_text(text=f"{ownerships}")
 
@@ -111,10 +112,48 @@ class CoordCells:
 
 class SellWindow(CTkToplevel):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.geometry("400x300")
+    def __init__(self, master):
+        super().__init__(master = master)
+        self.title("Sell Ownership")
 
-        self.label = CTkLabel(self, text="ToplevelWindow")
-        self.label.pack(padx=20, pady=20)
+        self.transient(master)
+        self.lift()
+        self.focus_force()
+        self.grab_set()
+
+        self.protocol("WM_DELETE_WINDOW", self.close)
+
+        self.__sell_btn = None
+        self.__sell_index = None
+
+    def get_sell_index(self) -> int:
+        return self.__sell_index.get()
+
+    def create_widgets(self, names: list[str]) -> None:
+        label1 = CTkLabel(self, text="Выберите собственность которую хотите продать")
+        label1.pack(padx = 30)
+
+        if not names:
+            label2 = CTkLabel(self, text="У вас нет собственности для продажи")
+            label2.pack()
+
+            return None
+
+        self.__sell_index = tkinter.IntVar(value=0)
+
+        for i in range(len(names)):
+            rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__sell_index)
+            rad_button.pack(pady=10)
+
+        self.__sell_btn = Button(master = self, text = "Sell")
+        self.__sell_btn.pack(pady=30)
+
+        return None
+
+    def close(self) -> None:
+        self.grab_release()
+        self.destroy()
+
+    def add_listener_on_click_sell(self, callback) -> None:
+        self.__sell_btn.add_listener(callback)
 

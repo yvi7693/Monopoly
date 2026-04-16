@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from copy import deepcopy
+
 from src.models.gameboard import Ownership, Board, Neighborhood
 from src.models.idbusinessman import IdBusinessman
 
@@ -12,11 +14,19 @@ class Businessman:
         self.__ownerships = ownerships or []
         self.__position = position
 
-    def get_ownerships_names(self):
+    def get_ownerships_names(self) -> str:
         names_ownership = ""
 
         for ownership in self.__ownerships:
             names_ownership += f"{ownership.get_name()}\n"
+
+        return names_ownership
+
+    def get_ownerships_names_list(self) -> list[str]:
+        names_ownership = []
+
+        for ownership in self.__ownerships:
+            names_ownership.append(ownership.get_name())
 
         return names_ownership
 
@@ -73,7 +83,7 @@ class Businessman:
         copy_ownerships = []
 
         for i in range(len(self.__ownerships)):
-            copy_ownerships.append(Ownership.copy(self.__ownerships[i]))
+            copy_ownerships.append(deepcopy(self.__ownerships[i]))
 
         return copy_ownerships
 

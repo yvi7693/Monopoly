@@ -208,10 +208,6 @@ class Ownership(Cell, ABC):
     def unset_owner(self) -> None:
         self._owner = None
 
-    @staticmethod
-    def copy(ownership: Ownership) -> Ownership:
-        return Ownership(ownership._x, ownership._name, ownership._price, ownership._rent)
-
 
 class Street(Ownership):
 

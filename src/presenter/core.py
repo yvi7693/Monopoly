@@ -1,8 +1,10 @@
 from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
+from src.presenter.sell_presenter import SellPresenter
 
 from src.view.main_window import MainWindow
 from src.view.message import MessageDropper
+from src.view.windows_lower import SellWindow
 
 
 class GamePresenter:
@@ -14,6 +16,9 @@ class GamePresenter:
         self.__game = Game()
         self.__game_view = MainWindow(WIDTH, HEIGHT)
 
+        self.__sell_window = None
+        self.__sell_presenter = None
+
         self.__game_view.start_window.add_listener_on_click_start(self.run)
 
         self.__game_view.game_window.add_listener_on_click_move(self.make_move)
@@ -21,7 +26,6 @@ class GamePresenter:
         self.__game_view.game_window.add_listener_on_click_build(self.build)
 
         self.__game_view.winner_window.add_listener_on_click_restart(self.restart)
-
 
         self.__game_view.loop()
 
@@ -40,51 +44,66 @@ class GamePresenter:
         self.__game_view.show_present_window()
 
     def make_move(self) -> None:
+
         self.__game.make_move()
 
-        self.__update_info()
+        self.update_info()
 
         self.__game_view.update_idletasks()
 
         buying_permission = None
 
         if self.__game.board.is_ownerless(self.__game.get_current_cell()):
-            buying_permission = MessageDropper.drop_message_ask(str(self.__game.get_current_cell()))
+            buying_permission = MessageDropper.drop_message_ask(self.__game_view, str(self.__game.get_current_cell()))
 
         elif not self.__game.board.is_free_parking(self.__game.get_current_cell()):
-            MessageDropper.drop_message_info(str(self.__game.get_current_cell()))
+            MessageDropper.drop_message_info(self.__game_view, str(self.__game.get_current_cell()))
 
         self.__game.processing_move(buying_permission)
 
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
-            MessageDropper.drop_message_info("Игрок обанкротился \nи выбывает из игры 🚫")
+            MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился \nи выбывает из игры 🚫")
             self.__game_view.game_window.delete_token(self.__game.get_current_player().id.get_value())
 
         if self.__game.get_winner_manager().is_winner():
             self.__game_view.show_winner_window(self.__game.get_current_player().id.get_value()+1)
 
+        self.update_info()
 
     def restart(self) -> None:
         self.__game = Game()
         self.__game_view.show_start_window()
 
-
     def sell(self) -> None:
-        pass
 
+        current_player = self.__game.get_current_player()
+
+        if current_player is None:
+            MessageDropper.drop_message_info(self.__game_view, "Нажмите MOVE для того чтобы определить текущего игрока.")
+            return None
+
+        if self.__sell_window is None or not self.__sell_window.winfo_exists():
+            self.__sell_window = SellWindow(self.__game_view.game_window)
+
+        else:
+            self.__sell_window.focus()
+
+        self.__sell_window.create_widgets(current_player.get_ownerships_names_list())
+        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info)
+
+        return None
 
     def build(self) -> None:
         pass
 
-
-    def __update_info(self) -> None:
+    def update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()
         balance = self.__game.get_current_balance()
         position = self.__game.get_current_player().get_position()
         points_1, points_2 = self.__game.get_current_points()
-        ownership = self.__game.get_current_player().get_ownerships_names()
+        ownerships = self.__game.get_current_player().get_ownerships_names()
 
-        self.__game_view.update_window(id, balance, position, points_1, points_2, ownership)
+        self.__game_view.update_window(id, balance, position, points_1, points_2, ownerships)
 
 
 
