@@ -167,7 +167,8 @@ class GameWindow(CTkFrame):
         self.__create_token(count_players)
 
     def update_place_token(self, number_token: int, position: int):
-        self.__tokens[number_token].itemconfig()
+        self.__game_field.itemconfig(self.__tokens[number_token - 1], image=self.__tokens_image[number_token - 1])
+        self.__game_field.itemconfig(self.__tokens[number_token], image=self.__tokens_active_image[number_token])
 
         if position <= 10:
             self.__game_field.coords(self.__tokens[number_token],CoordCells.TOP_X[position], 50)
@@ -272,12 +273,12 @@ class GameWindow(CTkFrame):
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token5.png"))
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token6.png"))
 
-        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token1.png"))
-        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token2.png"))
-        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token3.png"))
-        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token4.png"))
-        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token5.png"))
-        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token6.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/active_token1.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/active_token2.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/active_token3.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/active_token4.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/active_token5.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/active_token6.png"))
 
     def __offset_token(self, overlay_index: list[int], position: int) -> None:
 
