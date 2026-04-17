@@ -51,7 +51,7 @@ class GameRules:
             self.__token_placer.put_on_chance(Chance.CASH, cell.try_luck(), businessman.id)
 
         elif isinstance(cell, Jail):
-            self.__token_placer.put_on_jail(businessman.id, cell)
+            self.__token_placer.put_on_jail(businessman.id)
 
     def __give_bonus_go(self, businessman: Businessman) -> None:
         if not isinstance(businessman, Businessman):  raise TypeError("Тип данных не Businessman")

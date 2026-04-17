@@ -51,9 +51,12 @@ class GamePresenter:
 
         self.__game.make_move()
 
+        if self.__game.is_skip_move():
+            MessageDropper.drop_message_info(self.__game_view, "Ход пропущен: игрок в тюрьме")
+            return None
+
         self.update_info()
         self.update_place_token()
-
         self.__game_view.update_idletasks()
 
         buying_permission = None
@@ -75,12 +78,18 @@ class GamePresenter:
 
         self.update_info()
 
+        return None
+
     def sell(self) -> None:
 
         current_player = self.__game.get_current_player()
 
         if current_player is None:
             MessageDropper.drop_message_info(self.__game_view, "Нажмите MOVE для того чтобы определить текущего игрока.")
+            return None
+
+        if self.__game.get_bankrupt_manager().is_bankrupt(current_player.id):
+            MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился. Вы не можете продать его собственность")
             return None
 
         if self.__sell_window is None or not self.__sell_window.winfo_exists():
@@ -99,6 +108,10 @@ class GamePresenter:
 
         if current_player is None:
             MessageDropper.drop_message_info(self.__game_view, "Нажмите MOVE для того чтобы определить текущего игрока.")
+            return None
+
+        if self.__game.get_bankrupt_manager().is_bankrupt(current_player.id):
+            MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился. Вы не можете строить.")
             return None
 
         if self.__sell_window is None or not self.__sell_window.winfo_exists():

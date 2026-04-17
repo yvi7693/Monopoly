@@ -4,10 +4,23 @@ from src.models.idbusinessman import IdBusinessman
 
 class Warden:
 
-    @staticmethod
-    def arrest(id: IdBusinessman, jail: Jail) -> None:
-        jail.conclude(id)
+    def __init__(self, jail: Jail = None):
+        self.__jail = jail
 
-    @staticmethod
-    def release(id: IdBusinessman, jail: Jail) -> None:
-        jail.give_freedom(id)
+    def set_jail(self, jail: Jail) -> None:
+        self.__jail = jail
+
+    def arrest(self, id: IdBusinessman) -> None:
+        if self.__jail.is_concluded(id):
+            return None
+
+        self.__jail.conclude(id)
+
+        return None
+
+    def release(self, id: IdBusinessman) -> None:
+        self.__jail.give_freedom(id)
+
+    def is_conclude(self, id: IdBusinessman) -> bool:
+        return self.__jail.is_concluded(id)
+

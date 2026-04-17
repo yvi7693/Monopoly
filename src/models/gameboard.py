@@ -295,7 +295,7 @@ class Jail(Cell):
     def conclude(self, id: IdBusinessman) -> None:
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
-        if self.__is_concluded(id):  raise AssertionError("Данный предприниматель уже заключён")
+        if self.is_concluded(id):  raise AssertionError("Данный предприниматель уже заключён")
 
         self.__prisoners.append(id)
 
@@ -313,7 +313,9 @@ class Jail(Cell):
 
         self.__prisoners.pop(delete_index)
 
-    def __is_concluded(self, id: IdBusinessman) -> bool:
+    def is_concluded(self, id: IdBusinessman) -> bool:
+        if not isinstance(id, IdBusinessman):
+            raise TypeError("Тип данных не IdBusinessman")
 
         if id in self.__prisoners: return True
 

@@ -61,11 +61,11 @@ class TokenPlacer:
 
                 self.__bankrupt_manager.bankrupting(id)
 
-    def put_on_jail(self, id: IdBusinessman, jail: Jail) -> None:
+    def put_on_jail(self, id: IdBusinessman) -> None:
 
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
-        self.__warden.arrest(id, jail)
+        self.__warden.arrest(id)
 
 
 

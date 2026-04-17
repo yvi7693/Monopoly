@@ -8,7 +8,7 @@ from src.controllers.warden import Warden
 from src.models.businesman import Businessman
 
 from src.models.dice import Dice
-from src.models.gameboard import Board, Cell
+from src.models.gameboard import Board, Cell, Jail
 
 
 class Game:
@@ -44,9 +44,18 @@ class Game:
         self.__game_board.create_neighborhood()
         self.__game_board.create_cells()
 
+        self.__warden.set_jail(self.__game_board.get_cell(30))
+
 
     def make_move(self) -> None:
         self.__current_player = self.__player_manager.get_current_businessman()
+
+        if self.__warden.is_conclude(self.__current_player.id):
+            self.__current_points = (0, 0)
+            self.__warden.release(self.__current_player.id)
+            self.update_data()
+            return None
+
         self.__current_points = self.__dice.throw()
 
         self.__game_rules.move_token(sum(self.__current_points), self.__current_player)
@@ -56,11 +65,16 @@ class Game:
         if self.__winner_manager.chek_winner():
             self.__winner_manager.declare_winner(self.__current_player)
 
+        return None
+
 
     def processing_move(self, buying_permission: bool | None) -> None:
         self.__game_rules.processing_move(self.__current_player, buying_permission)
 
         self.update_data()
+
+    def is_skip_move(self) -> bool:
+        return self.__current_points == (0,0)
 
     def get_current_player(self) -> Businessman:
         return self.__current_player
