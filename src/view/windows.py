@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import time
 import tkinter
 from tkinter import PhotoImage
@@ -135,6 +136,8 @@ class GameWindow(CTkFrame):
 
         self.__tokens = []
         self.__tokens_image = []
+        self.__tokens_active_image = []
+        self.__tokens_position = []
 
         self.__logo = tkinter.PhotoImage(file = PATH_LOGO_GAME)
 
@@ -164,21 +167,33 @@ class GameWindow(CTkFrame):
         self.__create_token(count_players)
 
     def update_place_token(self, number_token: int, position: int):
+        self.__tokens[number_token].itemconfig()
 
         if position <= 10:
-            self.__game_field.coords(self.__tokens[number_token], CoordCells.TOP_X[position], 50)
+            self.__game_field.coords(self.__tokens[number_token],CoordCells.TOP_X[position], 50)
 
         elif position > 10 and position <= 20:
-            self.__game_field.coords(self.__tokens[number_token], 720, CoordCells.RIGHT_Y[position-10])
+            self.__game_field.coords(self.__tokens[number_token], 720, CoordCells.RIGHT_Y[position - 10])
 
         elif position > 20 and position <= 30:
             self.__game_field.coords(self.__tokens[number_token], CoordCells.BOTTOM_X[position - 20], 720)
 
         elif position > 30 and position <= 40:
-            self.__game_field.coords(self.__tokens[number_token], 50, CoordCells.RIGHT_Y[position - 30])
+            self.__game_field.coords(self.__tokens[number_token], 50, CoordCells.LEFT_Y[position - 30])
+
+        self.__tokens_position[number_token] = position
+
+        overlay_index = []
+
+        for i in range(len(self.__tokens_position)):
+            if self.__tokens_position[i] == position:
+                overlay_index.append(i)
+
+        if len(overlay_index) >= 2:
+            self.__offset_token(overlay_index, position)
 
     def delete_token(self, id: int) -> None:
-        self.__game_field.itemconfig(self.__tokens[id], state='hidden')
+            self.__game_field.itemconfig(self.__tokens[id], state='hidden')
 
     def __create_interaction_window(self) -> None:
         self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
@@ -247,6 +262,7 @@ class GameWindow(CTkFrame):
     def __create_token(self, count_players: int) -> None:
         for i in range(count_players):
             self.__tokens.append(self.__game_field.create_image(50, 50,  image = self.__tokens_image[i]))
+            self.__tokens_position.append(0)
 
     def __create_token_image(self) -> None:
         self.__tokens_image.append(tkinter.PhotoImage(file = "images/token1.png"))
@@ -255,6 +271,42 @@ class GameWindow(CTkFrame):
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token4.png"))
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token5.png"))
         self.__tokens_image.append(tkinter.PhotoImage(file="images/token6.png"))
+
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token1.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token2.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token3.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token4.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token5.png"))
+        self.__tokens_active_image.append(tkinter.PhotoImage(file="images/token6.png"))
+
+    def __offset_token(self, overlay_index: list[int], position: int) -> None:
+
+        base_x, base_y = self.__cell_center(position)
+
+        count = len(overlay_index)
+
+        radius = min(30, 10 + count * 4)
+
+        for i, token_idx in enumerate(overlay_index):
+            angle = (2 * math.pi * i) / count
+            dx = radius * math.cos(angle)
+            dy = radius * math.sin(angle)
+            self.__game_field.coords(self.__tokens[token_idx], base_x + dx, base_y + dy)
+
+        return None
+
+    @staticmethod
+    def __cell_center(position: int) -> tuple[int, int] | None:
+        if position <= 10:
+            return CoordCells.TOP_X[position], 50
+        if position <= 20:
+            return 720, CoordCells.RIGHT_Y[position - 10]
+        if position <= 30:
+            return CoordCells.BOTTOM_X[position - 20], 720
+        if position <= 40:
+            return 50, CoordCells.LEFT_Y[position - 30]
+
+        return None
 
 
 class WinnerWindow(CTkFrame):

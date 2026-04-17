@@ -48,6 +48,7 @@ class GamePresenter:
         self.__game.make_move()
 
         self.update_info()
+        self.update_place_token()
 
         self.__game_view.update_idletasks()
 
@@ -99,11 +100,16 @@ class GamePresenter:
     def update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()
         balance = self.__game.get_current_balance()
-        position = self.__game.get_current_player().get_position()
         points_1, points_2 = self.__game.get_current_points()
         ownerships = self.__game.get_current_player().get_ownerships_names()
 
-        self.__game_view.update_window(id, balance, position, points_1, points_2, ownerships)
+        self.__game_view.update_window_info(id, balance, points_1, points_2, ownerships)
+
+    def update_place_token(self) -> None:
+        id = self.__game.get_current_player().id.get_value()
+        position = self.__game.get_current_player().get_position()
+
+        self.__game_view.update_place_token(id, position)
 
 
 
