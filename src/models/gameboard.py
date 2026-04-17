@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
-from src.models.building import Building
+from src.models.building import Building, BuildingTypes
 from src.models.idbusinessman import IdBusinessman
 from src.models.typescell import ChanceResultTypes, Neighborhood, NeighborhoodTypes
 
@@ -40,14 +40,14 @@ class Board:
     def create_neighborhood(self) -> None:
         self.__cells.clear()
 
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BROWN, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.WHITE_BLUE, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.PURPLE, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.ORANGE, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.RED, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.YELLOW, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.GREEN, 0))
-        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 0))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BROWN, 50))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.WHITE_BLUE, 50))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.PURPLE, 100))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.ORANGE, 100))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.RED, 150))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.YELLOW, 150))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.GREEN, 200))
+        self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 200))
 
     def create_cells(self) -> None:
         companies = ['MAX', 'VK', 'RU Tube', 'Amazon', 'Google', 'Meta', 'Tesla', 'Intel', 'AMD', 'Oracle', 'IBM', 'Apple', 'Yandex', 'Nike', 'Sber', 'Tinkoff', 'Ozon', 'Avito', '1C', 'Kaspersky', 'ABBYY', 'Nexign', 'Naumen', 'Drom']
@@ -230,6 +230,9 @@ class Street(Ownership):
     def get_color(self) -> str:
         return self.__neighborhood.get_color()
 
+    def get_builds(self) -> list[Building]:
+        return self.__builds
+
     def calculate_price(self) -> int:
         price_buildings = 0
 
@@ -246,7 +249,7 @@ class Street(Ownership):
 
         return  self._rent * build_ratio
 
-    def create_build(self, price: int, type: int, ratio: int) -> None:  # построить дом
+    def create_build(self, price: int, type: BuildingTypes, ratio: int) -> None:  # построить дом
         self.__builds.append(Building(price, type, ratio))
 
     def can_build_home(self) -> bool: # можно ли построить дом

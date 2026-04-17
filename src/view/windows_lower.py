@@ -157,3 +157,61 @@ class SellWindow(CTkToplevel):
     def add_listener_on_click_sell(self, callback) -> None:
         self.__sell_btn.add_listener(callback)
 
+
+class BuildWindow(CTkToplevel):
+
+    def __init__(self, master):
+        super().__init__(master = master)
+        self.title("Building")
+
+        self.transient(master)
+        self.lift()
+        self.focus_force()
+        self.grab_set()
+
+        self.protocol("WM_DELETE_WINDOW", self.close)
+
+        self.__home_button = None
+        self.__hotel_button = None
+
+        self.__build_index = None
+
+    def get_build_index(self) -> int:
+        return self.__build_index.get()
+
+    def create_widgets(self, names: list[str]) -> None:
+        label1 = CTkLabel(self, text="Выберите собственность которую хотите улучшить")
+        label1.grid(row=0, column = 0, padx = 30)
+
+        if not names:
+            label2 = CTkLabel(self, text="У вас нет собственности для улучшения")
+            label2.pack()
+
+            return None
+
+        self.__build_index = tkinter.IntVar(value=0)
+
+        for i in range(len(names)):
+            rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__build_index)
+            rad_button.grid(row= i + 1, column=0, pady=10)
+
+        self.__home_button = Button(master=self, text="Home", fg_color="#00FF00", hover_color="#32CD32", text_color="black")
+        self.__home_button.grid(row=len(names)+1, column=0, pady=10, sticky="e")
+
+        self.__hotel_button = Button(master=self, text="Hotel")
+        self.__hotel_button.grid(row=len(names)+1, column=1, pady=10, sticky="w")
+
+        return None
+
+    def close(self) -> None:
+        self.grab_release()
+        self.destroy()
+
+    def add_listener_on_click_home(self, callback) -> None:
+        self.__home_button.add_listener(callback)
+
+    def add_listener_on_click_hotel(self, callback) -> None:
+        self.__hotel_button.add_listener(callback)
+
+
+

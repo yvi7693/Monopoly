@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 
-from src.models.gameboard import Ownership, Board, Neighborhood
+from src.models.gameboard import Ownership, Board, Neighborhood, Street
 from src.models.idbusinessman import IdBusinessman
 
 
@@ -18,7 +18,19 @@ class Businessman:
         names_ownership = ""
 
         for ownership in self.__ownerships:
-            names_ownership += f"{ownership.get_name()}\n"
+            if not isinstance(ownership, Street):
+                names_ownership += f"{ownership.get_name()}\n"
+
+            else:
+                count_building = len(ownership.get_builds())
+
+                if count_building > 4:
+                    emoji = "🏨"
+                else:
+                    emoji = "🏠" * count_building
+
+                names_ownership += f"{ownership.get_name()}{emoji}\n"
+
 
         return names_ownership
 
@@ -29,6 +41,25 @@ class Businessman:
             names_ownership.append(ownership.get_name())
 
         return names_ownership
+
+    def get_street_names(self) -> list[str]:
+        names_street = []
+
+        for ownership in self.__ownerships:
+            if isinstance(ownership, Street):
+
+                names_street.append(ownership.get_name())
+
+        return names_street
+
+    def get_street(self) -> list[Street]:
+        streets = []
+
+        for ownership in self.__ownerships:
+            if isinstance(ownership, Street):
+                streets.append(ownership)
+
+        return streets
 
     def get_position(self) -> int: return self.__position
 

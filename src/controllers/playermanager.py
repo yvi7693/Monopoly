@@ -1,6 +1,6 @@
 from src.controllers.finance import Bank
 from src.models.businesman import Businessman, IdBusinessman
-from src.models.gameboard import Ownership
+from src.models.gameboard import Ownership, Street
 
 
 class PlayerManager:
@@ -89,6 +89,14 @@ class PlayerManager:
         if businessman is None:  raise AssertionError("Текущий предприниматель не найден")
 
         return businessman.has_title_deeds(ownership)
+
+    def has_neighborhood(self, id: IdBusinessman, street: Street) -> bool:
+        businessman = self.__search_businessman(id)
+
+        if businessman.has_neighborhood_by_street(street.neighborhood):
+            return True
+
+        return False
 
     def get_businessmen(self) -> list[Businessman]:
         businessmen_copy = []

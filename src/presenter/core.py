@@ -1,10 +1,11 @@
 from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
+from src.presenter.build_presenter import BuildPresenter
 from src.presenter.sell_presenter import SellPresenter
 
 from src.view.main_window import MainWindow
 from src.view.message import MessageDropper
-from src.view.windows_lower import SellWindow
+from src.view.windows_lower import SellWindow, BuildWindow
 
 
 class GamePresenter:
@@ -18,6 +19,9 @@ class GamePresenter:
 
         self.__sell_window = None
         self.__sell_presenter = None
+
+        self.__build_window = None
+        self.__build_presenter = None
 
         self.__game_view.start_window.add_listener_on_click_start(self.run)
 
@@ -71,10 +75,6 @@ class GamePresenter:
 
         self.update_info()
 
-    def restart(self) -> None:
-        self.__game = Game()
-        self.__game_view.show_start_window()
-
     def sell(self) -> None:
 
         current_player = self.__game.get_current_player()
@@ -95,7 +95,26 @@ class GamePresenter:
         return None
 
     def build(self) -> None:
-        pass
+        current_player = self.__game.get_current_player()
+
+        if current_player is None:
+            MessageDropper.drop_message_info(self.__game_view, "Нажмите MOVE для того чтобы определить текущего игрока.")
+            return None
+
+        if self.__sell_window is None or not self.__sell_window.winfo_exists():
+            self.__build_window = BuildWindow(self.__game_view.game_window)
+
+        else:
+            self.__build_window.focus()
+
+        self.__build_window.create_widgets(current_player.get_street_names())
+        self.__build_presenter = BuildPresenter(self.__game.get_builder(), self.__build_window, self.__game, self.update_info)
+
+        return None
+
+    def restart(self) -> None:
+        self.__game = Game()
+        self.__game_view.show_start_window()
 
     def update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()

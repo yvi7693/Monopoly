@@ -28,7 +28,7 @@ class Game:
         self.__winner_manager = WinnerManager(self.__player_manager)
         self.__token_placer = TokenPlacer(self.__manager_ownership, self.__bank, self.__warden, self.__bankrupt_manager)
         self.__game_rules = GameRules(self.__game_board, self.__bank, self.__token_placer)
-        self.__builder = Builder(self.__bank)
+        self.__builder = Builder(self.__bank, self.__player_manager)
 
         self.__dice = Dice()
 
