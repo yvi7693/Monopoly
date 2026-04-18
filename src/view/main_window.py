@@ -1,4 +1,5 @@
 from customtkinter import CTk
+from pygame import mixer
 
 from src.constant_view import *
 from src.view.windows import StartWindow, PresentWindow, GameWindow, WinnerWindow
@@ -38,17 +39,44 @@ class MainWindow(CTk):
 
     def show_start_window(self) -> None:
         self.__start_window.tkraise()
+        mixer.init()
+
+        mixer.music.load("music/StartTrack.mp3")
+
+        mixer.music.set_volume(0.7)
+
+        mixer.music.play()
 
     def show_present_window(self):
         self.__present_window.tkraise()
         self.__present_window.start_animate(self.show_game_window)
 
+        mixer.music.load("music/ShowLogo.mp3")
+
+        mixer.music.set_volume(0.7)
+
+        mixer.music.play()
+
     def show_game_window(self) -> None:
         self.__game_window.tkraise()
+
+        mixer.music.load("music/GameTrack.mp3")
+
+        mixer.music.set_volume(0.7)
+
+        mixer.music.play()
 
     def show_winner_window(self, id: int) -> None:
         self.__winner_window.create_widgets(id)
         self.__winner_window.tkraise()
+
+        mixer.music.stop()
+
+        mixer.music.load("music/END.mp3")
+
+        mixer.music.set_volume(0.7)
+
+        mixer.music.play(fade_ms=1000)
 
     def update_window_info(self, id: int, balance: int, points_1: int, points_2: int, ownership: str) -> None:
         self.__game_window.update_widgets(id, balance, points_1, points_2, ownership)

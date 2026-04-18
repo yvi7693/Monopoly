@@ -32,7 +32,7 @@ class ProgressBar(CTkProgressBar):
         speed = 0.1
 
         while self.__progress < 1:
-            time.sleep(0.1)
+            time.sleep(0.3)
             self.__progress += speed
 
             self.set(self.__progress)
@@ -42,9 +42,9 @@ class ProgressBar(CTkProgressBar):
 class ScrollableOwnerships(CTkScrollableFrame):
     
     def __init__(self, master, width: int, height: int):
-        super().__init__(master=master, width=width, height=height)
+        super().__init__(master=master, width=width, height=height, fg_color="#e8e8e8", corner_radius=20)
 
-        self.__label = CTkLabel(self, text = EMPTY_TEXT, anchor="w", justify="left")
+        self.__label = CTkLabel(self, text = EMPTY_TEXT, anchor="w", justify="left", font=("Comic Sans MS", 14, "bold"))
         self.__label.grid(row=0, column=0, padx=20)
 
     def update_text(self, text: str):

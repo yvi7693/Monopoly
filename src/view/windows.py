@@ -4,6 +4,7 @@ import math
 import time
 import tkinter
 from tkinter import PhotoImage
+from pygame import mixer
 
 from customtkinter import *
 
@@ -29,10 +30,13 @@ class StartWindow(CTkFrame):
 
         self.__create_widgets()
 
+
     def add_listener_on_click_start(self, callback) -> None:
         self.__start_btn.add_listener(callback)
 
     def start_loading(self) -> None:
+        mixer.music.fadeout(3000)
+
         self.__progressbar = ProgressBar(self, PROGRESS_WIDTH, SYSTEM_FG)
         self.__progressbar.pack(pady=(100,0))
         self.__progressbar.start()
@@ -50,11 +54,11 @@ class StartWindow(CTkFrame):
 
         self.__count_players = tkinter.IntVar(value=2)
 
-        players_2 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_2, variable=self.__count_players, value=2, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_3 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_3, variable=self.__count_players, value=3, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_4 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_4, variable=self.__count_players, value=4, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_5 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_5, variable=self.__count_players, value=5, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
-        players_6 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_6, variable=self.__count_players, value=6, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER)
+        players_2 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_2, variable=self.__count_players, value=2, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
+        players_3 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_3, variable=self.__count_players, value=3, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
+        players_4 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_4, variable=self.__count_players, value=4, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
+        players_5 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_5, variable=self.__count_players, value=5, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
+        players_6 = CTkRadioButton(radio_frame, text=RADIO_BUTTON_TEXT_6, variable=self.__count_players, value=6, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
 
         players_2.pack(side = "left", pady = 20)
         players_3.pack(side = "left", pady = 20)
@@ -86,6 +90,8 @@ class PresentWindow(CTkFrame):
 
         self.__create_widgets()
 
+
+
     def start_animate(self, callback) -> None:
         self.__step = 0
         self.__display_text()
@@ -101,7 +107,7 @@ class PresentWindow(CTkFrame):
         self.__label_present.place(relx=0.5, rely=0.55, anchor="center")
 
     def __display_text(self) -> None:
-        max_step = 150
+        max_step = 70
 
         value = int((255 / max_step) * self.__step)
 
@@ -139,9 +145,12 @@ class GameWindow(CTkFrame):
         self.__tokens_active_image = []
         self.__tokens_position = []
 
+        self.__current_token = None
+
         self.__logo = tkinter.PhotoImage(file = PATH_LOGO_GAME)
 
         self.__create_interaction_window()
+
 
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
@@ -167,8 +176,8 @@ class GameWindow(CTkFrame):
         self.__create_token(count_players)
 
     def update_place_token(self, number_token: int, position: int):
-        self.__game_field.itemconfig(self.__tokens[number_token - 1], image=self.__tokens_image[number_token - 1])
-        self.__game_field.itemconfig(self.__tokens[number_token], image=self.__tokens_active_image[number_token])
+
+        self.__activate_token(number_token)
 
         if position <= 10:
             self.__game_field.coords(self.__tokens[number_token],CoordCells.TOP_X[position], 50)
@@ -196,6 +205,13 @@ class GameWindow(CTkFrame):
     def delete_token(self, id: int) -> None:
             self.__game_field.itemconfig(self.__tokens[id], state='hidden')
 
+    def __activate_token(self, number_token: int) -> None:
+        if self.__current_token is not None:
+            self.__game_field.itemconfig(self.__tokens[self.__current_token], image=self.__tokens_image[self.__current_token])
+
+        self.__game_field.itemconfig(self.__tokens[number_token], image=self.__tokens_active_image[number_token])
+        self.__current_token = number_token
+
     def __create_interaction_window(self) -> None:
         self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
         self.__interaction_window.grid(row=0, column=1, sticky="nswe")
@@ -203,34 +219,34 @@ class GameWindow(CTkFrame):
     def __create_rectangles(self) -> None:
 
         for i in range(80, 683, 67):
-            self.__game_field.create_rectangle(i, 0, i+67, 80)
-            self.__game_field.create_rectangle(i, 683, i + 67, 763)
-            self.__game_field.create_rectangle(683, i, 763, i + 67)
-            self.__game_field.create_rectangle(0, i, 80, i + 67)
+            self.__game_field.create_rectangle(i, 0, i+67, 80, outline="#FFFFFF", width=3)
+            self.__game_field.create_rectangle(i, 683, i + 67, 763, outline="#FFFFFF", width=3)
+            self.__game_field.create_rectangle(683, i, 763, i + 67, outline="#FFFFFF", width=3)
+            self.__game_field.create_rectangle(0, i, 80, i + 67, outline="#FFFFFF", width=3)
 
-        self.__game_field.create_rectangle(0, 0, 80, 80)
-        self.__game_field.create_rectangle(683, 0, 763, 80)
-        self.__game_field.create_rectangle(0, 683, 80, 763)
-        self.__game_field.create_rectangle(683, 683, 763, 763)
+        self.__game_field.create_rectangle(0, 0, 80, 80, outline="#FFFFFF", width=3)
+        self.__game_field.create_rectangle(683, 0, 763, 80, outline="#FFFFFF", width=3)
+        self.__game_field.create_rectangle(0, 683, 80, 763, outline="#FFFFFF", width=3)
+        self.__game_field.create_rectangle(683, 683, 763, 763, outline="#FFFFFF", width=3)
 
     def __create_text(self, names_cells: list[str]) -> None:
 
         index = 0
 
         for i in range(45, 763, 67):
-            self.__game_field.create_text(i, 40 , text = names_cells[index])
+            self.__game_field.create_text(i, 40 , text = names_cells[index], font=("Comic Sans MS", 13))
             index += 1
 
         for i in range(115, 700, 67):
-            self.__game_field.create_text(730, i, text = names_cells[index])
+            self.__game_field.create_text(730, i, text = names_cells[index], font=("Comic Sans MS", 13))
             index += 1
 
         for i in range(715, 20, -67):
-            self.__game_field.create_text(i, 725, text = names_cells[index])
+            self.__game_field.create_text(i, 725, text = names_cells[index], font=("Comic Sans MS", 13))
             index += 1
 
         for i in range(650, 80, -67):
-            self.__game_field.create_text(30, i, text = names_cells[index])
+            self.__game_field.create_text(30, i, text = names_cells[index], font=("Comic Sans MS", 13))
             index += 1
 
     def __create_neighborhood(self, colors: list[str]) -> None:
@@ -242,19 +258,19 @@ class GameWindow(CTkFrame):
 
 
         for x in coord_first:
-            self.__game_field.create_rectangle(x, 60, x + 67, 80, fill = colors[index])
+            self.__game_field.create_rectangle(x, 60, x + 67, 80, fill = colors[index], outline="#FFFFFF")
             index += 1
 
         for y in coord_first:
-            self.__game_field.create_rectangle(683, y, 705, y + 67, fill = colors[index])
+            self.__game_field.create_rectangle(683, y, 705, y + 67, fill = colors[index], outline="#FFFFFF")
             index += 1
 
         for x in coord_last:
-            self.__game_field.create_rectangle(x, 683, x-67, 705, fill = colors[index])
+            self.__game_field.create_rectangle(x, 683, x-67, 705, fill = colors[index], outline="#FFFFFF")
             index += 1
 
         for y in coord_last:
-            self.__game_field.create_rectangle(60, y, 80, y-67, fill = colors[index])
+            self.__game_field.create_rectangle(60, y, 80, y-67, fill = colors[index], outline="#FFFFFF")
             index += 1
 
     def __create_logo(self) -> None:

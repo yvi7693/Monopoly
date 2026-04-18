@@ -17,7 +17,7 @@ class InteractionWindow(CTkFrame):
     __scroll_ownerships: ScrollableOwnerships
 
     def __init__(self, master, width: int, height: int):
-        super().__init__(master = master, width = width, height = height)
+        super().__init__(master = master, width = width, height = height, fg_color="#FFFAFA")
 
         self.grid_columnconfigure(0, weight=0, minsize=163)
         self.grid_columnconfigure(1, weight=0, minsize=163)
@@ -46,18 +46,21 @@ class InteractionWindow(CTkFrame):
         self.__build_btn.add_listener(callback)
 
     def __create_widgets(self) -> None:
-        self.__label_player = CTkLabel(master = self, text=f"{PLAYER_LABEL}", fg_color="transparent", text_color=TEXT_COLOR, font=(FONT, FONT_SIZE_INTER), pady = 20)
-        self.__label_player.grid(row=0, column=0, columnspan=2)
+        frame = CTkFrame(master=self, height=200, corner_radius=100, fg_color="#e8e8e8")
+        frame.grid(row=0, column=0, columnspan=2, sticky="ew")
 
-        self.__label_balance = CTkLabel(master=self, text=BALANCE_LABEL, fg_color="transparent", text_color=TEXT_COLOR)
+        self.__label_player = CTkLabel(master = frame, text=f"{PLAYER_LABEL}", fg_color="transparent", text_color=TEXT_COLOR, font=("San Francisco", FONT_SIZE_INTER, "bold"), pady = 20)
+        self.__label_player.pack(anchor="center")
+
+        self.__label_balance = CTkLabel(master=self, text=BALANCE_LABEL, fg_color="transparent", text_color=TEXT_COLOR, font=("San Francisco", 14, "bold"))
         self.__label_balance.grid(row=1, column=0, padx=5, sticky="e")
 
-        self.__balance = CTkLabel(master=self, text=MONEY_EMOJI, fg_color="transparent", text_color=TEXT_COLOR)
+        self.__balance = CTkLabel(master=self, text=MONEY_EMOJI, fg_color="transparent", text_color=TEXT_COLOR, font=("San Francisco", 14, "bold"))
         self.__balance.grid(row=1, column=1, padx=0, sticky="w")
 
         self.__label_ownership = CTkLabel(master=self, text=OWNERSHIP_TEXT, fg_color="transparent", text_color=TEXT_COLOR,
-                                 font=(FONT, FONT_SIZE_INTER), pady=0)
-        self.__label_ownership.grid(row=2, column=0, columnspan=2)
+                                 font=(FONT, FONT_SIZE_INTER))
+        self.__label_ownership.grid(row=2, column=0, columnspan=2, pady=(30,0))
 
         self.__scroll_ownerships = ScrollableOwnerships(self,width=WIDTH_OWNERSHIP,height=HEIGHT_OWNERSHIP)
         self.__scroll_ownerships.grid(row=3, column=0, columnspan=2, sticky="nswe", pady=20)
@@ -70,11 +73,11 @@ class InteractionWindow(CTkFrame):
 
         self.__create_dice()
 
-        self.__dice_1.grid(row = 5, column = 0, pady=(100,0), sticky = "e")
-        self.__dice_2.grid(row=5, column=1, pady=(150, 0), sticky = "w")
+        self.__dice_1.grid(row = 5, column = 0, pady=(50,0), sticky = "e")
+        self.__dice_2.grid(row=5, column=1, pady=(100, 0), sticky = "w")
 
         self.__move_btn = Button(self, MOVE_BUTTON_TEXT)
-        self.__move_btn.grid(row = 6, column =0, pady=(70,0), columnspan=2)
+        self.__move_btn.grid(row = 6, column =0, pady=(50,0), columnspan=2)
 
     def __create_dice(self) -> None:
 
@@ -123,29 +126,28 @@ class SellWindow(CTkToplevel):
 
         self.protocol("WM_DELETE_WINDOW", self.close)
 
-        self.__sell_btn = None
+        self.__sell_btn = Button(master = self, text = "SELL", width=110)
         self.__sell_index = None
 
     def get_sell_index(self) -> int:
         return self.__sell_index.get()
 
     def create_widgets(self, names: list[str]) -> None:
-        label1 = CTkLabel(self, text="Выберите собственность которую хотите продать")
-        label1.pack(padx = 30)
+        label1 = CTkLabel(self, text="Выберите собственность которую хотите продать", font=(FONT, 14, "bold"))
+        label1.pack(padx = 30, pady=20)
 
         if not names:
             label2 = CTkLabel(self, text="У вас нет собственности для продажи")
-            label2.pack()
+            label2.pack(pady=20)
 
             return None
 
         self.__sell_index = tkinter.IntVar(value=0)
 
         for i in range(len(names)):
-            rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__sell_index)
+            rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__sell_index, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
             rad_button.pack(pady=10)
 
-        self.__sell_btn = Button(master = self, text = "Sell")
         self.__sell_btn.pack(pady=30)
 
         return None
@@ -171,8 +173,8 @@ class BuildWindow(CTkToplevel):
 
         self.protocol("WM_DELETE_WINDOW", self.close)
 
-        self.__home_button = None
-        self.__hotel_button = None
+        self.__home_button = Button(master=self, text="HOME", fg_color="#3CB371", hover_color="#006400", width = 110)
+        self.__hotel_button = Button(master=self, text="HOTEL", width = 110)
 
         self.__build_index = None
 
@@ -180,26 +182,23 @@ class BuildWindow(CTkToplevel):
         return self.__build_index.get()
 
     def create_widgets(self, names: list[str]) -> None:
-        label1 = CTkLabel(self, text="Выберите собственность которую хотите улучшить")
-        label1.grid(row=0, column = 0, padx = 30)
+        label1 = CTkLabel(self, text="Выберите собственность которую хотите улучшить", font=(FONT, 14, "bold"))
+        label1.grid(row=0, column = 0, padx = 30, pady=20, columnspan=2)
 
         if not names:
             label2 = CTkLabel(self, text="У вас нет собственности для улучшения")
-            label2.pack()
+            label2.grid(row=1, column=0, pady=20, columnspan= 2)
 
             return None
 
         self.__build_index = tkinter.IntVar(value=0)
 
         for i in range(len(names)):
-            rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__build_index)
-            rad_button.grid(row= i + 1, column=0, pady=10)
+            rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__build_index, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
+            rad_button.grid(row= i + 1, column=0, pady=10, columnspan=2)
 
-        self.__home_button = Button(master=self, text="Home", fg_color="#00FF00", hover_color="#32CD32", text_color="black")
-        self.__home_button.grid(row=len(names)+1, column=0, pady=10, sticky="e")
-
-        self.__hotel_button = Button(master=self, text="Hotel")
-        self.__hotel_button.grid(row=len(names)+1, column=1, pady=10, sticky="w")
+        self.__home_button.grid(row=len(names)+1, column=0, pady=10, sticky="e", padx=10)
+        self.__hotel_button.grid(row=len(names)+1, column=1, pady=10, sticky="w", padx=10)
 
         return None
 

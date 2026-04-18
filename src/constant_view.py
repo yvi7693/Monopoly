@@ -24,7 +24,7 @@ MOVE_BUTTON_TEXT = "MOVE"
 
 OWNERSHIP_TEXT = "Ownerships:"
 
-FONT = "Arial"
+FONT = "San Francisco"
 
 # PresentWindow
 NAME_PRESENT = "Yaroslav Volkov"
@@ -43,11 +43,11 @@ RADIO_BG = "#e7d5e7"
 PLAYER_LABEL = "Player №"
 BALANCE_LABEL = "Balance:"
 MONEY_EMOJI = "💰"
-TEXT_COLOR = "black"
-FONT_SIZE_INTER = 20
+TEXT_COLOR = "#000000"
+FONT_SIZE_INTER = 24
 
-WIDTH_OWNERSHIP = 100
-HEIGHT_OWNERSHIP = 100
+WIDTH_OWNERSHIP = 70
+HEIGHT_OWNERSHIP = 70
 
 PATH_DICE1 = "images/1.png"
 PATH_DICE2 = "images/2.png"
@@ -62,7 +62,7 @@ EMPTY_TEXT = ""
 
 # WinnerWindow: PNG-кадры (приоритет) или один GIF, если glob не нашёл файлов
 PATH_WINNER_FRAMES_GLOB = "images/winner_frames/*.png"
-PATH_WINNER_GIF = "images/confetti.gif"
+PATH_WINNER_GIF = "images/money-drop-1.gif"
 WINNER_BG = "#1e1e2e"
 WINNER_ANIM_FRAME_MS = 50
 WINNER_GIF_FRAME_MS = WINNER_ANIM_FRAME_MS
