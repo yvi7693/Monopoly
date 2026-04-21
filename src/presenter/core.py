@@ -60,8 +60,6 @@ class GamePresenter:
 
         self.__game_view.update_idletasks()
 
-
-
         return None
 
     def make_move_part2(self) -> None:
