@@ -55,10 +55,16 @@ class GamePresenter:
             MessageDropper.drop_message_info(self.__game_view, "Ход пропущен: игрок в тюрьме")
             return None
 
+        self.update_place_token(self.make_move_part2)
         self.update_info()
-        self.update_place_token()
+
         self.__game_view.update_idletasks()
 
+
+
+        return None
+
+    def make_move_part2(self) -> None:
         buying_permission = None
 
         if self.__game.board.is_ownerless(self.__game.get_current_cell()):
@@ -74,11 +80,9 @@ class GamePresenter:
             self.__game_view.game_window.delete_token(self.__game.get_current_player().id.get_value())
 
         if self.__game.get_winner_manager().is_winner():
-            self.__game_view.show_winner_window(self.__game.get_current_player().id.get_value()+1)
+            self.__game_view.show_winner_window(self.__game.get_current_player().id.get_value() + 1)
 
         self.update_info()
-
-        return None
 
     def sell(self) -> None:
 
@@ -137,10 +141,11 @@ class GamePresenter:
 
         self.__game_view.update_window_info(id, balance, points_1, points_2, ownerships)
 
-    def update_place_token(self) -> None:
+    def update_place_token(self, callback) -> None:
         id = self.__game.get_current_player().id.get_value()
         position = self.__game.get_current_player().get_position()
 
+        self.__game_view.game_window.set_callback_past_animate(callback)
         self.__game_view.update_place_token(id, position)
 
 

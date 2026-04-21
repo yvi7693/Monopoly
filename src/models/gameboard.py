@@ -124,31 +124,27 @@ class Chance(Cell):
 
     CASH = 200
 
+    __result: ChanceResultTypes | None
+
     def __init__(self, x: int, name: str):
         super().__init__(x, name)
+
         self.__result = None
 
     def __str__(self):
-        if self.__result == ChanceResultTypes.POSITIVE:
-            return f"Вы попали на клетку шанс\n и получаете {Chance.CASH}💰"
-
-        return f"Вы попали на клетку шанс\n вы вынуждены заплатить {Chance.CASH}💰"
-
-    def try_luck(self) -> ChanceResultTypes:  # испытать удачу
-
-        self.__solve_chance()
-
-        if self.__result == ChanceResultTypes.POSITIVE:
-            return ChanceResultTypes.POSITIVE
+        if self.__result == ChanceResultTypes.NEGATIVE:
+            return f"Вы попали на клетку шанс\n вы вынуждены заплатить {Chance.CASH}💰"
 
         else:
-            return ChanceResultTypes.NEGATIVE
+            return f"Вы попали на клетку шанс\n и получаете {Chance.CASH}💰"
 
+    def get_result(self) -> ChanceResultTypes:  # испытать удачу
+        return self.__result
 
-    def __solve_chance(self) -> None:  # вычислить шанс
+    def try_luck(self) -> None:  # вычислить шанс
         import random
 
-        if random.randint(0, 10) > 5:
+        if random.randint(0, 1) == 1:
             self.__result = ChanceResultTypes.POSITIVE
         else:
             self.__result = ChanceResultTypes.NEGATIVE

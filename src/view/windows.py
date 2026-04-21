@@ -147,10 +147,14 @@ class GameWindow(CTkFrame):
 
         self.__current_token = None
 
+        self.__callback_past_animate = None
+
         self.__logo = tkinter.PhotoImage(file = PATH_LOGO_GAME)
 
         self.__create_interaction_window()
 
+    def set_callback_past_animate(self, callback) -> None:
+        self.__callback_past_animate = callback
 
     def add_listener_on_click_move(self, callback) -> None:
         self.__interaction_window.add_listener_on_click_move(callback)
@@ -175,24 +179,46 @@ class GameWindow(CTkFrame):
         self.__create_token_image()
         self.__create_token(count_players)
 
-    def update_place_token(self, number_token: int, position: int):
+    def animate_move_token(self, number_token: int, position: int, callback) -> None:
 
+        current_position = self.__tokens_position[number_token]
+
+        if current_position < 10:
+            self.__game_field.move(self.__tokens[number_token], 67, 0)
+
+        elif current_position >= 10 and current_position < 20:
+            self.__game_field.move(self.__tokens[number_token], 0, 67)
+
+        elif current_position >= 20 and current_position < 30:
+            self.__game_field.move(self.__tokens[number_token], -67, 0)
+
+        elif current_position >= 30 and current_position < 40:
+            self.__game_field.move(self.__tokens[number_token], 0, -67)
+
+        self.__tokens_position[number_token] += 1
+
+        if self.__tokens_position[number_token] == 40:
+            self.__tokens_position[number_token] = 0
+
+        if not self.__tokens_position[number_token] == position:
+            self.__game_field.after(80, self.animate_move_token, number_token, position, callback)
+
+        else:
+            self.__game_field.update_idletasks()
+            callback(position)
+
+        return None
+
+    def update_place_token(self, number_token: int, position: int) -> None:
         self.__activate_token(number_token)
 
-        if position <= 10:
-            self.__game_field.coords(self.__tokens[number_token],CoordCells.TOP_X[position], 50)
+        self.animate_move_token(number_token, position, self.past_animation)
 
-        elif position > 10 and position <= 20:
-            self.__game_field.coords(self.__tokens[number_token], 720, CoordCells.RIGHT_Y[position - 10])
+    def past_animation(self, position: int):
+        self.find_overlay_tokens(position)
+        self.__callback_past_animate()
 
-        elif position > 20 and position <= 30:
-            self.__game_field.coords(self.__tokens[number_token], CoordCells.BOTTOM_X[position - 20], 720)
-
-        elif position > 30 and position <= 40:
-            self.__game_field.coords(self.__tokens[number_token], 50, CoordCells.LEFT_Y[position - 30])
-
-        self.__tokens_position[number_token] = position
-
+    def find_overlay_tokens(self, position: int) -> None:
         overlay_index = []
 
         for i in range(len(self.__tokens_position)):
@@ -201,6 +227,12 @@ class GameWindow(CTkFrame):
 
         if len(overlay_index) >= 2:
             self.__offset_token(overlay_index, position)
+
+        if len(overlay_index) == 1:
+            x, y = self.__cell_center(position)
+            self.__game_field.coords(self.__tokens[overlay_index[0]], x, y)
+
+
 
     def delete_token(self, id: int) -> None:
             self.__game_field.itemconfig(self.__tokens[id], state='hidden')

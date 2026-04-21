@@ -48,7 +48,7 @@ class GameRules:
             self.__token_placer.put_on_ownership(cell, businessman.id, buying_permission)
 
         elif isinstance(cell, Chance):
-            self.__token_placer.put_on_chance(Chance.CASH, cell.try_luck(), businessman.id)
+            self.__token_placer.put_on_chance(Chance.CASH, cell, businessman.id)
 
         elif isinstance(cell, Jail):
             self.__token_placer.put_on_jail(businessman.id)

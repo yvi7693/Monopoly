@@ -111,6 +111,9 @@ class CoordCells:
     BOTTOM_X = list(range(720, 0, -67))
     LEFT_Y = list(range(720, 0, -67))
 
+    FIRST_FIELD = TOP_X + RIGHT_Y
+    TWICE_FIELD = BOTTOM_X + LEFT_Y
+
 
 
 class SellWindow(CTkToplevel):

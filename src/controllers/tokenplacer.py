@@ -3,7 +3,7 @@ from src.controllers.finance import Bank
 from src.controllers.purchasesale import ManagerOwnership
 from src.controllers.warden import Warden
 from src.models.businesman import IdBusinessman
-from src.models.gameboard import Ownership, Jail
+from src.models.gameboard import Ownership, Jail, Chance
 from src.models.typescell import ChanceResultTypes
 
 
@@ -48,17 +48,21 @@ class TokenPlacer:
 
         return None
 
-    def put_on_chance(self, money: int, result: ChanceResultTypes, id: IdBusinessman) -> None:
+    def put_on_chance(self, money: int, chance: Chance, id: IdBusinessman) -> None:
 
         if not isinstance(money, int):  raise TypeError("Тип данных не int")
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
+
+        chance.try_luck()
+
+        result = chance.get_result()
 
         if result == ChanceResultTypes.POSITIVE:
             self.__bank.charge_account(money, id)
 
         elif result == ChanceResultTypes.NEGATIVE:
-            if not self.__bank.try_debit_account(money, id):
 
+            if not self.__bank.try_debit_account(money, id):
                 self.__bankrupt_manager.bankrupting(id)
 
     def put_on_jail(self, id: IdBusinessman) -> None:
