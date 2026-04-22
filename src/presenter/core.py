@@ -31,6 +31,8 @@ class GamePresenter:
 
         self.__game_view.winner_window.add_listener_on_click_restart(self.restart)
 
+        self.__need_restart = False
+
         self.__game_view.loop()
 
     def run(self) -> None:
@@ -58,6 +60,7 @@ class GamePresenter:
 
         if self.__game.is_skip_move():
             MessageDropper.drop_message_info(self.__game_view, "Ход пропущен: игрок в тюрьме")
+            self.__game_view.game_window.get_interaction_window().unlock_button_move()
             return None
 
         self.update_place_token(self.make_move_part2)
@@ -137,10 +140,9 @@ class GamePresenter:
     def restart(self) -> None:
         self.__game_view.winner_window.lock_button_restart()
 
-        self.__game = Game()
-        self.__game_view.show_start_window()
+        self.__game_view.destroy()
 
-        self.__game_view.winner_window.unlock_button_restart()
+        self.__need_restart = True
 
     def update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()
@@ -156,6 +158,14 @@ class GamePresenter:
 
         self.__game_view.game_window.set_callback_past_animate(callback)
         self.__game_view.update_place_token(id, position)
+
+    def __get_need_restart(self) -> bool:
+        return self.__need_restart
+
+    need_restart = property(__get_need_restart)
+
+
+
 
 
 

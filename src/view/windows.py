@@ -161,14 +161,12 @@ class GameWindow(CTkFrame):
         self.__start_position_field = 150
         self.__stop_position_field = 0
 
-        self.__start_position_frame = 1100
         self.__stop_position_frame = 770
 
         self.__go_btn = None
 
     def __create_interaction_window(self) -> None:
         self.__start_position_frame = 1100
-        self.__stop_position_frame = 770
 
         self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
         self.__interaction_window.place(x=self.__start_position_frame)
@@ -185,7 +183,7 @@ class GameWindow(CTkFrame):
         self.__create_token(count_players)
 
     def create_go_btn(self) -> None:
-        self.__go_btn = Button(master=self, text="GO!", width = 50)
+        self.__go_btn = Button(master=self, text="GO!", width = 50, height= 40)
         self.__go_btn.add_listener(self.animate_slide_field)
         self.__go_btn.place(x=500, y=500)
 
