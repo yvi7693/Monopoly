@@ -34,6 +34,8 @@ class GamePresenter:
         self.__game_view.loop()
 
     def run(self) -> None:
+        self.__game_view.start_window.lock_button()
+
         count_players = self.__game_view.start_window.count_players.get()
 
         self.__game.set_up(count_players)
@@ -47,7 +49,10 @@ class GamePresenter:
 
         self.__game_view.show_present_window()
 
+        self.__game_view.start_window.unlock_button()
+
     def make_move(self) -> None:
+        self.__game_view.game_window.get_interaction_window().lock_button_move()
 
         self.__game.make_move()
 
@@ -78,9 +83,11 @@ class GamePresenter:
             self.__game_view.game_window.delete_token(self.__game.get_current_player().id.get_value())
 
         if self.__game.get_winner_manager().is_winner():
-            self.__game_view.show_winner_window(self.__game.get_current_player().id.get_value() + 1)
+            self.__game_view.show_winner_window(self.__game.get_winner_manager().get_winner().id.get_value())
 
         self.update_info()
+
+        self.__game_view.game_window.get_interaction_window().unlock_button_move()
 
     def sell(self) -> None:
 
@@ -128,8 +135,12 @@ class GamePresenter:
         return None
 
     def restart(self) -> None:
+        self.__game_view.winner_window.lock_button_restart()
+
         self.__game = Game()
         self.__game_view.show_start_window()
+
+        self.__game_view.winner_window.unlock_button_restart()
 
     def update_info(self) -> None:
         id = self.__game.get_current_player().id.get_value()

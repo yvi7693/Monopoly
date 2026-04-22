@@ -79,6 +79,12 @@ class InteractionWindow(CTkFrame):
         self.__move_btn = Button(self, MOVE_BUTTON_TEXT)
         self.__move_btn.grid(row = 6, column =0, pady=(50,0), columnspan=2)
 
+    def lock_button_move(self) -> None:
+        self.__move_btn.configure(state=tkinter.DISABLED)
+
+    def unlock_button_move(self) -> None:
+        self.__move_btn.configure(state=tkinter.NORMAL)
+
     def __create_dice(self) -> None:
 
         self.__dices.append(CTkImage(light_image=Image.open(PATH_DICE1), dark_image=Image.open(PATH_DICE1),

@@ -55,7 +55,14 @@ class PlayerManager:
 
         self.__bank.deregister_account(businessman.id)
 
-        self.__queue -= 1
+        if len(self.__businessmen) == 0:
+            self.__queue = 0
+
+        elif delete_index < self.__queue:
+            self.__queue -= 1
+
+        elif self.__queue >= len(self.__businessmen):
+            self.__queue = 0
 
     def add_ownership(self, ownership: Ownership, id: IdBusinessman) -> None:
 
@@ -151,6 +158,9 @@ class WinnerManager:
 
         self.__player_manager = player_manager
         self.__winner = None
+
+    def get_winner(self) -> Businessman:
+        return self.__winner
 
     def chek_winner(self) -> bool:
         return len(self.__player_manager.get_businessmen()) == WinnerManager.ONE_PLAYER

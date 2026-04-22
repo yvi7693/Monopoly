@@ -64,12 +64,11 @@ class Game:
 
         return None
 
-
     def processing_move(self, buying_permission: bool | None) -> None:
         self.__game_rules.processing_move(self.__current_player, buying_permission)
 
         if self.__winner_manager.chek_winner():
-            self.__winner_manager.declare_winner(self.__current_player)
+            self.__winner_manager.declare_winner(self.__player_manager.get_current_businessman())
 
         self.update_data()
 

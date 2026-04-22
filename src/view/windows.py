@@ -30,6 +30,11 @@ class StartWindow(CTkFrame):
 
         self.__create_widgets()
 
+    def lock_button(self) -> None:
+        self.__start_btn.configure(state=tkinter.DISABLED)
+
+    def unlock_button(self) -> None:
+        self.__start_btn.configure(state=tkinter.NORMAL)
 
     def add_listener_on_click_start(self, callback) -> None:
         self.__start_btn.add_listener(callback)
@@ -153,6 +158,9 @@ class GameWindow(CTkFrame):
 
         self.__create_interaction_window()
 
+    def get_interaction_window(self) -> InteractionWindow:
+        return self.__interaction_window
+
     def set_callback_past_animate(self, callback) -> None:
         self.__callback_past_animate = callback
 
@@ -231,8 +239,6 @@ class GameWindow(CTkFrame):
         if len(overlay_index) == 1:
             x, y = self.__cell_center(position)
             self.__game_field.coords(self.__tokens[overlay_index[0]], x, y)
-
-
 
     def delete_token(self, id: int) -> None:
             self.__game_field.itemconfig(self.__tokens[id], state='hidden')
@@ -377,13 +383,19 @@ class WinnerWindow(CTkFrame):
         label_win = CTkLabel(self, text="WINNER", fg_color="transparent", text_color="red", font=(FONT_PRESENT, 60, "bold"))
         label_win.pack(anchor="center", pady=(20, 0))
 
-        label_win = CTkLabel(self, text=f"Player №{id}", fg_color="transparent", font=(FONT_PRESENT, 30))
+        label_win = CTkLabel(self, text=f"Player №{id + 1}", fg_color="transparent", font=(FONT_PRESENT, 30))
         label_win.pack(anchor="center", pady=10)
 
         self.__restart_btn.pack(pady = (60, 0))
 
     def add_listener_on_click_restart(self, callback) -> None:
         self.__restart_btn.add_listener(callback)
+
+    def lock_button_restart(self) -> None:
+        self.__restart_btn.configure(state=tkinter.DISABLED)
+
+    def unlock_button_restart(self) -> None:
+        self.__restart_btn.configure(state=tkinter.NORMAL)
 
 
 
