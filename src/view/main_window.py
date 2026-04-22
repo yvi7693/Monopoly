@@ -84,8 +84,9 @@ class MainWindow(CTk):
     def update_place_token(self, id: int, position: int) -> None:
         self.__game_window.update_place_token(id, position)
 
-    def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int):
+    def create_initial_view(self, names_cells: list[str], colors: list[str], count_players: int):
         self.__game_window.create_game_field(names_cells, colors, count_players)
+        self.__game_window.create_go_btn()
 
     def __get_start_window(self) -> StartWindow: return self.__start_window
 

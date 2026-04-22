@@ -43,7 +43,7 @@ class GamePresenter:
         name_cells = self.__game.board.get_name_cells()
         colors = self.__game.board.get_colors()
 
-        self.__game_view.create_game_field(name_cells, colors, count_players)
+        self.__game_view.create_initial_view(name_cells, colors, count_players)
 
         self.__game_view.start_window.start_loading()
 

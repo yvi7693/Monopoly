@@ -17,7 +17,9 @@ class InteractionWindow(CTkFrame):
     __scroll_ownerships: ScrollableOwnerships
 
     def __init__(self, master, width: int, height: int):
-        super().__init__(master = master, width = width, height = height, fg_color="#FFFAFA")
+        super().__init__(master = master, width = width, height = height, fg_color="#FFFAFA", corner_radius=30)
+
+        self.pack_propagate(False)
 
         self.grid_columnconfigure(0, weight=0, minsize=163)
         self.grid_columnconfigure(1, weight=0, minsize=163)

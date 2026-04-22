@@ -158,6 +158,56 @@ class GameWindow(CTkFrame):
 
         self.__create_interaction_window()
 
+        self.__start_position_field = 150
+        self.__stop_position_field = 0
+
+        self.__start_position_frame = 1100
+        self.__stop_position_frame = 770
+
+        self.__go_btn = None
+
+    def __create_interaction_window(self) -> None:
+        self.__start_position_frame = 1100
+        self.__stop_position_frame = 770
+
+        self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
+        self.__interaction_window.place(x=self.__start_position_frame)
+
+    def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int) -> None:
+        self.__game_field = tkinter.Canvas(master=self, width=HEIGHT, height=HEIGHT, bg = FIELD_COLOR)
+        self.__game_field.place(x=self.__start_position_field)
+
+        self.__create_rectangles()
+        self.__create_text(names_cells)
+        self.__create_neighborhood(colors)
+        self.__create_logo()
+        self.__create_token_image()
+        self.__create_token(count_players)
+
+    def create_go_btn(self) -> None:
+        self.__go_btn = Button(master=self, text="GO!", width = 50)
+        self.__go_btn.add_listener(self.animate_slide_field)
+        self.__go_btn.place(x=500, y=500)
+
+    def animate_slide_field(self) -> None:
+        self.__go_btn.destroy()
+
+        if self.__start_position_field > self.__stop_position_field:
+            self.__start_position_field -= 5
+            self.__game_field.place(x=self.__start_position_field)
+
+            self.after(5, self.animate_slide_field)
+
+        else:
+            self.animate_slide_frame()
+
+    def animate_slide_frame(self) -> None:
+        if self.__start_position_frame > self.__stop_position_frame:
+            self.__start_position_frame -= 5
+            self.__interaction_window.place(x=self.__start_position_frame)
+
+            self.after(5, self.animate_slide_frame)
+
     def get_interaction_window(self) -> InteractionWindow:
         return self.__interaction_window
 
@@ -175,17 +225,6 @@ class GameWindow(CTkFrame):
 
     def update_widgets(self, id: int, balance: int, points_1: int, points_2: int, ownership: str) -> None:
         self.__interaction_window.update_widgets(id, balance, points_1, points_2, ownership)
-
-    def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int) -> None:
-        self.__game_field = tkinter.Canvas(master=self, width=HEIGHT, height=HEIGHT, bg = FIELD_COLOR)
-        self.__game_field.grid(row=0, column=0, sticky="w")
-
-        self.__create_rectangles()
-        self.__create_text(names_cells)
-        self.__create_neighborhood(colors)
-        self.__create_logo()
-        self.__create_token_image()
-        self.__create_token(count_players)
 
     def animate_move_token(self, number_token: int, position: int, callback) -> None:
 
@@ -250,9 +289,7 @@ class GameWindow(CTkFrame):
         self.__game_field.itemconfig(self.__tokens[number_token], image=self.__tokens_active_image[number_token])
         self.__current_token = number_token
 
-    def __create_interaction_window(self) -> None:
-        self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
-        self.__interaction_window.grid(row=0, column=1, sticky="nswe")
+
 
     def __create_rectangles(self) -> None:
 
