@@ -50,7 +50,7 @@ class Board:
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 200))
 
     def create_cells(self) -> None:
-        companies = ['MAX', 'VK', 'RU Tube', 'Amazon', 'Google', 'Meta', 'Tesla', 'Intel', 'AMD', 'Oracle', 'IBM', 'Apple', 'Yandex', 'Nike', 'Sber', 'Tinkoff', 'Ozon', 'Avito', '1C', 'Kaspersky', 'ABBYY', 'Nexign', 'Naumen', 'Drom']
+        companies = ['MAX', 'VK', 'RU Tube', 'Amazon', 'Google', 'Meta', 'Tesla', 'Intel', 'AMD', 'Oracle', 'IBM', 'Apple', 'Yandex', 'Nike', 'Netflix', 'Tinkoff', 'Ozon', '1C', 'Avito', 'Sber', 'BMW', 'Disney', 'Hasbro', 'Kefir']
         self.__cells.clear()
 
         self.__cells.append(FreeParking(0, "Start"))
