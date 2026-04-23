@@ -61,13 +61,13 @@ class Board:
         for i in range(0, 40, 10):
 
             self.__cells.append(Street(i + 1, companies[k], 140, 50000, self.__neighborhoods[j]))
-            self.__cells.append(Street(i + 3, companies[k+1], 140, 7000, self.__neighborhoods[j]))
-            self.__cells.append(Chance(i + 2, "Chance"))
+            self.__cells.append(Street(i + 2, companies[k+1], 140, 7000, self.__neighborhoods[j]))
+            self.__cells.append(Chance(i + 3, "Chance"))
             self.__cells.append(Street(i + 4, companies[k+2], 160, 4000, self.__neighborhoods[j]))
             self.__cells.append(Station(i + 5, "Station", 200, 3000))
             self.__cells.append(Street(i + 6, companies[k+3], 160, 6000, self.__neighborhoods[j + 1]))
-            self.__cells.append(Street(i + 8, companies[k+4], 140, 50000, self.__neighborhoods[j + 1]))
-            self.__cells.append(Chance(i + 7, "Chance"))
+            self.__cells.append(Street(i + 7, companies[k+4], 140, 50000, self.__neighborhoods[j + 1]))
+            self.__cells.append(Chance(i + 8, "Chance"))
             self.__cells.append(Street(i + 9, companies[k+5], 200, 7000, self.__neighborhoods[j + 1]))
             self.__cells.append(FreeParking(i + 10, ""))
 
@@ -113,6 +113,9 @@ class Cell(ABC):
 
     def get_name(self) -> str:
         return self._name
+
+    def get_position(self) -> int:
+        return self._x
 
 class FreeParking(Cell):
 
@@ -222,6 +225,8 @@ class Street(Ownership):
     def __eq__(self, other: Street):
         return super().__eq__(other) and self.__neighborhood == other.__neighborhood
 
+    def get_count_build(self) -> int:
+        return len(self.__builds)
 
     def get_color(self) -> str:
         return self.__neighborhood.get_color()

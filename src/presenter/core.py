@@ -133,7 +133,7 @@ class GamePresenter:
             self.__build_window.focus()
 
         self.__build_window.create_widgets(current_player.get_street_names())
-        self.__build_presenter = BuildPresenter(self.__game.get_builder(), self.__build_window, self.__game, self.update_info)
+        self.__build_presenter = BuildPresenter(self.__game.get_builder(), self.__build_window, self.__game, self.update_info, self.__game_view.game_window)
 
         return None
 

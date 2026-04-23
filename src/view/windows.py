@@ -150,6 +150,8 @@ class GameWindow(CTkFrame):
         self.__tokens_active_image = []
         self.__tokens_position = []
 
+        self.__builds = {}
+
         self.__current_token = None
 
         self.__callback_past_animate = None
@@ -165,11 +167,38 @@ class GameWindow(CTkFrame):
 
         self.__go_btn = None
 
-    def __create_interaction_window(self) -> None:
-        self.__start_position_frame = 1100
+    def create_home(self, position: int, index_home: int) -> None:
+        if position not in self.__builds:
+            self.__builds[position] = []
 
-        self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
-        self.__interaction_window.place(x=self.__start_position_frame)
+        x1, y1, x2, y2 = CoordCells.HOME[position]
+
+        if position < 10 or position > 20 and position < 30:
+            house = self.__game_field.create_rectangle(x1 + (10 * index_home), y1, x2 + (10 * index_home), y2, fill="green")
+
+        else:
+            house = self.__game_field.create_rectangle(x1, y1 + (10 * index_home), x2, y2 + (10 * index_home), fill="green")
+
+        self.__builds[position].append(house)
+
+    def delete_builds(self, position: int) -> None:
+        for build in self.__builds[position]:
+            self.__game_field.delete(build)
+
+    def create_hotel(self, position: int) -> None:
+        self.delete_builds(position)
+
+        x1, y1, x2, y2 = CoordCells.HOME[position]
+
+        if position < 10 or position > 20 and position < 30:
+            hotel = self.__game_field.create_rectangle(x1, y1, x2, y2,
+                                                       fill="red")
+
+        else:
+            hotel = self.__game_field.create_rectangle(x1, y1, x2, y2,
+                                                       fill="red")
+
+        self.__builds[position].append(hotel)
 
     def create_game_field(self, names_cells: list[str], colors: list[str], count_players: int) -> None:
         self.__game_field = tkinter.Canvas(master=self, width=HEIGHT, height=HEIGHT, bg = FIELD_COLOR)
@@ -280,14 +309,18 @@ class GameWindow(CTkFrame):
     def delete_token(self, id: int) -> None:
             self.__game_field.itemconfig(self.__tokens[id], state='hidden')
 
+    def __create_interaction_window(self) -> None:
+        self.__start_position_frame = 1100
+
+        self.__interaction_window = InteractionWindow(self, WIDTH_INTERACTIVE_WINDOW, HEIGHT)
+        self.__interaction_window.place(x=self.__start_position_frame)
+
     def __activate_token(self, number_token: int) -> None:
         if self.__current_token is not None:
             self.__game_field.itemconfig(self.__tokens[self.__current_token], image=self.__tokens_image[self.__current_token])
 
         self.__game_field.itemconfig(self.__tokens[number_token], image=self.__tokens_active_image[number_token])
         self.__current_token = number_token
-
-
 
     def __create_rectangles(self) -> None:
 

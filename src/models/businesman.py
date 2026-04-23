@@ -52,7 +52,7 @@ class Businessman:
 
         return names_street
 
-    def get_street(self) -> list[Street]:
+    def get_streets(self) -> list[Street]:
         streets = []
 
         for ownership in self.__ownerships:
