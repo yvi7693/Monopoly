@@ -111,7 +111,7 @@ class GamePresenter:
             self.__sell_window.focus()
 
         self.__sell_window.create_widgets(current_player.get_ownerships_names_list())
-        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info)
+        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info, self.__game_view.game_window)
 
         return None
 

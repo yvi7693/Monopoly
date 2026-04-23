@@ -36,7 +36,7 @@ class Neighborhood:
         color = self.__type
 
         if color == NeighborhoodTypes.BLUE: return "#4169E1"
-        if color == NeighborhoodTypes.RED: return "#FF0000"
+        if color == NeighborhoodTypes.RED: return "#DC143C"
         if color == NeighborhoodTypes.YELLOW: return "#FFFF00"
         if color == NeighborhoodTypes.BROWN: return "#8B4513"
         if color == NeighborhoodTypes.PURPLE: return "#FF00FF"

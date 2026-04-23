@@ -147,9 +147,6 @@ class CoordCells:
     }
 
 
-
-
-
 class SellWindow(CTkToplevel):
 
     def __init__(self, master):
