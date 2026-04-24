@@ -1,6 +1,6 @@
 from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
-from src.models.gameboard import Street
+from src.models.gameboard import Street, Ownership
 from src.presenter.build_presenter import BuildPresenter
 from src.presenter.sell_presenter import SellPresenter
 
@@ -74,18 +74,26 @@ class GamePresenter:
     def make_move_part2(self) -> None:
         buying_permission = None
 
-        if self.__game.board.is_ownerless(self.__game.get_current_cell()):
-            buying_permission = MessageDropper.drop_message_ask(self.__game_view, str(self.__game.get_current_cell()))
+        cell = self.__game.get_current_cell()
 
-            if buying_permission:
-                self.__game_view.game_window.create_owner_label(self.__game.get_current_player().id.get_value() + 1, self.__game.get_current_player().get_position())
+        if isinstance(cell, Ownership):
+            if cell.identify_owner(self.__game.get_current_player().id):
+
+                self.__game_view.game_window.get_interaction_window().unlock_button_move()
+                return None
+
+            buying_permission = MessageDropper.drop_message_ask(self.__game_view, str(self.__game.get_current_cell()))
 
         elif not self.__game.board.is_free_parking(self.__game.get_current_cell()):
             MessageDropper.drop_message_info(self.__game_view, str(self.__game.get_current_cell()))
 
-        ownerships = self.__game.get_current_player().ownerships
+        ownerships = list(self.__game.get_current_player().ownerships)
 
         self.__game.processing_move(buying_permission)
+
+        if self.__game.token_placer.get_status() == "buy":
+            self.__game_view.game_window.create_owner_label(self.__game.get_current_player().id.get_value() + 1,
+                                                            self.__game.get_current_player().get_position())
 
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
 
@@ -93,13 +101,14 @@ class GamePresenter:
             self.__game_view.game_window.delete_token(self.__game.get_current_player().id.get_value())
             self.clear_bankrupt_player_view(ownerships)
 
-
         if self.__game.get_winner_manager().is_winner():
             self.__game_view.show_winner_window(self.__game.get_winner_manager().get_winner().id.get_value())
 
         self.update_info()
 
         self.__game_view.game_window.get_interaction_window().unlock_button_move()
+
+        return None
 
     def sell(self) -> None:
 

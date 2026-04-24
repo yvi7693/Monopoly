@@ -25,21 +25,30 @@ class TokenPlacer:
         self.__warden = warden
         self.__bankrupt_manager = bankrupt_manager
 
+        self.__status = None
+
+    def get_status(self) -> str:
+        return self.__status
+
     def put_on_ownership(self, ownership: Ownership, id: IdBusinessman, buying_permission: bool) -> None:
 
         if not ownership.has_owner():
             if buying_permission and self.__manager_ownership.try_buy_ownership(ownership,id):
+                self.__status = "buy"
                 return None
 
             else:
+                self.__status = "no money"
                 return None
 
         elif not ownership.identify_owner(id):
 
             if self.__manager_ownership.try_charge_rent(ownership,id):
+                self.__status = "rent"
                 return None
 
             else:
+                self.__status = "no money"
                 self.__bankrupt_manager.bankrupting(id)
 
         return None
@@ -53,6 +62,8 @@ class TokenPlacer:
 
         result = chance.get_result()
 
+        self.__status = "chance"
+
         if result == ChanceResultTypes.POSITIVE:
             self.__bank.charge_account(money, id)
 
@@ -63,10 +74,18 @@ class TokenPlacer:
 
     def put_on_jail(self, id: IdBusinessman) -> None:
 
+        self.__status = "jail"
+
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")
 
         self.__warden.arrest(id)
 
+
+    def put_on_free_parking(self) -> None:
+
+        self.__status = "parking"
+
+        return None
 
 
 

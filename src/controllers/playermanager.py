@@ -45,7 +45,8 @@ class PlayerManager:
         businessman = self.__search_businessman(id)
 
         for ownership in businessman.ownerships:
-            self.delete_ownership(ownership, id)
+
+            ownership.unset_owner()
 
             if isinstance(ownership, Street): ownership.delete_builds()
 
@@ -90,6 +91,8 @@ class PlayerManager:
         if businessman is None:  raise AssertionError("Текущий предприниматель не найден")
 
         businessman.delete_ownership(ownership)
+
+        ownership.unset_owner()
 
     def has_tittle_deeds(self, ownership: Ownership, id: IdBusinessman) -> bool:
 

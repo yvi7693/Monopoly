@@ -321,7 +321,8 @@ class GameWindow(CTkFrame):
             self.__game_field.coords(self.__tokens[overlay_index[0]], x, y)
 
     def delete_token(self, id: int) -> None:
-            self.__game_field.itemconfig(self.__tokens[id], state='hidden')
+        self.__game_field.itemconfig(self.__tokens[id], state='hidden')
+        self.__tokens_position[id] = None
 
     def __create_interaction_window(self) -> None:
         self.__start_position_frame = 1100

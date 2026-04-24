@@ -202,7 +202,7 @@ class Ownership(Cell, ABC):
         return not self._owner is None
 
     def identify_owner(self, owner: IdBusinessman) -> bool:
-        return self._owner == owner or self._owner is None
+        return self._owner == owner
 
     def unset_owner(self) -> None:
         self._owner = None

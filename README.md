@@ -257,7 +257,7 @@ typing-extensions==4.15.0
 
 <p align="center">
   <b>Product by</b><br>
-  <a href="https://github.com/yvi7693">Yaroslav Vokov</a>
+  <a href="https://github.com/yvi7693">Yaroslav Volkov</a>
 </p>
 
 <p align="center">
@@ -269,4 +269,8 @@ typing-extensions==4.15.0
 
 <p align="center">
   <i>Build your empire. Buy smart. Survive longer than everyone else. 🏙️</i>
+</p>
+
+<p align="center">
+  <i>*It is not a commercial product.</i>
 </p>

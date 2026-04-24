@@ -111,12 +111,8 @@ class Businessman:
         return self.__id
 
     def __get_ownerships(self) -> list[Ownership]:
-        copy_ownerships = []
 
-        for i in range(len(self.__ownerships)):
-            copy_ownerships.append(deepcopy(self.__ownerships[i]))
-
-        return copy_ownerships
+        return self.__ownerships
 
     @staticmethod
     def copy(businessman: Businessman) -> Businessman:

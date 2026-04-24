@@ -1,8 +1,7 @@
 from src.controllers.finance import Bank
 from src.controllers.tokenplacer import TokenPlacer
 from src.models.businesman import Businessman
-from src.models.gameboard import Board, Street, Chance, Cell, Jail, Station
-from src.models.typescell import CurrentStatusOwner
+from src.models.gameboard import Board, Street, Chance, Cell, Jail, Station, FreeParking
 
 
 class GameRules:
@@ -52,6 +51,9 @@ class GameRules:
 
         elif isinstance(cell, Jail):
             self.__token_placer.put_on_jail(businessman.id)
+
+        elif isinstance(cell, FreeParking):
+            self.__token_placer.put_on_free_parking()
 
     def __give_bonus_go(self, businessman: Businessman) -> None:
         if not isinstance(businessman, Businessman):  raise TypeError("Тип данных не Businessman")
