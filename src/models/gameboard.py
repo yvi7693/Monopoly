@@ -225,6 +225,9 @@ class Street(Ownership):
     def __eq__(self, other: Street):
         return super().__eq__(other) and self.__neighborhood == other.__neighborhood
 
+    def get_build_price(self) -> int:
+        return self.__neighborhood.build_price
+
     def get_count_build(self) -> int:
         return len(self.__builds)
 

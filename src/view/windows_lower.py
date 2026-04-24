@@ -197,13 +197,13 @@ class SellWindow(CTkToplevel):
     def get_sell_index(self) -> int:
         return self.__sell_index.get()
 
-    def create_widgets(self, names: list[str]) -> None:
+    def create_widgets(self, names: list[str], prices: list[int]) -> None:
         label1 = CTkLabel(self, text="Выберите собственность которую хотите продать", font=(FONT, 14, "bold"))
-        label1.pack(padx = 30, pady=20)
+        label1.grid(row = 0, column = 0, padx = 30, pady=20, columnspan = 2)
 
         if not names:
             label2 = CTkLabel(self, text="У вас нет собственности для продажи")
-            label2.pack(pady=20)
+            label2.grid(row = 1, column = 0, pady=20, columnspan = 2)
 
             return None
 
@@ -211,9 +211,12 @@ class SellWindow(CTkToplevel):
 
         for i in range(len(names)):
             rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__sell_index, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
-            rad_button.pack(pady=10)
+            rad_button.grid(row = i + 1, column = 0, pady=10)
 
-        self.__sell_btn.pack(pady=30)
+            price = CTkLabel(self, text=f"{prices[i]}$", font=(FONT, 14, "bold"))
+            price.grid(row=i + 1, column=1, pady=10, padx=20)
+
+        self.__sell_btn.grid(row = len(names) + 1, column = 0, pady=30, columnspan = 2)
 
         return None
 
@@ -246,7 +249,7 @@ class BuildWindow(CTkToplevel):
     def get_build_index(self) -> int:
         return self.__build_index.get()
 
-    def create_widgets(self, names: list[str]) -> None:
+    def create_widgets(self, names: list[str], prices: list[int]) -> None:
         label1 = CTkLabel(self, text="Выберите собственность которую хотите улучшить", font=(FONT, 14, "bold"))
         label1.grid(row=0, column = 0, padx = 30, pady=20, columnspan=2)
 
@@ -260,7 +263,10 @@ class BuildWindow(CTkToplevel):
 
         for i in range(len(names)):
             rad_button = CTkRadioButton(master=self, value=i, text=names[i], variable=self.__build_index, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, font=("Comic Sans MS", 14, "bold"))
-            rad_button.grid(row= i + 1, column=0, pady=10, columnspan=2)
+            rad_button.grid(row= i + 1, column=0, pady=10)
+
+            price = CTkLabel(self, text=f"{prices[i]}$", font=(FONT, 14, "bold"))
+            price.grid(row=i + 1, column=1, pady=10, padx=20)
 
         self.__home_button.grid(row=len(names)+1, column=0, pady=10, sticky="e", padx=10)
         self.__hotel_button.grid(row=len(names)+1, column=1, pady=10, sticky="w", padx=10)

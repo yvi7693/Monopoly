@@ -128,7 +128,7 @@ class GamePresenter:
         else:
             self.__sell_window.focus()
 
-        self.__sell_window.create_widgets(current_player.get_ownerships_names_list())
+        self.__sell_window.create_widgets(current_player.get_ownerships_names_list(), current_player.get_ownerships_prices())
         self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info, self.__game_view.game_window)
 
         return None
@@ -150,7 +150,7 @@ class GamePresenter:
         else:
             self.__build_window.focus()
 
-        self.__build_window.create_widgets(current_player.get_street_names())
+        self.__build_window.create_widgets(current_player.get_street_names(), current_player.get_build_prices())
         self.__build_presenter = BuildPresenter(self.__game.get_builder(), self.__build_window, self.__game, self.update_info, self.__game_view.game_window)
 
         return None

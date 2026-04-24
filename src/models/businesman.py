@@ -42,6 +42,14 @@ class Businessman:
 
         return names_ownership
 
+    def get_ownerships_prices(self) -> list[int]:
+        prices_ownership = []
+
+        for ownership in self.__ownerships:
+            prices_ownership.append(ownership.calculate_price())
+
+        return prices_ownership
+
     def get_street_names(self) -> list[str]:
         names_street = []
 
@@ -60,6 +68,17 @@ class Businessman:
                 streets.append(ownership)
 
         return streets
+
+    def get_build_prices(self) -> list[int]:
+
+        prices = []
+
+        streets = self.get_streets()
+
+        for street in streets:
+            prices.append(street.get_build_price())
+
+        return prices
 
     def get_position(self) -> int: return self.__position
 
