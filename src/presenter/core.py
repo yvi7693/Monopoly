@@ -33,6 +33,7 @@ class GamePresenter:
         self.__game_view.winner_window.add_listener_on_click_restart(self.restart)
 
         self.__need_restart = False
+        self.__need_sell = False
 
         self.__game_view.loop()
 
@@ -101,6 +102,16 @@ class GamePresenter:
             self.__game_view.game_window.create_owner_label(self.__game.get_current_player().id.get_value() + 1,
                                                             self.__game.get_current_player().get_position())
 
+        if self.__game.token_placer.get_status() == "need sell":
+            sell_permission =MessageDropper.drop_message_ask(self.__game_view, "Не достаточно средств чтобы погасить долг!\n Желаете продать собственность?")
+
+            if sell_permission:
+                self.__need_sell = True
+                self.sell()
+
+            else:
+                self.__game.get_bankrupt_manager().bankrupting(self.__game.get_current_player().id)
+
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
 
             MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился \nи выбывает из игры 🚫")
@@ -135,7 +146,9 @@ class GamePresenter:
             self.__sell_window.focus()
 
         self.__sell_window.create_widgets(current_player.get_ownerships_names_list(), current_player.get_ownerships_prices())
-        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info, self.__game_view.game_window)
+        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info, self.make_move_part2, self.__need_sell, self.__game_view.game_window)
+
+        self.__need_sell = False
 
         return None
 

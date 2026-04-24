@@ -8,7 +8,7 @@ from src.view.windows_lower import SellWindow
 
 class SellPresenter:
 
-    def __init__(self, manager_ownership: ManagerOwnership, sell_window: SellWindow | None, game: Game, callback_update, game_window: GameWindow):
+    def __init__(self, manager_ownership: ManagerOwnership, sell_window: SellWindow | None, game: Game, callback_update, callback_move, need_sell: bool, game_window: GameWindow):
 
         self.__manager_ownership = manager_ownership
         self.__sell_window = sell_window
@@ -16,6 +16,9 @@ class SellPresenter:
         self.__game_window = game_window
 
         self.__callback_update = callback_update
+        self.__callback_move = callback_move
+
+        self.__need_sell = need_sell
 
         self.__sell_window.add_listener_on_click_sell(self.sell)
 
@@ -32,9 +35,14 @@ class SellPresenter:
 
         self.__game_window.delete_owner_label(ownership.get_position())
 
-        MessageDropper.drop_message_info(self.__sell_window, message=f"Вы продали собственность {ownership.get_name()}")
-
         self.__game.update_data()
         self.__callback_update()
+        self.__game_window.update_idletasks()
+
+        MessageDropper.drop_message_info(self.__sell_window, message=f"Вы продали собственность {ownership.get_name()}")
 
         self.__sell_window.close()
+
+        if self.__need_sell:
+            self.__callback_move()
+

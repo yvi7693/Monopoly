@@ -113,6 +113,11 @@ class PlayerManager:
 
         return False
 
+    def has_ownerships(self, id: IdBusinessman) -> bool:
+        businessman = self.__search_businessman(id)
+
+        return businessman.has_ownerships()
+
     def get_businessmen(self) -> list[Businessman]:
         businessmen_copy = []
 

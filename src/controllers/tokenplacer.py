@@ -1,4 +1,4 @@
-from src.controllers.playermanager import BankruptManager
+from src.controllers.playermanager import BankruptManager, PlayerManager
 from src.controllers.finance import Bank
 from src.controllers.purchasesale import ManagerOwnership
 from src.controllers.warden import Warden
@@ -14,7 +14,7 @@ class TokenPlacer:
     __warden = Warden
     __bankrupt_manager: BankruptManager
 
-    def __init__(self, manager_ownership: ManagerOwnership, bank: Bank, warden: Warden, bankrupt_manager: BankruptManager):
+    def __init__(self, manager_ownership: ManagerOwnership, bank: Bank, warden: Warden, bankrupt_manager: BankruptManager, player_manager: PlayerManager):
 
         if not isinstance(manager_ownership, ManagerOwnership):  raise TypeError("Тип данных не ManagerOwnership")
         if not isinstance(bank, Bank):  raise TypeError("Тип данных не Bank")
@@ -24,6 +24,7 @@ class TokenPlacer:
         self.__bank = bank
         self.__warden = warden
         self.__bankrupt_manager = bankrupt_manager
+        self.__player_manager = player_manager
 
         self.__status = None
 
@@ -45,10 +46,12 @@ class TokenPlacer:
 
             if self.__manager_ownership.try_charge_rent(ownership,id):
                 self.__status = "rent"
-                return None
+
+            elif self.__player_manager.has_ownerships(id):
+                self.__status = "need sell"
 
             else:
-                self.__status = "no money"
+                self.__status = "bankrupt"
                 self.__bankrupt_manager.bankrupting(id)
 
         return None

@@ -115,6 +115,9 @@ class Businessman:
 
         return False
 
+    def has_ownerships(self) -> bool:
+        return len(self.__ownerships) > 0
+
     def has_neighborhood_by_street(self, neighborhood: Neighborhood) -> bool:
         count = 0
 
