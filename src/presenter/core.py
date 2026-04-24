@@ -1,6 +1,6 @@
 from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
-from src.models.gameboard import Street, Ownership
+from src.models.gameboard import Street, Ownership, Cell
 from src.presenter.build_presenter import BuildPresenter
 from src.presenter.sell_presenter import SellPresenter
 
@@ -65,17 +65,34 @@ class GamePresenter:
             self.__game_view.game_window.get_interaction_window().unlock_button_move()
             return None
 
-        self.update_place_token(self.make_move_part2)
+        self.update_place_token(self.processing_move)
         self.update_info()
 
         self.__game_view.update_idletasks()
 
         return None
 
-    def make_move_part2(self) -> None:
-        buying_permission = None
+    def processing_move(self) -> None:
 
         cell = self.__game.get_current_cell()
+
+        buying_permission = self.check_drop_message(cell)
+
+        ownerships = list(self.__game.get_current_player().ownerships)
+
+        self.__game.processing_move(buying_permission)
+
+        self.chek_placer_status()
+
+        self.check_player_status(ownerships)
+
+        self.update_info()
+
+        self.__game_view.game_window.get_interaction_window().unlock_button_move()
+
+        return None
+
+    def check_drop_message(self, cell: Cell) -> None | bool:
 
         if isinstance(cell, Ownership):
             if cell.identify_owner(self.__game.get_current_player().id):
@@ -84,26 +101,27 @@ class GamePresenter:
                 return None
 
             if not cell.has_owner():
-
                 buying_permission = MessageDropper.drop_message_ask(self.__game_view, str(self.__game.get_current_cell()))
 
-            else:
+                return buying_permission
 
+            else:
                 MessageDropper.drop_message_info(self.__game_view, str(cell))
 
         elif not self.__game.board.is_free_parking(self.__game.get_current_cell()):
             MessageDropper.drop_message_info(self.__game_view, str(self.__game.get_current_cell()))
 
-        ownerships = list(self.__game.get_current_player().ownerships)
+        return None
 
-        self.__game.processing_move(buying_permission)
+    def chek_placer_status(self) -> None:
 
         if self.__game.token_placer.get_status() == "buy":
             self.__game_view.game_window.create_owner_label(self.__game.get_current_player().id.get_value() + 1,
                                                             self.__game.get_current_player().get_position())
 
         if self.__game.token_placer.get_status() == "need sell":
-            sell_permission =MessageDropper.drop_message_ask(self.__game_view, "Не достаточно средств чтобы погасить долг!\n Желаете продать собственность?")
+            sell_permission = MessageDropper.drop_message_ask(self.__game_view,
+                                                              "Не достаточно средств чтобы погасить долг!\n Желаете продать собственность?")
 
             if sell_permission:
                 self.__need_sell = True
@@ -112,6 +130,7 @@ class GamePresenter:
             else:
                 self.__game.get_bankrupt_manager().bankrupting(self.__game.get_current_player().id)
 
+    def check_player_status(self, ownerships: list[Ownership]) -> None:
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
 
             MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился \nи выбывает из игры 🚫")
@@ -120,12 +139,6 @@ class GamePresenter:
 
         if self.__game.get_winner_manager().is_winner():
             self.__game_view.show_winner_window(self.__game.get_winner_manager().get_winner().id.get_value())
-
-        self.update_info()
-
-        self.__game_view.game_window.get_interaction_window().unlock_button_move()
-
-        return None
 
     def sell(self) -> None:
 
@@ -146,7 +159,7 @@ class GamePresenter:
             self.__sell_window.focus()
 
         self.__sell_window.create_widgets(current_player.get_ownerships_names_list(), current_player.get_ownerships_prices())
-        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info, self.make_move_part2, self.__need_sell, self.__game_view.game_window)
+        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info, self.processing_move, self.__need_sell, self.__game_view.game_window)
 
         self.__need_sell = False
 
