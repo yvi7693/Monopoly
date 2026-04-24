@@ -44,6 +44,11 @@ class PlayerManager:
 
         businessman = self.__search_businessman(id)
 
+        for ownership in businessman.ownerships:
+            self.delete_ownership(ownership, id)
+
+            if isinstance(ownership, Street): ownership.delete_builds()
+
         delete_index = 0
 
         for i in range(len(self.__businessmen)):

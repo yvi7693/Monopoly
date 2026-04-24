@@ -151,6 +151,7 @@ class GameWindow(CTkFrame):
         self.__tokens_position = []
 
         self.__builds = {}
+        self.__label_own = {}
 
         self.__current_token = None
 
@@ -167,11 +168,20 @@ class GameWindow(CTkFrame):
 
         self.__go_btn = None
 
+    def create_owner_label(self, player_id: int, position: int) -> None:
+        x,y = CoordCells.PLAYER_LABEL[position]
+
+        label = self.__game_field.create_text(x, y, text=f"P{player_id}", font=(FONT, 14, "bold"))
+        self.__label_own[position] = label
+
+    def delete_owner_label(self, position: int) -> None:
+        self.__game_field.delete(self.__label_own[position])
+
     def create_home(self, position: int, index_home: int) -> None:
         if position not in self.__builds:
             self.__builds[position] = []
 
-        x1, y1, x2, y2 = CoordCells.HOME[position]
+        x1, y1, x2, y2 = CoordCells.BUILD[position]
 
         if position < 10 or position > 20 and position < 30:
             house = self.__game_field.create_rectangle(x1 + (10 * index_home), y1, x2 + (10 * index_home), y2, fill="green")
@@ -182,13 +192,17 @@ class GameWindow(CTkFrame):
         self.__builds[position].append(house)
 
     def delete_builds(self, position: int) -> None:
+        if not position in self.__builds: return None
+
         for build in self.__builds[position]:
             self.__game_field.delete(build)
+
+        return None
 
     def create_hotel(self, position: int) -> None:
         self.delete_builds(position)
 
-        x1, y1, x2, y2 = CoordCells.HOME[position]
+        x1, y1, x2, y2 = CoordCells.BUILD[position]
 
         if position < 10 or position > 20 and position < 30:
             hotel = self.__game_field.create_rectangle(x1, y1, x2, y2,

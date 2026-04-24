@@ -1,7 +1,8 @@
 from src.controllers.finance import Bank
 from src.controllers.playermanager import PlayerManager
 from src.models.businesman import IdBusinessman
-from src.models.gameboard import Ownership
+from src.models.gameboard import Ownership, Street
+
 
 class ManagerOwnership:
 
@@ -36,6 +37,9 @@ class ManagerOwnership:
         self.__bank.charge_account(price, id)
 
         ownership.unset_owner()
+
+        if isinstance(ownership, Street):
+            ownership.delete_builds()
 
     def try_charge_rent(self, ownership: Ownership, tenant: IdBusinessman) -> bool:
         rent = ownership.calculate_rent()

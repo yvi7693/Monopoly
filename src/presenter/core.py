@@ -1,5 +1,6 @@
 from src.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
+from src.models.gameboard import Street
 from src.presenter.build_presenter import BuildPresenter
 from src.presenter.sell_presenter import SellPresenter
 
@@ -76,14 +77,22 @@ class GamePresenter:
         if self.__game.board.is_ownerless(self.__game.get_current_cell()):
             buying_permission = MessageDropper.drop_message_ask(self.__game_view, str(self.__game.get_current_cell()))
 
+            if buying_permission:
+                self.__game_view.game_window.create_owner_label(self.__game.get_current_player().id.get_value() + 1, self.__game.get_current_player().get_position())
+
         elif not self.__game.board.is_free_parking(self.__game.get_current_cell()):
             MessageDropper.drop_message_info(self.__game_view, str(self.__game.get_current_cell()))
+
+        ownerships = self.__game.get_current_player().ownerships
 
         self.__game.processing_move(buying_permission)
 
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
+
             MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился \nи выбывает из игры 🚫")
             self.__game_view.game_window.delete_token(self.__game.get_current_player().id.get_value())
+            self.clear_bankrupt_player_view(ownerships)
+
 
         if self.__game.get_winner_manager().is_winner():
             self.__game_view.show_winner_window(self.__game.get_winner_manager().get_winner().id.get_value())
@@ -145,7 +154,9 @@ class GamePresenter:
         self.__need_restart = True
 
     def update_info(self) -> None:
-        id = self.__game.get_current_player().id.get_value()
+        businessman = self.__game.get_current_player()
+
+        id = businessman.id.get_value()
         balance = self.__game.get_current_balance()
         points_1, points_2 = self.__game.get_current_points()
         ownerships = self.__game.get_current_player().get_ownerships_names()
@@ -158,6 +169,14 @@ class GamePresenter:
 
         self.__game_view.game_window.set_callback_past_animate(callback)
         self.__game_view.update_place_token(id, position)
+
+    def clear_bankrupt_player_view(self, ownerships) -> None:
+
+            for ownership in ownerships:
+                self.__game_view.game_window.delete_owner_label(ownership.get_position())
+
+                if isinstance(ownership, Street):
+                    self.__game_view.game_window.delete_builds(ownership.get_position())
 
     def __get_need_restart(self) -> bool:
         return self.__need_restart

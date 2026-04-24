@@ -263,6 +263,9 @@ class Street(Ownership):
 
         return False
 
+    def delete_builds(self) -> None:
+        self.__builds = []
+
     def __get_neighborhood(self) -> Neighborhood:
         return self.__neighborhood
 

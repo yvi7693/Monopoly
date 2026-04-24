@@ -30,6 +30,8 @@ class SellPresenter:
         if isinstance(ownership, Street):
             self.__game_window.delete_builds(ownership.get_position())
 
+        self.__game_window.delete_owner_label(ownership.get_position())
+
         MessageDropper.drop_message_info(self.__sell_window, message=f"Вы продали собственность {ownership.get_name()}")
 
         self.__game.update_data()
