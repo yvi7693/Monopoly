@@ -28,13 +28,9 @@ class TokenPlacer:
     def put_on_ownership(self, ownership: Ownership, id: IdBusinessman, buying_permission: bool) -> None:
 
         if not ownership.has_owner():
-            if buying_permission:
+            if buying_permission and self.__manager_ownership.try_buy_ownership(ownership,id):
+                return None
 
-                if self.__manager_ownership.try_buy_ownership(ownership,id):
-                    return None
-
-                else:
-                    self.__bankrupt_manager.bankrupting(id)
             else:
                 return None
 
