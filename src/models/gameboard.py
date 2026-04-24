@@ -172,7 +172,7 @@ class Ownership(Cell, ABC):
 
     def __str__(self):
         if self.has_owner():
-            return f"Вы заплатили ренту {self.calculate_rent()}💰"
+            return f"Вы вынуждены заплатить ренту {self.calculate_rent()}💰"
 
         return f"{self._name}: {self._price}💰"
 

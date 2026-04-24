@@ -82,7 +82,13 @@ class GamePresenter:
                 self.__game_view.game_window.get_interaction_window().unlock_button_move()
                 return None
 
-            buying_permission = MessageDropper.drop_message_ask(self.__game_view, str(self.__game.get_current_cell()))
+            if not cell.has_owner():
+
+                buying_permission = MessageDropper.drop_message_ask(self.__game_view, str(self.__game.get_current_cell()))
+
+            else:
+
+                MessageDropper.drop_message_info(self.__game_view, str(cell))
 
         elif not self.__game.board.is_free_parking(self.__game.get_current_cell()):
             MessageDropper.drop_message_info(self.__game_view, str(self.__game.get_current_cell()))
