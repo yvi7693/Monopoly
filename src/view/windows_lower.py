@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from customtkinter import *
 from PIL import Image
 
-from src.constant_view import *
+from src.view.constant_view import *
 from src.view.widgets import Button, ScrollableOwnerships
 
 

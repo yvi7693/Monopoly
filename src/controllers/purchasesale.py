@@ -6,6 +6,9 @@ from src.models.gameboard import Ownership, Street
 
 class ManagerOwnership:
 
+    __bank: Bank
+    __player_manager: PlayerManager
+
     def __init__(self, bank: Bank, player_manager: PlayerManager):
         if not isinstance(bank, Bank):  raise TypeError()
 

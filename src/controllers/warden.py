@@ -4,6 +4,8 @@ from src.models.idbusinessman import IdBusinessman
 
 class Warden:
 
+    __jail: Jail
+
     def __init__(self, jail: Jail = None):
         self.__jail = jail
 

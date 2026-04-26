@@ -1,7 +1,7 @@
 from customtkinter import CTk
 from pygame import mixer
 
-from src.constant_view import *
+from src.view.constant_view import *
 from src.view.windows import StartWindow, PresentWindow, GameWindow, WinnerWindow
 
 
@@ -17,7 +17,7 @@ class MainWindow(CTk):
 
         self.geometry(f"{width}x{height}")
         self.resizable(False, False)
-        self.title("Monopoly")
+        self.title(MAIN_TITTLE)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -41,9 +41,9 @@ class MainWindow(CTk):
         self.__start_window.tkraise()
         mixer.init()
 
-        mixer.music.load("music/StartTrack.mp3")
+        mixer.music.load(START_TRACK)
 
-        mixer.music.set_volume(0.7)
+        mixer.music.set_volume(VOLUME)
 
         mixer.music.play()
 
@@ -51,18 +51,18 @@ class MainWindow(CTk):
         self.__present_window.tkraise()
         self.__present_window.start_animate(self.show_game_window)
 
-        mixer.music.load("music/ShowLogo.mp3")
+        mixer.music.load(LOGO_TRACK)
 
-        mixer.music.set_volume(0.7)
+        mixer.music.set_volume(VOLUME)
 
         mixer.music.play()
 
     def show_game_window(self) -> None:
         self.__game_window.tkraise()
 
-        mixer.music.load("music/GameTrack.mp3")
+        mixer.music.load(GAME_TRACK)
 
-        mixer.music.set_volume(0.7)
+        mixer.music.set_volume(VOLUME)
 
         mixer.music.play()
 
@@ -72,11 +72,11 @@ class MainWindow(CTk):
 
         mixer.music.stop()
 
-        mixer.music.load("music/END.mp3")
+        mixer.music.load(END_TRACK)
 
-        mixer.music.set_volume(0.7)
+        mixer.music.set_volume(VOLUME)
 
-        mixer.music.play(fade_ms=1000)
+        mixer.music.play(fade_ms=FADE_MS)
 
     def update_window_info(self, id: int, balance: int, points_1: int, points_2: int, ownership: str) -> None:
         self.__game_window.update_widgets(id, balance, points_1, points_2, ownership)

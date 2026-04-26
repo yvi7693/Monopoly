@@ -2,6 +2,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from src.models.building import Building, BuildingTypes
+
+from src.models.constant_models import COMPANIES, CHANCE, STATION, CURSION, FREE_PARK, JAIL, GO, EMPTY, \
+    CHANCE_MESSAGE_NEGATIVE, CHANCE_MESSAGE_POSITIVE, OWNERSHIP_MESSAGE, JAIL_MESSAGE
+
 from src.models.idbusinessman import IdBusinessman
 from src.models.typescell import ChanceResultTypes, Neighborhood, NeighborhoodTypes
 
@@ -50,33 +54,33 @@ class Board:
         self.__neighborhoods.append(Neighborhood(NeighborhoodTypes.BLUE, 200))
 
     def create_cells(self) -> None:
-        companies = ['MAX', 'VK', 'RU Tube', 'Amazon', 'Google', 'Meta', 'Tesla', 'Intel', 'AMD', 'Oracle', 'IBM', 'Apple', 'Yandex', 'Nike', 'Netflix', 'Tinkoff', 'Ozon', '1C', 'Avito', 'Sber', 'BMW', 'Disney', 'Hasbro', 'Kefir']
+
         self.__cells.clear()
 
-        self.__cells.append(FreeParking(0, "Start"))
+        self.__cells.append(FreeParking(0, GO))
 
         j = 0
         k = 0
 
         for i in range(0, 40, 10):
 
-            self.__cells.append(Street(i + 1, companies[k], 140, 50000, self.__neighborhoods[j]))
-            self.__cells.append(Street(i + 2, companies[k+1], 140, 7000, self.__neighborhoods[j]))
-            self.__cells.append(Chance(i + 3, "Chance"))
-            self.__cells.append(Street(i + 4, companies[k+2], 160, 4000, self.__neighborhoods[j]))
-            self.__cells.append(Station(i + 5, "Station", 200, 3000))
-            self.__cells.append(Street(i + 6, companies[k+3], 160, 6000, self.__neighborhoods[j + 1]))
-            self.__cells.append(Street(i + 7, companies[k+4], 140, 50000, self.__neighborhoods[j + 1]))
-            self.__cells.append(Chance(i + 8, "Chance"))
-            self.__cells.append(Street(i + 9, companies[k+5], 200, 7000, self.__neighborhoods[j + 1]))
-            self.__cells.append(FreeParking(i + 10, ""))
+            self.__cells.append(Street(i + 1, COMPANIES[k], 140, 50000, self.__neighborhoods[j]))
+            self.__cells.append(Street(i + 2, COMPANIES[k+1], 140, 7000, self.__neighborhoods[j]))
+            self.__cells.append(Chance(i + 3, CHANCE))
+            self.__cells.append(Street(i + 4, COMPANIES[k+2], 160, 4000, self.__neighborhoods[j]))
+            self.__cells.append(Station(i + 5, STATION, 200, 3000))
+            self.__cells.append(Street(i + 6, COMPANIES[k+3], 160, 6000, self.__neighborhoods[j + 1]))
+            self.__cells.append(Street(i + 7, COMPANIES[k+4], 140, 50000, self.__neighborhoods[j + 1]))
+            self.__cells.append(Chance(i + 8, CHANCE))
+            self.__cells.append(Street(i + 9, COMPANIES[k+5], 200, 7000, self.__neighborhoods[j + 1]))
+            self.__cells.append(FreeParking(i + 10, EMPTY))
 
             j += 2
             k += 6
 
-        self.__cells[10] = FreeParking(10, "Cursion")
-        self.__cells[20] = FreeParking(20, "Free Park")
-        self.__cells[30] = Jail(30, "Jail")
+        self.__cells[10] = FreeParking(10, CURSION)
+        self.__cells[20] = FreeParking(20, FREE_PARK)
+        self.__cells[30] = Jail(30, JAIL)
 
     @staticmethod
     def is_free_parking(cell: Cell) -> bool:
@@ -127,6 +131,9 @@ class Chance(Cell):
 
     CASH = 200
 
+    POSITIVE = 1
+    NEGATIVE = 0
+
     __result: ChanceResultTypes | None
 
     def __init__(self, x: int, name: str):
@@ -136,10 +143,10 @@ class Chance(Cell):
 
     def __str__(self):
         if self.__result == ChanceResultTypes.NEGATIVE:
-            return f"Вы попали на клетку шанс\n вы вынуждены заплатить {Chance.CASH}💰"
+            return CHANCE_MESSAGE_POSITIVE + f" {Chance.CASH}💰"
 
         else:
-            return f"Вы попали на клетку шанс\n и получаете {Chance.CASH}💰"
+            return CHANCE_MESSAGE_NEGATIVE + f"{Chance.CASH}💰"
 
     def get_result(self) -> ChanceResultTypes:  # испытать удачу
         return self.__result
@@ -147,7 +154,7 @@ class Chance(Cell):
     def try_luck(self) -> None:  # вычислить шанс
         import random
 
-        if random.randint(0, 1) == 1:
+        if random.randint(Chance.NEGATIVE, Chance.POSITIVE) == Chance.POSITIVE:
             self.__result = ChanceResultTypes.POSITIVE
         else:
             self.__result = ChanceResultTypes.NEGATIVE
@@ -172,7 +179,7 @@ class Ownership(Cell, ABC):
 
     def __str__(self):
         if self.has_owner():
-            return f"Вы вынуждены заплатить ренту\n {self.calculate_rent()}💰"
+            return OWNERSHIP_MESSAGE + f" {self.calculate_rent()}💰"
 
         return f"{self._name}: {self._price}💰"
 
@@ -297,7 +304,7 @@ class Jail(Cell):
         self.__prisoners = []
 
     def __str__(self):
-        return f"Вы попадаете в тюрьму и пропускаете ход 🙈"
+        return JAIL_MESSAGE
 
     def conclude(self, id: IdBusinessman) -> None:
         if not isinstance(id, IdBusinessman):  raise TypeError("Тип данных не IdBusinessman")

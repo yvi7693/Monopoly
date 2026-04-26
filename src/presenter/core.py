@@ -1,7 +1,10 @@
-from src.constant_view import WIDTH, HEIGHT
+from src.view.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
+from src.controllers.tokenplacer import TokenPlacerStatus
 from src.models.gameboard import Street, Ownership, Cell
 from src.presenter.build_presenter import BuildPresenter
+from src.presenter.constant_presenter import PLAYER_IN_JAIL, WANT_SELL, BANKRUPT, CLICK_MOVE, CAN_NOT_SELL, \
+    CAN_NOT_BUILD
 from src.presenter.sell_presenter import SellPresenter
 
 from src.view.main_window import MainWindow
@@ -61,7 +64,7 @@ class GamePresenter:
         self.__game.make_move()
 
         if self.__game.is_skip_move():
-            MessageDropper.drop_message_info(self.__game_view, "Ход пропущен: игрок в тюрьме")
+            MessageDropper.drop_message_info(self.__game_view, PLAYER_IN_JAIL)
             self.__game_view.game_window.get_interaction_window().unlock_button_move()
             return None
 
@@ -115,13 +118,12 @@ class GamePresenter:
 
     def chek_placer_status(self) -> None:
 
-        if self.__game.token_placer.get_status() == "buy":
+        if self.__game.token_placer.get_status() == TokenPlacerStatus.BUY:
             self.__game_view.game_window.create_owner_label(self.__game.get_current_player().id.get_value() + 1,
                                                             self.__game.get_current_player().get_position())
 
-        if self.__game.token_placer.get_status() == "need sell":
-            sell_permission = MessageDropper.drop_message_ask(self.__game_view,
-                                                              "Не достаточно средств чтобы погасить долг!\n Желаете продать собственность?")
+        if self.__game.token_placer.get_status() == TokenPlacerStatus.NEED_SELL:
+            sell_permission = MessageDropper.drop_message_ask(self.__game_view, WANT_SELL)
 
             if sell_permission:
                 self.__need_sell = True
@@ -133,7 +135,7 @@ class GamePresenter:
     def check_player_status(self, ownerships: list[Ownership]) -> None:
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
 
-            MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился \nи выбывает из игры 🚫")
+            MessageDropper.drop_message_info(self.__game_view, BANKRUPT)
             self.__game_view.game_window.delete_token(self.__game.get_current_player().id.get_value())
             self.clear_bankrupt_player_view(ownerships)
 
@@ -145,11 +147,11 @@ class GamePresenter:
         current_player = self.__game.get_current_player()
 
         if current_player is None:
-            MessageDropper.drop_message_info(self.__game_view, "Нажмите MOVE для того чтобы определить текущего игрока.")
+            MessageDropper.drop_message_info(self.__game_view, CLICK_MOVE)
             return None
 
         if self.__game.get_bankrupt_manager().is_bankrupt(current_player.id):
-            MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился. Вы не можете продать его собственность")
+            MessageDropper.drop_message_info(self.__game_view, CAN_NOT_SELL)
             return None
 
         if self.__sell_window is None or not self.__sell_window.winfo_exists():
@@ -159,7 +161,10 @@ class GamePresenter:
             self.__sell_window.focus()
 
         self.__sell_window.create_widgets(current_player.get_ownerships_names_list(), current_player.get_ownerships_prices())
-        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(), self.__sell_window, self.__game, self.update_info, self.processing_move, self.__need_sell, self.__game_view.game_window)
+        self.__sell_presenter = SellPresenter(self.__game.get_manager_ownership(),
+                                              self.__sell_window, self.__game,
+                                              self.update_info, self.processing_move,
+                                              self.__need_sell, self.__game_view.game_window)
 
         self.__need_sell = False
 
@@ -169,11 +174,11 @@ class GamePresenter:
         current_player = self.__game.get_current_player()
 
         if current_player is None:
-            MessageDropper.drop_message_info(self.__game_view, "Нажмите MOVE для того чтобы определить текущего игрока.")
+            MessageDropper.drop_message_info(self.__game_view, CLICK_MOVE)
             return None
 
         if self.__game.get_bankrupt_manager().is_bankrupt(current_player.id):
-            MessageDropper.drop_message_info(self.__game_view, "Игрок обанкротился. Вы не можете строить.")
+            MessageDropper.drop_message_info(self.__game_view, CAN_NOT_BUILD)
             return None
 
         if self.__sell_window is None or not self.__sell_window.winfo_exists():
@@ -183,7 +188,9 @@ class GamePresenter:
             self.__build_window.focus()
 
         self.__build_window.create_widgets(current_player.get_street_names(), current_player.get_build_prices())
-        self.__build_presenter = BuildPresenter(self.__game.get_builder(), self.__build_window, self.__game, self.update_info, self.__game_view.game_window)
+        self.__build_presenter = BuildPresenter(self.__game.get_builder(),
+                                                self.__build_window, self.__game,
+                                                self.update_info, self.__game_view.game_window)
 
         return None
 
@@ -223,11 +230,3 @@ class GamePresenter:
         return self.__need_restart
 
     need_restart = property(__get_need_restart)
-
-
-
-
-
-
-
-

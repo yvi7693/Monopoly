@@ -8,7 +8,7 @@ from pygame import mixer
 
 from customtkinter import *
 
-from src.constant_view import *
+from src.view.constant_view import *
 from src.view.widgets import Button, ProgressBar
 from src.view.windows_lower import InteractionWindow, CoordCells
 

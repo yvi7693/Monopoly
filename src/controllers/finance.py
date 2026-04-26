@@ -11,7 +11,8 @@ class BankAccount:
         self.__id = id
         self.__balance = Bank.START_CAPITAL
 
-    def get_balance(self) -> int: return self.__balance
+    def get_balance(self) -> int:
+        return self.__balance
 
     def charge(self, money: int) -> None:
         if not isinstance(money, int):  raise TypeError()

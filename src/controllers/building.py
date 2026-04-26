@@ -7,6 +7,9 @@ from src.models.idbusinessman import IdBusinessman
 
 class Builder:
 
+    __bank: Bank
+    __player_manager: PlayerManager
+
     HOME_PRICE = 100
     HOTEL_PRICE = 150
 

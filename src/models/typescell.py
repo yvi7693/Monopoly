@@ -1,10 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from typing_extensions import Literal
-
-
-
 
 class NeighborhoodTypes(Enum):
     RED = "red"
@@ -57,36 +53,3 @@ class ChanceResultTypes(Enum):
 
     POSITIVE = 1
     NEGATIVE = -1
-
-
-class StatusOwner(Enum):
-    BOUGHT = 0
-    NOT_MONEY = 1
-    NOT_WISH = 2
-    PAID_RENT = 3
-
-
-class CurrentStatusOwner:
-
-    __status: Literal[StatusOwner.BOUGHT, StatusOwner.NOT_MONEY, StatusOwner.NOT_WISH, StatusOwner.PAID_RENT] | None
-
-    def __init__(self):
-        self.__status = None
-
-    def set_status(self, new_status: Literal[StatusOwner.BOUGHT, StatusOwner.NOT_MONEY, StatusOwner.NOT_WISH, StatusOwner.PAID_RENT]) -> None:
-
-        if new_status not in [StatusOwner.BOUGHT, StatusOwner.NOT_MONEY, StatusOwner.NOT_WISH, StatusOwner.PAID_RENT]:
-            raise ValueError("Не соответствует ожидаемому значению")
-
-        self.__status = new_status
-
-    def get_status(self) -> Literal[StatusOwner.BOUGHT, StatusOwner.NOT_MONEY, StatusOwner.NOT_WISH, StatusOwner.PAID_RENT] | None:
-        return self.__status
-
-class TypeMessage(Enum):
-    INFO = 0
-    ASK = 1
-    ERROR = 2
-
-
-

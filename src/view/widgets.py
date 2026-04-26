@@ -1,18 +1,21 @@
 import time
+from typing import Callable
 
 from customtkinter import CTkButton, CTkProgressBar, CTkScrollableFrame, CTkLabel
 
-from src.constant_view import EMPTY_TEXT, SYSTEM_FG, SYSTEM_HOVER
+from src.view.constant_view import EMPTY_TEXT, SYSTEM_FG, SYSTEM_HOVER
 
 
 class Button(CTkButton):
 
-    def __init__(self, master, text: str, width: int = 150, height: int =30, callback=None, fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, border_color = None, corner_radius: int = 100, text_color = "white"):
+    __callback: Callable
+
+    def __init__(self, master, text: str, width: int = 150, height: int =30, callback: Callable = None , fg_color=SYSTEM_FG, hover_color = SYSTEM_HOVER, border_color = None, corner_radius: int = 100, text_color = "white"):
         super().__init__(master=master, text=text, command = self.__handler_click, fg_color = fg_color, hover_color = hover_color, width=width, height=height, corner_radius = corner_radius, border_color=border_color, text_color=text_color)
 
         self.__callback = callback
 
-    def add_listener(self, callback) -> None:
+    def add_listener(self, callback: Callable) -> None:
         self.__callback = callback
 
     def __handler_click(self) -> None:

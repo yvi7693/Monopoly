@@ -8,6 +8,10 @@ from src.models.idbusinessman import IdBusinessman
 
 class Businessman:
 
+    __id: IdBusinessman
+    __ownerships: list[Ownership]
+    __position: int
+
     def __init__(self, id: IdBusinessman, position: int = Board.START, ownerships: list[Ownership] = None):
 
         self.__id = id
@@ -80,7 +84,8 @@ class Businessman:
 
         return prices
 
-    def get_position(self) -> int: return self.__position
+    def get_position(self) -> int:
+        return self.__position
 
     def set_position(self, points: int) -> None:
         if not isinstance(points, int): raise TypeError("Тип данных не int")

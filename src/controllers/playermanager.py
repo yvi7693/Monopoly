@@ -8,6 +8,7 @@ class PlayerManager:
     MAX_COUNT = 6
 
     __businessmen: list[Businessman]
+    __bank: Bank
 
     def __init__(self, bank: Bank):
         self.__businessmen = []
@@ -27,6 +28,14 @@ class PlayerManager:
             self.__queue = 0
 
         return current_businessman
+
+    def get_businessmen(self) -> list[Businessman]:
+        businessmen_copy = []
+
+        for i in range(len(self.__businessmen)):
+            businessmen_copy.append(Businessman.copy(self.__businessmen[i]))
+
+        return businessmen_copy
 
     def add_businessmen(self, businessmen_count: int) -> None:
 
@@ -117,14 +126,6 @@ class PlayerManager:
         businessman = self.__search_businessman(id)
 
         return businessman.has_ownerships()
-
-    def get_businessmen(self) -> list[Businessman]:
-        businessmen_copy = []
-
-        for i in range(len(self.__businessmen)):
-            businessmen_copy.append(Businessman.copy(self.__businessmen[i]))
-
-        return businessmen_copy
 
     def __search_businessman(self, id: IdBusinessman) -> Businessman | None:
 
