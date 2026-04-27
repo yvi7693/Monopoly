@@ -26,7 +26,7 @@ class Auctioneer:
 
         participants = self.__player_manager.get_id_without_seller(seller)
 
-        self.__bidding_terminal.set_participants(participants)
+        self.__bidding_terminal.set_up(participants)
 
         self.__lot = lot
 
@@ -66,8 +66,15 @@ class BiddingTerminal:
 
         self.__bidder = None
 
-    def set_participants(self, participants: list[IdBusinessman]) -> None:
+    def set_up(self, participants: list[IdBusinessman]) -> None:
         self.__participants = participants
+
+        self.__queue = 0
+
+        self.__bidder = None
+        self.__highest_bidder = None
+
+        self.__price = Auctioneer.START_PRICE
 
         self.__set_current_bidder()
 

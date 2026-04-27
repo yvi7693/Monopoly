@@ -146,8 +146,7 @@ class GamePresenter:
 
             cell = self.__game.get_current_cell()
 
-            if not isinstance(cell, Ownership): raise AssertionError(
-                "На аукцион не может быть выставлена не собственность")
+            if not isinstance(cell, Ownership): raise AssertionError("На аукцион не может быть выставлена не собственность")
 
             auctioneer = self.__game.get_auctioneer()
             seller = self.__game.get_current_player().id
