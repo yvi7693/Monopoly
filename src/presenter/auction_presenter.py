@@ -27,15 +27,13 @@ class AuctionPresenter:
         self.__auction_window.create_widgets(lot.get_name(), Auctioneer.START_PRICE, bidder.get_value()+1, self.__bank.get_balance(bidder), Auctioneer.INCREMENT_BID)
 
     def place_bid(self) -> None:
-        self.__auctioneer.bidding_terminal.place_bid()
 
-        if self.__auctioneer.try_end_auction():
+        if not self.__auctioneer.bidding_terminal.try_place_bid():
 
-            MessageDropper.drop_message_info(self.__auction_window, "Аукцион завершен")
+            MessageDropper.drop_message_info(self.__auction_window, "У игрока не достаточно средств, чтобы подтвердить ставку")
+            MessageDropper.drop_message_info(self.__auction_window, "Игрок выбывает из аукциона, так как не подтвердил ставку")
 
-            self.__auction_window.destroy()
-
-            return None
+        self.__try_end_auction()
 
         self.update_window()
 
@@ -44,12 +42,9 @@ class AuctionPresenter:
     def skip_bid(self) -> None:
         self.__auctioneer.bidding_terminal.skip_bid()
 
-        if self.__auctioneer.try_end_auction():
+        MessageDropper.drop_message_info(self.__auction_window, "Игрок выбывает из аукциона, так как не подтвердил ставку")
 
-            MessageDropper.drop_message_info(self.__auction_window, "Аукцион завершен")
-
-            self.__auction_window.destroy()
-
+        if self.__try_end_auction():
             return None
 
         self.update_window()
@@ -63,3 +58,13 @@ class AuctionPresenter:
 
         self.__auction_window.update_widgets(price, bidder.get_value()+1, balance)
 
+    def __try_end_auction(self) -> bool:
+
+        if self.__auctioneer.try_end_auction():
+            MessageDropper.drop_message_info(self.__auction_window, "Аукцион завершен")
+
+            self.__auction_window.destroy()
+
+            return True
+
+        return False

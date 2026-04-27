@@ -83,7 +83,7 @@ class BiddingTerminal:
     def check_winner(self) -> bool:
         return len(self.__participants) == 1 and not self.__highest_bidder is None
 
-    def place_bid(self) -> None:
+    def try_place_bid(self) -> bool:
 
         next_bid = self.__price + Auctioneer.INCREMENT_BID
 
@@ -92,12 +92,34 @@ class BiddingTerminal:
             self.__price = next_bid
             self.__highest_bidder = self.__bidder
 
-        self.__set_current_bidder()
+            self.__set_current_bidder()
+
+            return True
+
+        self.skip_bid()
+
+        return False
 
     def skip_bid(self) -> None:
 
         if self.__bidder == self.__highest_bidder:
             self.__highest_bidder = None
+
+        self.__delete_participant()
+
+        self.__set_current_bidder()
+
+    def __set_current_bidder(self) -> None:
+        count_bidder = len(self.__participants)
+
+        self.__bidder = self.__participants[self.__queue]
+
+        self.__queue += 1
+
+        if self.__queue >= count_bidder:
+            self.__queue = 0
+
+    def __delete_participant(self) -> None:
 
         delete_index = None
 
@@ -116,18 +138,6 @@ class BiddingTerminal:
             self.__queue -= 1
 
         elif self.__queue >= len(self.__participants):
-            self.__queue = 0
-
-        self.__set_current_bidder()
-
-    def __set_current_bidder(self) -> None:
-        count_bidder = len(self.__participants)
-
-        self.__bidder = self.__participants[self.__queue]
-
-        self.__queue += 1
-
-        if self.__queue >= count_bidder:
             self.__queue = 0
 
 
