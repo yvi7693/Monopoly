@@ -46,7 +46,7 @@ class TokenPlacer:
                 return None
 
             else:
-                self.__status = TokenPlacerStatus.NO_MONEY
+                self.__status = TokenPlacerStatus.AUCTION
                 return None
 
         elif not ownership.identify_owner(id):
@@ -58,7 +58,7 @@ class TokenPlacer:
                 self.__status = TokenPlacerStatus.NEED_SELL
 
             else:
-                self.__status = TokenPlacerStatus.NEED_SELL
+                self.__status = TokenPlacerStatus.BANKRUPT
                 self.__bankrupt_manager.bankrupting(id)
 
         return None
@@ -98,11 +98,11 @@ class TokenPlacer:
         return None
 
 
-@dataclasses.dataclass
+
 class TokenPlacerStatus(Enum):
 
     BUY = 0
-    NO_MONEY = 1
+    AUCTION = 1
     RENT = 2
     NEED_SELL = 3
     BANKRUPT = 4

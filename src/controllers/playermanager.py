@@ -37,6 +37,15 @@ class PlayerManager:
 
         return businessmen_copy
 
+    def get_id_without_seller(self, seller_id: IdBusinessman) -> list[IdBusinessman]:
+        id = []
+
+        for businessman in self.__businessmen:
+            if businessman.id != seller_id:
+                id.append(businessman.id)
+
+        return id
+
     def add_businessmen(self, businessmen_count: int) -> None:
 
         for i in range(businessmen_count):

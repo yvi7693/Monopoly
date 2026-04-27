@@ -1,3 +1,5 @@
+from src.controllers.auction import Auctioneer
+from src.presenter.auction_presenter import AuctionPresenter
 from src.view.constant_view import WIDTH, HEIGHT
 from src.controllers.core import Game
 from src.controllers.tokenplacer import TokenPlacerStatus
@@ -9,7 +11,7 @@ from src.presenter.sell_presenter import SellPresenter
 
 from src.view.main_window import MainWindow
 from src.view.message import MessageDropper
-from src.view.windows_lower import SellWindow, BuildWindow
+from src.view.windows_lower import SellWindow, BuildWindow, AuctionWindow
 
 
 class GamePresenter:
@@ -26,6 +28,9 @@ class GamePresenter:
 
         self.__build_window = None
         self.__build_presenter = None
+
+        self.__auction_presenter = None
+        self.__auction_window = None
 
         self.__game_view.start_window.add_listener_on_click_start(self.run)
 
@@ -85,7 +90,7 @@ class GamePresenter:
 
         self.__game.processing_move(buying_permission)
 
-        self.chek_placer_status()
+        self.check_placer_status()
 
         self.check_player_status(ownerships)
 
@@ -116,21 +121,40 @@ class GamePresenter:
 
         return None
 
-    def chek_placer_status(self) -> None:
+    def check_placer_status(self) -> None:
 
-        if self.__game.token_placer.get_status() == TokenPlacerStatus.BUY:
+        status = self.__game.token_placer.get_status()
+
+        if status == TokenPlacerStatus.BUY:
+
             self.__game_view.game_window.create_owner_label(self.__game.get_current_player().id.get_value() + 1,
                                                             self.__game.get_current_player().get_position())
 
-        if self.__game.token_placer.get_status() == TokenPlacerStatus.NEED_SELL:
+        elif status == TokenPlacerStatus.NEED_SELL:
+
             sell_permission = MessageDropper.drop_message_ask(self.__game_view, WANT_SELL)
 
             if sell_permission:
+
                 self.__need_sell = True
                 self.sell()
 
             else:
                 self.__game.get_bankrupt_manager().bankrupting(self.__game.get_current_player().id)
+
+        elif status == TokenPlacerStatus.AUCTION:
+
+            cell = self.__game.get_current_cell()
+
+            if not isinstance(cell, Ownership): raise AssertionError(
+                "На аукцион не может быть выставлена не собственность")
+
+            auctioneer = self.__game.get_auctioneer()
+            seller = self.__game.get_current_player().id
+            game_window = self.__game_view.game_window
+            self.__auction_window = AuctionWindow(game_window)
+
+            self.__auction_presenter = AuctionPresenter(auctioneer, self.__auction_window, seller, cell, self.__game.get_bank())
 
     def check_player_status(self, ownerships: list[Ownership]) -> None:
         if self.__game.get_bankrupt_manager().is_bankrupt(self.__game.get_current_player().id):
@@ -220,11 +244,11 @@ class GamePresenter:
 
     def clear_bankrupt_player_view(self, ownerships) -> None:
 
-            for ownership in ownerships:
-                self.__game_view.game_window.delete_owner_label(ownership.get_position())
+        for ownership in ownerships:
+            self.__game_view.game_window.delete_owner_label(ownership.get_position())
 
-                if isinstance(ownership, Street):
-                    self.__game_view.game_window.delete_builds(ownership.get_position())
+            if isinstance(ownership, Street):
+                self.__game_view.game_window.delete_builds(ownership.get_position())
 
     def __get_need_restart(self) -> bool:
         return self.__need_restart

@@ -1,3 +1,4 @@
+from src.controllers.auction import Auctioneer
 from src.controllers.gamerules import GameRules
 from src.controllers.playermanager import PlayerManager, BankruptManager, WinnerManager
 from src.controllers.purchasesale import ManagerOwnership
@@ -32,6 +33,7 @@ class Game:
         self.__token_placer = TokenPlacer(self.__manager_ownership, self.__bank, self.__warden, self.__bankrupt_manager, self.__player_manager)
         self.__game_rules = GameRules(self.__game_board, self.__bank, self.__token_placer)
         self.__builder = Builder(self.__bank, self.__player_manager)
+        self.__auctioneer = Auctioneer(self.__player_manager, self.__bank)
 
         self.__dice = Dice()
 
@@ -64,6 +66,15 @@ class Game:
 
     def get_builder(self) -> Builder:
         return self.__builder
+
+    def get_auctioneer(self) -> Auctioneer:
+        return self.__auctioneer
+
+    def get_player_manager(self) -> PlayerManager:
+        return self.__player_manager
+
+    def get_bank(self) -> Bank:
+        return self.__bank
 
     def set_up(self, count_businessmen: int):
         self.__player_manager.add_businessmen(count_businessmen)

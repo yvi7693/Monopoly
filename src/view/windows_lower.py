@@ -1,11 +1,78 @@
 import tkinter
 from dataclasses import dataclass
+from typing import Callable
 
 from customtkinter import *
 from PIL import Image
 
 from src.view.constant_view import *
 from src.view.widgets import Button, ScrollableOwnerships
+
+@dataclass
+class CoordCells:
+
+    TOP_X = list(range(50, 763, 67))
+    RIGHT_Y = list(range(50, 763, 67))
+    BOTTOM_X = list(range(720, 0, -67))
+    LEFT_Y = list(range(720, 0, -67))
+
+    BUILD = {
+        1: (82, 62, 90, 78),
+        2: (149, 62, 157, 78),
+        4: (283, 62, 291, 78),
+        6: (417, 62, 425, 78),
+        7: (484, 62, 492, 78),
+        9: (618, 62, 626, 78),
+        11: (685, 82, 701, 90),
+        12: (685, 149, 701, 157),
+        14: (685, 283, 701, 291),
+        16: (685, 417, 701, 425),
+        17: (685, 484, 701, 492),
+        19: (685, 618, 701, 626),
+        21: (618, 685, 626, 703),
+        22: (551, 685, 559, 703),
+        24: (417, 685, 425, 703),
+        26: (283, 685, 291, 703),
+        27: (216, 685, 224, 703),
+        29: (82, 685, 90, 703),
+        31: (62, 618, 78, 626),
+        32: (62, 551, 78, 559),
+        34: (62, 417, 78, 425),
+        36: (62, 283, 78, 291),
+        37: (62, 216, 78, 224),
+        39: (62, 82, 78, 90)
+    }
+
+    PLAYER_LABEL = {
+        1: (110, 90),
+        2: (177, 90),
+        4: (311, 90),
+        5: (378, 90),
+        6: (445, 90),
+        7: (512, 90),
+        9: (646, 90),
+        11: (673, 113),
+        12: (673, 180),
+        14: (673, 314),
+        15: (673, 381),
+        16: (673, 448),
+        17: (673, 515),
+        19: (673, 649),
+        21: (646, 675),
+        22: (579, 675),
+        24: (445, 675),
+        25: (378, 675),
+        26: (311, 675),
+        27: (244, 675),
+        29: (110, 670),
+        31: (90, 649),
+        32: (90, 582),
+        34: (90, 448),
+        35: (90, 381),
+        36: (90, 314),
+        37: (90, 247),
+        39: (90, 113)
+    }
 
 
 class InteractionWindow(CTkFrame):
@@ -109,73 +176,6 @@ class InteractionWindow(CTkFrame):
 
         self.__dice_1 = CTkLabel(self, text="", width=SIZE_DICE, height=SIZE_DICE)
         self.__dice_2 = CTkLabel(self, text="", width=SIZE_DICE, height=SIZE_DICE)
-
-
-@dataclass
-class CoordCells:
-
-    TOP_X = list(range(50, 763, 67))
-    RIGHT_Y = list(range(50, 763, 67))
-    BOTTOM_X = list(range(720, 0, -67))
-    LEFT_Y = list(range(720, 0, -67))
-
-    BUILD = {
-        1: (82, 62, 90, 78),
-        2: (149, 62, 157, 78),
-        4: (283, 62, 291, 78),
-        6: (417, 62, 425, 78),
-        7: (484, 62, 492, 78),
-        9: (618, 62, 626, 78),
-        11: (685, 82, 701, 90),
-        12: (685, 149, 701, 157),
-        14: (685, 283, 701, 291),
-        16: (685, 417, 701, 425),
-        17: (685, 484, 701, 492),
-        19: (685, 618, 701, 626),
-        21: (618, 685, 626, 703),
-        22: (551, 685, 559, 703),
-        24: (417, 685, 425, 703),
-        26: (283, 685, 291, 703),
-        27: (216, 685, 224, 703),
-        29: (82, 685, 90, 703),
-        31: (62, 618, 78, 626),
-        32: (62, 551, 78, 559),
-        34: (62, 417, 78, 425),
-        36: (62, 283, 78, 291),
-        37: (62, 216, 78, 224),
-        39: (62, 82, 78, 90)
-    }
-
-    PLAYER_LABEL = {
-        1: (110, 90),
-        2: (177, 90),
-        4: (311, 90),
-        5: (378, 90),
-        6: (445, 90),
-        7: (512, 90),
-        9: (646, 90),
-        11: (673, 113),
-        12: (673, 180),
-        14: (673, 314),
-        15: (673, 381),
-        16: (673, 448),
-        17: (673, 515),
-        19: (673, 649),
-        21: (646, 675),
-        22: (579, 675),
-        24: (445, 675),
-        25: (378, 675),
-        26: (311, 675),
-        27: (244, 675),
-        29: (110, 670),
-        31: (90, 649),
-        32: (90, 582),
-        34: (90, 448),
-        35: (90, 381),
-        36: (90, 314),
-        37: (90, 247),
-        39: (90, 113)
-    }
 
 
 class SellWindow(CTkToplevel):
@@ -282,6 +282,63 @@ class BuildWindow(CTkToplevel):
 
     def add_listener_on_click_hotel(self, callback) -> None:
         self.__hotel_button.add_listener(callback)
+
+
+class AuctionWindow(CTkToplevel):
+
+    def __init__(self, master):
+        super().__init__(master = master)
+
+        self.title("Auction")
+
+        self.__ownership_label = None
+
+        self.__up_frame = None
+        self.__price_label = None
+        self.__player_label = None
+        self.__balance_label = None
+        self.__step_label = None
+        self.__bid_btn = Button(master=self, text="BID", fg_color="#3CB371", hover_color="#006400", width = 110)
+        self.__skip_btn = Button(master=self, text="SKIP", width=110)
+
+    def create_widgets(self, name_lot: str, start_price: int , start_player: int, balance: int, bid_increment: int = 20) -> None:
+
+        self.__up_frame = CTkFrame(master=self, corner_radius=100, fg_color="#DCDCDC")
+        self.__up_frame.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=20, pady=10)
+
+        self.__up_frame.grid_columnconfigure(0, weight=1)
+        self.__up_frame.grid_columnconfigure(1, weight=1)
+
+        self.__ownership_label = CTkLabel(master=self.__up_frame, text=name_lot, font=("San Francisco", FONT_SIZE_INTER, "bold"), pady = 20)
+        self.__ownership_label.grid(row=0, column=0, sticky="w", padx=30)
+
+        self.__price_label = CTkLabel(master=self.__up_frame, text=f"{start_price}$", font=("San Francisco", FONT_SIZE_INTER, "bold"), pady = 20)
+        self.__price_label.grid(row=0, column=1, sticky="e", padx=30)
+
+        self.__player_label = CTkLabel(master=self, text= f"Player №{start_player}", font=("San Francisco", 18, "bold"))
+        self.__player_label.grid(row=1, column=0, columnspan=2, pady=20)
+
+        self.__balance_label = CTkLabel(master=self, text=f"Balance: {balance}$", font=("San Francisco", 14))
+        self.__balance_label.grid(row=2, column=0, sticky="e", padx=20)
+
+        self.__step_label = CTkLabel(master=self, text=f"Increment: {bid_increment}$", font=("San Francisco", 14))
+        self.__step_label.grid(row=2, column=1, sticky="w", padx=20)
+
+        self.__bid_btn.grid(row=3, column=0, padx=30, pady=20, stick="e")
+
+        self.__skip_btn.grid(row=3, column=1, padx=30, pady=20, sticky="w")
+
+    def update_widgets(self, price: int, number_bidder: int, balance: int) -> None:
+
+        self.__price_label.configure(text=f"{price}$")
+        self.__player_label.configure(text=f"Player №{number_bidder}")
+        self.__balance_label.configure(text=f"Balance: {balance}$")
+
+    def add_listener_on_click_bid(self, callback: Callable) -> None:
+        self.__bid_btn.add_listener(callback)
+
+    def add_listener_on_click_skip(self, callback: Callable) -> None:
+        self.__skip_btn.add_listener(callback)
 
 
 
