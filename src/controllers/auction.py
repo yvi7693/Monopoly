@@ -12,7 +12,13 @@ class Auctioneer:
     INCREMENT_BID = 20
 
     __player_manager: PlayerManager
+    __bank: Bank
+
     __bidding_terminal: BiddingTerminal
+    __queue_manager: QueueManager
+
+    __lot: Ownership | None
+
 
     def __init__(self, player_manager: PlayerManager, bank: Bank):
 
@@ -62,6 +68,11 @@ class Auctioneer:
 class BiddingTerminal:
 
     __highest_bidder: None | IdBusinessman
+    __price: int
+
+    __bank: Bank
+
+    __queue_manager: QueueManager
 
     def __init__(self, bank: Bank, queue_manager: QueueManager):
 
@@ -107,12 +118,18 @@ class BiddingTerminal:
         if self.__queue_manager.current_bidder == self.__highest_bidder:
             self.__highest_bidder = None
 
-        self.__queue_manager.delete_participant()
+        self.__queue_manager.delete_current_bidder()
 
         self.__queue_manager.next_bidder()
 
 
 class QueueManager:
+
+    __participants: list[IdBusinessman]
+
+    __queue: int
+
+    __bidder: IdBusinessman | None
 
     def __init__(self, participants: list[IdBusinessman] = None):
         self.__participants = participants or []
@@ -143,7 +160,7 @@ class QueueManager:
         if self.__queue >= count_bidder:
             self.__queue = 0
 
-    def delete_participant(self) -> None:
+    def delete_current_bidder(self) -> None:
 
         delete_index = None
 

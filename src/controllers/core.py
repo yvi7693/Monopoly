@@ -76,7 +76,7 @@ class Game:
     def get_bank(self) -> Bank:
         return self.__bank
 
-    def set_up(self, count_businessmen: int):
+    def set_up(self, count_businessmen: int) -> None:
         self.__player_manager.add_businessmen(count_businessmen)
 
         self.__game_board.create_neighborhood()
