@@ -18,7 +18,9 @@ class Auctioneer:
 
         self.__player_manager = player_manager
         self.__bank = bank
-        self.__bidding_terminal = BiddingTerminal(bank)
+
+        self.__queue_manager = QueueManager()
+        self.__bidding_terminal = BiddingTerminal(bank, self.__queue_manager)
 
         self.__lot = None
 
@@ -26,7 +28,9 @@ class Auctioneer:
 
         participants = self.__player_manager.get_id_without_seller(seller)
 
-        self.__bidding_terminal.set_up(participants)
+        self.__queue_manager.set_up(participants)
+
+        self.__bidding_terminal.set_price(Auctioneer.START_PRICE)
 
         self.__lot = lot
 
@@ -48,58 +52,49 @@ class Auctioneer:
     def __get_bidding_terminal(self) -> BiddingTerminal:
         return self.__bidding_terminal
 
+    def __get_queue_manager(self) -> QueueManager:
+        return self.__queue_manager
+
     bidding_terminal = property(__get_bidding_terminal)
+    queue_manager = property(__get_queue_manager)
 
 
 class BiddingTerminal:
 
     __highest_bidder: None | IdBusinessman
 
-    def __init__(self, bank: Bank, participants: list[IdBusinessman] = None):
+    def __init__(self, bank: Bank, queue_manager: QueueManager):
 
-        self.__highest_bidder = None
         self.__price = Auctioneer.START_PRICE
         self.__bank = bank
+        self.__queue_manager = queue_manager
 
-        self.__participants = participants or []
-        self.__queue = 0
-
-        self.__bidder = None
-
-    def set_up(self, participants: list[IdBusinessman]) -> None:
-        self.__participants = participants
-
-        self.__queue = 0
-
-        self.__bidder = None
         self.__highest_bidder = None
-
-        self.__price = Auctioneer.START_PRICE
-
-        self.__set_current_bidder()
-
-    def get_highest_bidder(self) -> IdBusinessman:
-        return self.__highest_bidder
-
-    def get_current_bidder(self) -> IdBusinessman:
-        return self.__bidder
 
     def get_price(self) -> int:
         return self.__price
 
+    def set_price(self, new_price: int) -> None:
+        self.__price = new_price
+
+    def get_highest_bidder(self) -> IdBusinessman:
+        return self.__highest_bidder
+
     def check_winner(self) -> bool:
-        return len(self.__participants) == 1 and not self.__highest_bidder is None
+        participants = self.__queue_manager.get_participants()
+
+        return len(participants) == 1 and not self.__highest_bidder is None
 
     def try_place_bid(self) -> bool:
 
         next_bid = self.__price + Auctioneer.INCREMENT_BID
 
-        if self.__bank.has_enough_money(next_bid, self.__bidder):
+        if self.__bank.has_enough_money(next_bid, self.__queue_manager.current_bidder):
 
             self.__price = next_bid
-            self.__highest_bidder = self.__bidder
+            self.__highest_bidder = self.__queue_manager.current_bidder
 
-            self.__set_current_bidder()
+            self.__queue_manager.next_bidder()
 
             return True
 
@@ -109,14 +104,36 @@ class BiddingTerminal:
 
     def skip_bid(self) -> None:
 
-        if self.__bidder == self.__highest_bidder:
+        if self.__queue_manager.current_bidder == self.__highest_bidder:
             self.__highest_bidder = None
 
-        self.__delete_participant()
+        self.__queue_manager.delete_participant()
 
-        self.__set_current_bidder()
+        self.__queue_manager.next_bidder()
 
-    def __set_current_bidder(self) -> None:
+
+class QueueManager:
+
+    def __init__(self, participants: list[IdBusinessman] = None):
+        self.__participants = participants or []
+
+        self.__queue = 0
+
+        self.__bidder = None
+
+    def get_participants(self) -> list[IdBusinessman]:
+        return self.__participants
+
+    def set_up(self, participants: list[IdBusinessman]) -> None:
+        self.__participants = participants
+
+        self.__queue = 0
+
+        self.__bidder = None
+
+        self.next_bidder()
+
+    def next_bidder(self) -> None:
         count_bidder = len(self.__participants)
 
         self.__bidder = self.__participants[self.__queue]
@@ -126,7 +143,7 @@ class BiddingTerminal:
         if self.__queue >= count_bidder:
             self.__queue = 0
 
-    def __delete_participant(self) -> None:
+    def delete_participant(self) -> None:
 
         delete_index = None
 
@@ -146,6 +163,13 @@ class BiddingTerminal:
 
         elif self.__queue >= len(self.__participants):
             self.__queue = 0
+
+    def __get_current_bidder(self) -> IdBusinessman:
+        return self.__bidder
+
+    current_bidder = property(__get_current_bidder)
+
+
 
 
 

@@ -22,7 +22,7 @@ class AuctionPresenter:
 
         self.__auctioneer.set_up(seller, lot)
 
-        bidder = self.__auctioneer.bidding_terminal.get_current_bidder()
+        bidder = self.__auctioneer.queue_manager.current_bidder
 
         self.__auction_window.create_widgets(lot.get_name(), Auctioneer.START_PRICE, bidder.get_value()+1, self.__bank.get_balance(bidder), Auctioneer.INCREMENT_BID)
 
@@ -52,7 +52,7 @@ class AuctionPresenter:
         return None
 
     def update_window(self) -> None:
-        bidder = self.__auctioneer.bidding_terminal.get_current_bidder()
+        bidder = self.__auctioneer.queue_manager.current_bidder
         price = self.__auctioneer.bidding_terminal.get_price()
         balance = self.__bank.get_balance(bidder)
 
