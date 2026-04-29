@@ -96,6 +96,11 @@ class BiddingTerminal:
 
         return len(participants) == 1 and not self.__highest_bidder is None
 
+    def check_all_skip(self) -> bool:
+        participants = self.__queue_manager.get_participants()
+
+        return len(participants) == 0 and self.__highest_bidder is None
+
     def try_place_bid(self) -> bool:
 
         next_bid = self.__price + Auctioneer.INCREMENT_BID
@@ -118,9 +123,15 @@ class BiddingTerminal:
         if self.__queue_manager.current_bidder == self.__highest_bidder:
             self.__highest_bidder = None
 
+        if self.check_all_skip():
+            return None
+
         self.__queue_manager.delete_current_bidder()
 
-        self.__queue_manager.next_bidder()
+        if not self.check_all_skip():
+            self.__queue_manager.next_bidder()
+
+        return None
 
 
 class QueueManager:

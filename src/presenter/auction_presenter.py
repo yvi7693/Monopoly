@@ -33,9 +33,9 @@ class AuctionPresenter:
             MessageDropper.drop_message_info(self.__auction_window, "У игрока не достаточно средств, чтобы подтвердить ставку")
             MessageDropper.drop_message_info(self.__auction_window, "Игрок выбывает из аукциона, так как не подтвердил ставку")
 
-        self.__try_end_auction()
+        if not self.__try_end_auction():
 
-        self.update_window()
+            self.update_window()
 
         return None
 
@@ -45,6 +45,13 @@ class AuctionPresenter:
         MessageDropper.drop_message_info(self.__auction_window, "Игрок выбывает из аукциона, так как не подтвердил ставку")
 
         if self.__try_end_auction():
+            return None
+
+        if self.__auctioneer.bidding_terminal.check_all_skip():
+            MessageDropper.drop_message_info(self.__auction_window,"Аукцион завершен. Собственность не была продана")
+
+            self.__auction_window.destroy()
+
             return None
 
         self.update_window()
