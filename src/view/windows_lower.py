@@ -6,6 +6,7 @@ from customtkinter import *
 from PIL import Image
 
 from src.view.constant_view import *
+from src.view.message import MessageDropper
 from src.view.widgets import Button, ScrollableOwnerships
 
 @dataclass
@@ -291,6 +292,13 @@ class AuctionWindow(CTkToplevel):
 
         self.title("Auction")
 
+        self.protocol("WM_DELETE_WINDOW", self.__close_message)
+
+        self.transient(master)
+        self.lift()
+        self.focus_force()
+        self.grab_set()
+
         self.__ownership_label = None
 
         self.__up_frame = None
@@ -339,6 +347,9 @@ class AuctionWindow(CTkToplevel):
 
     def add_listener_on_click_skip(self, callback: Callable) -> None:
         self.__skip_btn.add_listener(callback)
+
+    def __close_message(self) -> None:
+        MessageDropper.drop_message_info(self, "Окно не может быть закрыто, пока аукцион не завершен")
 
 
 
